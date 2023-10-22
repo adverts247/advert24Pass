@@ -1,7 +1,10 @@
 import 'dart:async';
 import 'dart:convert';
 
+import 'package:advert24pass/state/location_weather_state.dart';
+import 'package:advert24pass/state/user_state.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
 
 import 'package:web_socket_channel/web_socket_channel.dart';
@@ -117,20 +120,25 @@ class LocationWesocket {
         desiredAccuracy: LocationAccuracy.high);
   }
 
-  void checkLocation() {
+  void checkLocation(context) {
     final LocationSettings locationSettings = LocationSettings(
       accuracy: LocationAccuracy.high,
       distanceFilter: 100,
     );
+
+    var userData = Provider.of<UserState>(context, listen: false).userDetails;
     StreamSubscription<Position> positionStream =
         Geolocator.getPositionStream(locationSettings: locationSettings)
             .listen((Position? position) {
-      LocationWesocket().connectToSocket(
-        'wss://streamer.lazynerdstudios.com',
-        50,
-        position!.latitude.toString(),
-        position!.longitude.toString(),
-      );
+      //This function passes the latitude and logitude in the weatherPosition state
+      Provider.of<WeatherLocationState>(context, listen: false).long =
+          position!.longitude.toString();
+      Provider.of<WeatherLocationState>(context, listen: false).lat =
+          position.latitude.toString();
+
+        
+
+   
       print(position == null
           ? 'Unknown'
           : 'location ${position.latitude.toString()}, ${position.longitude.toString()}');

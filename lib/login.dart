@@ -34,6 +34,7 @@ class _LoginPageState extends State<LoginPage> {
     return Scaffold(
       body: SafeArea(
         child: Container(
+          color: Colors.black,
           height: MediaQuery.of(context).size.height,
           width: MediaQuery.of(context).size.width,
           child: Center(
@@ -46,7 +47,7 @@ class _LoginPageState extends State<LoginPage> {
                 children: [
                   Container(
                     height: MediaQuery.of(context).size.height > 450
-                        ? MediaQuery.of(context).size.height * .7
+                        ? MediaQuery.of(context).size.height * .72
                         : MediaQuery.of(context).size.height,
                     width: MediaQuery.of(context).size.width * .7,
                     child: Column(
@@ -75,7 +76,7 @@ class _LoginPageState extends State<LoginPage> {
                   ),
                   Center(
                     child: Container(
-                      height: MediaQuery.of(context).size.height,
+                      height: MediaQuery.of(context).size.height * .6,
                       width: MediaQuery.of(context).size.width * .58,
                       decoration: BoxDecoration(
                         color: Colors.white,
@@ -134,20 +135,16 @@ class _LoginPageState extends State<LoginPage> {
                                 text: 'Login',
                                 onPressed: () {
                                   var body = {
-                                    // 'email': loginEmail?.text,
-                                    // 'password': password?.text
+                                    'email': loginEmail?.text,
+                                    'password': password?.text
 
-                                    'email': 'tested@test.com',
-                                    'password': '12345678'
+                                    // 'email': 'tested@test.com',
+                                    // 'password': '12345678'
                                   };
                                   print(body);
                                   VideoService().login(context, body);
+                                
                                   //  LocationWesocket().sendDriverPingAndListenForPong( 1, 3.222, 4.66666);
-
-                                  Timer.periodic(Duration(seconds: 1), (timer) {
-                                    LocationWesocket().checkLocation();
-                                    //print('yes');
-                                  });
 
                                   // Navigator.push(
                                   //     context,

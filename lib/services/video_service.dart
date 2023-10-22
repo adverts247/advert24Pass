@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:advert24pass/about_me.dart';
 import 'package:advert24pass/model/video_model.dart';
 import 'package:advert24pass/services/network.dart/network.dart';
+import 'package:advert24pass/services/wether_service/weather_service.dart';
 import 'package:advert24pass/state/user_state.dart';
 import 'package:advert24pass/video_player1.dart';
 import 'package:advert24pass/widget/loader.dart';
@@ -29,10 +30,12 @@ class VideoService {
     HttpRequest('auth/login',
         context: context,
         body: body,
-        //  loader: LoaderType.popup,
+        loader: LoaderType.popup,
         shouldPopOnError: false, onSuccess: (_, result) async {
       tools.putInStore('accessToken', result['data']['token']);
+
       await getWallet(context);
+      WeatherService().getWeatherData(context);
 
       Navigator.push(
           context, MaterialPageRoute(builder: (context) => VideoPlayerApp()));
@@ -268,10 +271,12 @@ class VideoService {
     // }
   }
 
-  Future<Uint8List> fetchData(String path) async {
+  Future<Uint8List> fetchData(String path, context) async {
+    var userData = Provider.of<UserState>(context, listen: false).userDetails;
+
     var headers = {
       'Range': '0',
-      'driver-id': '1',
+      'driver-id': userData['id'].toString(),
       'Accept': 'multipart/form-data'
     };
 
@@ -306,11 +311,14 @@ class VideoService {
   }
 
   Future<dynamic> fetchVideo(String path, context) async {
+    var userData = Provider.of<UserState>(context, listen: false).userDetails;
+
     var headers = {
-      'Range': 'bytes=0-1000000',
-      'driver-id': '1',
+      'Range': '0',
+      'driver-id': userData['id'].toString(),
       'Accept': 'multipart/form-data'
     };
+    print(headers);
 
     var uri = Uri.parse('${path}?location=3.584494,1.090932');
     print(uri);
@@ -452,7 +460,10 @@ class VideoService {
 
   ///////rate ads ///////////////////////////////////////
   ///
-  void rateVideo(context, dynamic body, ) async {
+  void rateVideo(
+    context,
+    dynamic body,
+  ) async {
     final url = Uri.parse('https://streamer.lazynerdstudios.com/rate-ad'); //
     print(url);
     print(body);
@@ -491,4 +502,6 @@ class VideoService {
       );
     }
   }
+
+  //check weather
 }

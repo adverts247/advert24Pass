@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 import 'dart:math';
 
@@ -9,6 +10,7 @@ import 'package:advert24pass/rating.dart';
 import 'package:advert24pass/services/video_service.dart';
 import 'package:advert24pass/state/user_state.dart';
 import 'package:advert24pass/themes.dart';
+import 'package:advert24pass/websocket.dart';
 import 'package:advert24pass/widget/ads_form.dart';
 import 'package:advert24pass/widget/barcode.dart';
 import 'package:advert24pass/widget/button.dart';
@@ -19,7 +21,6 @@ import 'package:material_design_icons_flutter/material_design_icons_flutter.dart
 import 'package:provider/provider.dart';
 import 'package:video_player/video_player.dart';
 import 'package:flutter_vlc_player/flutter_vlc_player.dart';
-import 'package:animated_icon/animated_icon.dart';
 
 class VideoPlayerApp extends StatefulWidget {
   @override
@@ -30,25 +31,16 @@ class _VideoPlayerAppState extends State<VideoPlayerApp>
     with SingleTickerProviderStateMixin {
   VideoPlayerController? _controller;
   int _currentIndex = 0;
-
   VideoModel? currentAds;
-
   List<VideoModel>? videoModelList;
-
   void data;
-
   bool? isPhoto = false;
-
   Future<Uint8List>? futureValue;
-
   var video;
-
   bool? isLoading = true;
-
   double? _volume = 0.3;
-
+  late BuildContext myContext;
   bool? showVolumeSlider = false;
-  double _sliderValue = 0.0;
 
   int chuncksPlayed = 0;
   VlcPlayerController? vlcController;
@@ -56,14 +48,25 @@ class _VideoPlayerAppState extends State<VideoPlayerApp>
   AnimationController? likeController;
   AnimationController? disLikeController;
   bool _isLarge = false;
-
   var _isdisLikeLarge = false;
-
+  late Timer _timer;
   bool? rating = false;
+
+  bool? userdidntTaptheScreen = false;
+
+  bool? next = false;
 
   @override
   void initState() {
+    myContext = context;
     getVideoList();
+
+    //send driver location
+    Timer.periodic(Duration(seconds: 1), (timer) {
+      LocationWesocket().checkLocation(context);
+      //print('yes');
+    });
+
     super.initState();
     likeController = AnimationController(
       vsync: this,
@@ -108,6 +111,8 @@ class _VideoPlayerAppState extends State<VideoPlayerApp>
     // AdsFormPage()
   ];
 
+  //Check if the next ads is a video or photo
+
   Future<void> ifIsVideo() async {
     setState(() {
       isLoading = true;
@@ -119,8 +124,8 @@ class _VideoPlayerAppState extends State<VideoPlayerApp>
       setState(() {
         isPhoto = true;
 
-        futureValue =
-            VideoService().fetchData(currentAds!.content.path.toString());
+        futureValue = VideoService()
+            .fetchData(currentAds!.content.path.toString(), context);
       });
     } else {
       setState(() {
@@ -175,19 +180,54 @@ class _VideoPlayerAppState extends State<VideoPlayerApp>
   @override
   void dispose() {
     _controller!.dispose();
+    _timer.cancel();
     super.dispose();
   }
 
-  nextAds() {
-    // Trigger the modal when a barcode is scanned
-    var actionIdex = Random().nextInt(3);
+  int _counter = 10;
 
+  void _startTimer() {
+    setState(() {
+      _counter = 10; // Reset the counter when the screen is tapped
+    });
+    _timer = Timer.periodic(Duration(seconds: 1), (timer) {
+      // setState(() {
+      if (_counter > 0) {
+        _counter--;
+      } else {
+        Navigator.pop(context);
+        _timer.cancel(); // Cancel the timer when the counter reaches 0
+        setState(() {
+          rating = true;
+        });
+        Future.delayed(Duration(seconds: 5), () {
+          setState(() {
+            rating = false;
+            _currentIndex++;
+            currentAds = videoModelList![_currentIndex];
+          });
+          ifIsVideo();
+        });
+      }
+    });
+    // });
+  }
+
+  void _handleTap() {
+    setState(() {
+      _counter = 10; // Reset the counter when the screen is tapped
+    });
+  }
+
+// Update the nextAds function
+  void nextAds() {
+    _startTimer();
+    var actionIdex = Random().nextInt(3);
     if (currentAds!.callToAction.url.toString() == 'null') {
     } else {
       showModalBottomSheet(
         context: context,
         isDismissible: false,
-        //  isScrollControlled: true,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.only(
             topRight: Radius.circular(20),
@@ -195,31 +235,108 @@ class _VideoPlayerAppState extends State<VideoPlayerApp>
           ),
         ),
         builder: (BuildContext context) {
-          return BarcodeDisplayWidget(url: currentAds!.callToAction.url);
-          // BarcodeDisplayWidget();
+          return GestureDetector(
+            onTap: () {
+              _handleTap();
+            },
+            child: BarcodeDisplayWidget(url: currentAds!.callToAction.url),
+          );
         },
       );
     }
+  }
 
-    Future.delayed(Duration(seconds: 10), () {
-      Navigator.pop(context);
+  // timer to pop if user didnt touch the screen
+  // _startTimer() {
+  //   _timer = Timer.periodic(Duration(seconds: 10), (timer) {
+  //     // Perform your function here when no tap is detected within 10 seconds
+  //     test();
+  //   });
+  // }
 
+  // void ede() {
+  //   setState(() {
+  //     next = true;
+  //   });
+  // }
+
+  // void _handleTap() {
+  //   // Restart the timer when a tap is detected
+  //   _timer.cancel();
+  //   print('keep tapping');
+  //   _startTimer();
+  // }
+
+  // nextAds() {
+  //   _startTimer();
+  //   // Trigger the modal when a barcode is scanned
+  //   var actionIdex = Random().nextInt(3);
+
+  //   if (currentAds!.callToAction.url.toString() == 'null') {
+  //   } else {
+  //     //_startTimer();
+  //     showModalBottomSheet(
+  //       context: context,
+  //       isDismissible: false,
+  //       //  isScrollControlled: true,
+  //       shape: RoundedRectangleBorder(
+  //         borderRadius: BorderRadius.only(
+  //           topRight: Radius.circular(20),
+  //           topLeft: Radius.circular(20),
+  //         ),
+  //       ),
+  //       builder: (BuildContext context) {
+  //         return GestureDetector(
+  //             onTap: () {
+  //               _handleTap();
+  //             },
+  //             child: BarcodeDisplayWidget(url: currentAds!.callToAction.url));
+  //         // BarcodeDisplayWidget();
+  //       },
+  //     );
+  //   }
+
+  //   Future.delayed(Duration(seconds: 10), () {
+  //     Navigator.pop(context);
+
+  //     setState(() {
+  //       rating = true;
+  //     });
+
+  //     Future.delayed(Duration(seconds: 5), () {
+  //       setState(() {
+  //         rating = false;
+
+  //         setState(() {
+  //           _currentIndex++;
+
+  //           currentAds = videoModelList![_currentIndex];
+  //         });
+
+  //         ifIsVideo();
+  //       });
+  //     });
+  //   });
+  // }
+
+  void test() {
+    Navigator.pop(context);
+
+    setState(() {
+      rating = true;
+    });
+
+    Future.delayed(Duration(seconds: 5), () {
       setState(() {
-        rating = true;
-      });
+        rating = false;
 
-      Future.delayed(Duration(seconds: 5), () {
         setState(() {
-          rating = false;
+          _currentIndex++;
 
-          setState(() {
-            _currentIndex++;
-
-            currentAds = videoModelList![_currentIndex];
-          });
-
-          ifIsVideo();
+          currentAds = videoModelList![_currentIndex];
         });
+
+        ifIsVideo();
       });
     });
   }

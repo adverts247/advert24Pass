@@ -28,19 +28,20 @@ class _SplashScreenState extends State<SplashScreen> {
   Widget build(BuildContext context) {
     Size screenSize = MediaQuery.of(context).size;
     return Scaffold(
+      backgroundColor: Colors.black,
       body: SizedBox(
           height: screenSize.height,
           width: screenSize.width,
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Image.asset('assets/images/Untitled-1 1.png'),
+              Image.asset('assets/images/Group (6).png'),
               SizedBox(
                 height: 20,
               ),
               Text(
                 'WELCOME ONBOARD',
-                style: TextStyles().blackTextStyle700().copyWith(fontSize: 20),
+                style: TextStyles().whiteTextStyle().copyWith(fontSize: 20),
               )
             ],
           )),

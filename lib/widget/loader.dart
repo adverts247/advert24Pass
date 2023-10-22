@@ -1,3 +1,4 @@
+import 'package:advert24pass/themes.dart';
 import 'package:flutter/material.dart';
 
 class AnimatedImage extends StatefulWidget {
@@ -8,7 +9,7 @@ class AnimatedImage extends StatefulWidget {
 class _AnimatedImageState extends State<AnimatedImage> {
   double _imageSize = 100.0;
   bool _isAnimating = false;
-  
+
   double _imageheigh = 90;
 
   @override
@@ -25,37 +26,33 @@ class _AnimatedImageState extends State<AnimatedImage> {
     Future.delayed(Duration(milliseconds: 550), () {
       setState(() {
         _imageSize = _isAnimating ? 400.0 : 100.0;
-         _imageheigh = _isAnimating ? 150.0 : 90.0;
+        _imageheigh = _isAnimating ? 150.0 : 90.0;
       });
       _startAnimation();
     });
   }
 
-  
   @override
   void dispose() {
-    
     _startAnimation();
   }
 
-
-  
-
   @override
   Widget build(BuildContext context) {
-    return AnimatedContainer(
-      duration: Duration(microseconds: 550),
-      curve: Curves.easeInOut,
-
-      color: Colors.transparent,
-
-
-      child: Image.asset(
-        'assets/images/Untitled-1 1.png',
-        width: _imageSize,
-        height: _imageheigh,
-        fit: BoxFit.fill,
-      ), // Replace with your image path
+    return Container(
+      child: AnimatedContainer(
+        duration: Duration(microseconds: 550),
+        curve: Curves.easeInOut,
+    
+        color: Colors.transparent,
+    
+        child: Image.asset(
+          'assets/images/Untitled-1 1.png',
+          width: _imageSize,
+          height: _imageheigh,
+          fit: BoxFit.fill,
+        ), // Replace with your image path
+      ),
     );
   }
 }
@@ -66,8 +63,25 @@ class loader {
       context: context,
       builder: (BuildContext context) {
         return Dialog(
-          backgroundColor: Colors.transparent,
-          child: AnimatedImage(),
+          insetPadding: EdgeInsets.zero,
+          child: Container(
+            height: MediaQuery.of(context).size.height, 
+            width: MediaQuery.of(context).size.width, 
+            color: Colors.black,
+            child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Image.asset('assets/images/Group (6).png'),
+              SizedBox(
+                height: 20,
+              ),
+              Text(
+                'Connecting ....',
+                style: TextStyles().whiteTextStyle().copyWith(fontSize: 20),
+              )
+            ],
+          )
+          ),
         );
       },
     );

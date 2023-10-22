@@ -1,15 +1,15 @@
 import 'package:advert24pass/about_me.dart';
 import 'package:advert24pass/login.dart';
 import 'package:advert24pass/splash_screen.dart';
+import 'package:advert24pass/state/location_weather_state.dart';
 import 'package:advert24pass/state/user_state.dart';
 import 'package:advert24pass/video_player.dart';
 import 'package:advert24pass/video_player1.dart';
+import 'package:advert24pass/weather.dart';
 import 'package:advert24pass/websocket.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
-
-
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -28,6 +28,7 @@ class MyApp extends StatelessWidget {
     return MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (context) => UserState()),
+        ChangeNotifierProvider(create: (context) => WeatherLocationState()),
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
