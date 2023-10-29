@@ -635,3 +635,20 @@ Future<String?> pickImagePath() async {
 
   return null;
 }
+
+
+//delete video from phone storage 
+
+void deleteFile(String filePath) {
+  try {
+    File file = File(filePath);
+    if (file.existsSync()) {
+      file.deleteSync();
+      print('File deleted successfully.');
+    } else {
+      print('File does not exist.');
+    }
+  } catch (e) {
+    print('Error while deleting the file: $e');
+  }
+}

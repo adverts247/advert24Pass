@@ -19,6 +19,9 @@ import 'package:advert24pass/tools.dart' as tools;
 
 // ignore: ant_identifier_names
 const String BACKEND_URL = 'https://ads24.lazynerdstudios.com/api/v1/driver/';
+//ads24.lazynerdstudios.com
+
+//178.128.163.25
 
 //  live ip 138.68.168.255
 // test ip :  46.101.94.15

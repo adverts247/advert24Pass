@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:advert24pass/state/location_weather_state.dart';
 import 'package:advert24pass/state/user_state.dart';
 import 'package:advert24pass/themes.dart';
@@ -20,10 +22,22 @@ class _AboutMePageState extends State<AboutMePage> {
   Map<String, dynamic>? walletDetail;
 
   var weatherApiResult;
+  Timer? _timer;
+  var showWeather = true;
   @override
   void initState() {
     getWalletBalance();
     super.initState();
+    _timer = Timer.periodic(Duration(seconds: 5), (timer) {
+      setState(() {
+        showWeather = !showWeather;
+      });
+    });
+  }
+
+  void dispose() {
+    _timer?.cancel();
+    super.dispose();
   }
 
   getWalletBalance() async {
@@ -53,7 +67,12 @@ class _AboutMePageState extends State<AboutMePage> {
 
     return Scaffold(
         body: isLoading!
-            ? Text('fef')
+            ? Container(
+                color: Colors.black,
+                child: Center(
+                  child: CircularProgressIndicator(),
+                ),
+              )
             : Row(
                 children: [
                   Expanded(
@@ -104,7 +123,7 @@ class _AboutMePageState extends State<AboutMePage> {
                         width: MediaQuery.of(context).size.width * .5,
                         height: MediaQuery.of(context).size.height,
                         decoration: BoxDecoration(color: Colors.red),
-                        child: true == true
+                        child: showWeather
                             ? weatherWidget()
                             : Padding(
                                 padding: EdgeInsets.symmetric(
@@ -128,12 +147,29 @@ class _AboutMePageState extends State<AboutMePage> {
                                     SizedBox(
                                       height: 40,
                                     ),
-                                    aboutMeCard('FirstName',
-                                        walletDetail!['firstname']),
                                     aboutMeCard(
-                                        'LastName', walletDetail!['lastname']),
+                                        'Favourite Food',
+                                        walletDetail!['driver']
+                                            ['favourite_food']),
+                                    SizedBox(
+                                      height: 10,
+                                    ),
                                     aboutMeCard(
-                                        'Gender', walletDetail!['gender']),
+                                        'Favourite Food',
+                                        walletDetail!['driver']
+                                            ['favourite_hobby']),
+                                    SizedBox(
+                                      height: 10,
+                                    ),
+                                    aboutMeCard(' Ask Me',
+                                        walletDetail!['driver']['ask_me']),
+                                    SizedBox(
+                                      height: 10,
+                                    ),
+                                    aboutMeCard(
+                                        'Vacation Spot',
+                                        walletDetail!['driver']
+                                            ['vacation_spot']),
                                     // aboutMeCard()
                                   ],
                                 ),
@@ -158,11 +194,13 @@ class _AboutMePageState extends State<AboutMePage> {
               children: [
                 Text(
                   firstText,
-                  style: TextStyles().whiteTextStyle().copyWith(fontSize: 16),
+                  style: TextStyles()
+                      .whiteTextStyle()
+                      .copyWith(fontSize: 20, fontWeight: FontWeight.w700),
                 ),
                 Text(
                   walletDetail == null ? 'Loading...' : SecondText,
-                  style: TextStyles().greyTextStyle400().copyWith(fontSize: 14),
+                  style: TextStyles().whiteTextStyle().copyWith(fontSize: 14),
                 )
               ],
             )
@@ -187,35 +225,45 @@ class _AboutMePageState extends State<AboutMePage> {
     var formatter = DateFormat('EEEE, MMMM d, y');
     String formattedDate = formatter.format(now);
     return Padding(
-      padding:
-      
-      
-       const EdgeInsets.all(20.0),
+      padding: const EdgeInsets.all(20.0),
       child: Container(
+        height: MediaQuery.of(context).size.height,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Text(formattedDate,
                 style: TextStyles()
                     .whiteTextStyle()
                     .copyWith(fontSize: 22, fontWeight: FontWeight.w800)),
+            SizedBox(
+              height: 20,
+            ),
             Row(
               children: [
                 SvgPicture.asset('assets/login/brain shaped cloud.svg'),
                 Text(
-                    (weatherApiResult['main']['temp'] - 273.15).toStringAsFixed(2) +
+                    (weatherApiResult['main']['temp'] - 273.15)
+                            .toStringAsFixed(2) +
                         '°C',
                     style: TextStyles()
                         .whiteTextStyle()
                         .copyWith(fontSize: 22, fontWeight: FontWeight.w800))
               ],
             ),
+            SizedBox(
+              height: 20,
+            ),
             Row(
               children: [
                 squareBox(
                   'High/Low',
-                    (weatherApiResult['main']['temp_max'] - 273).toStringAsFixed(1) + '/'+ (weatherApiResult['main']['temp_min'] - 273.1).toStringAsFixed(1),
-                    ),
+                  (weatherApiResult['main']['temp_max'] - 273)
+                          .toStringAsFixed(1) +
+                      '/' +
+                      (weatherApiResult['main']['temp_min'] - 273.1)
+                          .toStringAsFixed(1),
+                ),
                 SizedBox(
                   width: 20,
                 ),

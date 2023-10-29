@@ -79,17 +79,17 @@ class _LoginPageState extends State<LoginPage> {
                       height: MediaQuery.of(context).size.height * .6,
                       width: MediaQuery.of(context).size.width * .58,
                       decoration: BoxDecoration(
-                        color: Colors.white,
+                        color: Colors.black,
                         borderRadius: BorderRadius.circular(5),
-                        boxShadow: [
-                          BoxShadow(
-                            color:
-                                Colors.grey.withOpacity(0.08), // Shadow color
-                            spreadRadius: 5, // How much the shadow spreads
-                            blurRadius: 9, // How blurry the shadow is
-                            offset: Offset(0, 2), // Offset of the shadow
-                          ),
-                        ],
+                        // boxShadow: [
+                        //   BoxShadow(
+                        //     color:
+                        //         Colors.grey.withOpacity(0.08), // Shadow color
+                        //     spreadRadius: 5, // How much the shadow spreads
+                        //     blurRadius: 9, // How blurry the shadow is
+                        //     offset: Offset(0, 2), // Offset of the shadow
+                        //   ),
+                        // ],
                       ),
                       child: Padding(
                         padding: const EdgeInsets.all(30.0),
@@ -100,7 +100,7 @@ class _LoginPageState extends State<LoginPage> {
                               Text(
                                 'Welcome Back',
                                 style: TextStyles()
-                                    .blackTextStyle700()
+                                    .whiteTextStyle()
                                     .copyWith(
                                         fontSize: 23,
                                         fontWeight: FontWeight.w800),

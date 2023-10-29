@@ -47,7 +47,7 @@ class _OutlineInputState extends State<OutlineInput> {
       children: [
         Text(
           widget.labelText.toString(),
-          style: TextStyles().blackTextStyle700().copyWith(fontSize: 13),
+          style: TextStyles().whiteTextStyle().copyWith(fontSize: 16, fontWeight: FontWeight.w700),
         ),
         const SizedBox(
           height: 5,
@@ -57,8 +57,8 @@ class _OutlineInputState extends State<OutlineInput> {
           textAlign:
               widget.textCenter == true ? TextAlign.center : TextAlign.left,
           style: TextStyles()
-              .blackTextStyle400()
-              .copyWith(fontSize: 14, fontWeight: FontWeight.w700),
+              .whiteTextStyle()
+              .copyWith(fontSize: 16, fontWeight: FontWeight.w700),
           onTap: widget.onTap,
           onChanged: widget.onChanged,
           keyboardType: widget.keyboardType,
@@ -70,10 +70,10 @@ class _OutlineInputState extends State<OutlineInput> {
               ? (String? value) => widget.validator!(value!)
               : null,
           decoration: InputDecoration(
-            labelText: widget.labelText,
-            labelStyle: TextStyles().greyTextStyle().copyWith(
-                  fontSize: 13,
-                ),
+            // labelText: widget.labelText,
+            // labelStyle: TextStyles().whiteTextStyle().copyWith(
+            //       fontSize: 13,
+            //     ),
             prefixIcon: widget.preffixWidget,
             suffixIcon: widget.suffixWidget ??
                 SizedBox(
@@ -106,7 +106,8 @@ class _OutlineInputState extends State<OutlineInput> {
             ),
             //   prefix: widget.preffixWidget,
             filled: true,
-            fillColor: const Color(0xffFFFFFF),
+          
+            fillColor:  Colors.black,
             focusedErrorBorder: const OutlineInputBorder(
               borderRadius: BorderRadius.all(Radius.circular(6)),
               borderSide: BorderSide(

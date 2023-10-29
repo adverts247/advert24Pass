@@ -5,23 +5,18 @@ import 'package:advert24pass/websocket.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
-class SplashScreen extends StatefulWidget {
-  const SplashScreen({super.key});
+class WelcomePage extends StatefulWidget {
+  const WelcomePage({super.key});
 
   @override
-  State<SplashScreen> createState() => _SplashScreenState();
+  State<WelcomePage> createState() => _WelcomePageState();
 }
 
-class _SplashScreenState extends State<SplashScreen> {
+class _WelcomePageState extends State<WelcomePage> {
   @override
   void initState() {
     super.initState();
-   // LocationWesocket().determinePosition();
-
-    Future.delayed(Duration(seconds: 2), () {
-      Navigator.push(
-          context, MaterialPageRoute(builder: (context) => LoginPage()));
-    });
+    LocationWesocket().determinePosition();
   }
 
   @override
@@ -41,7 +36,7 @@ class _SplashScreenState extends State<SplashScreen> {
               ),
               Text(
                 'WELCOME ONBOARD',
-                style: TextStyles().whiteTextStyle().copyWith(fontSize: 20),
+                style: TextStyles().whiteTextStyle().copyWith(fontSize: 30),
               )
             ],
           )),

@@ -40,6 +40,7 @@ class _RatingPageState extends State<RatingPage> {
         child: Container(
           height: MediaQuery.of(context).size.height,
           width: MediaQuery.of(context).size.width,
+          color: Colors.black,
           child: Center(
             child: Container(
               height: MediaQuery.of(context).size.height > 450
@@ -82,7 +83,7 @@ class _RatingPageState extends State<RatingPage> {
                       height: MediaQuery.of(context).size.height * .5,
                       width: MediaQuery.of(context).size.width * .58,
                       decoration: BoxDecoration(
-                        color: Colors.white,
+                        color: Colors.black,
                         borderRadius: BorderRadius.circular(5),
                         boxShadow: [
                           BoxShadow(
@@ -103,7 +104,7 @@ class _RatingPageState extends State<RatingPage> {
                               Text(
                                 'Thank You Watching',
                                 style: TextStyles()
-                                    .blackTextStyle700()
+                                    .whiteTextStyle()
                                     .copyWith(
                                         fontSize: 20,
                                         fontWeight: FontWeight.w800),
@@ -132,6 +133,7 @@ class _RatingPageState extends State<RatingPage> {
                               RatingBar.builder(
                                 initialRating: 3,
                                 minRating: 1,
+                                unratedColor: Colors.white,
                                 direction: Axis.horizontal,
                                 allowHalfRating: true,
                                 itemCount: 5,

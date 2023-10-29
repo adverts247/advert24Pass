@@ -1,70 +1,60 @@
-import 'dart:convert';
-import 'package:advert24pass/state/location_weather_state.dart';
+import 'package:advert24pass/themes.dart';
+import 'package:advert24pass/video_player1.dart';
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
-import 'package:provider/provider.dart';
+import 'package:socket_io_client/socket_io_client.dart' as IO;
 
-class WeatherPage extends StatefulWidget {
+class WaitingPage extends StatefulWidget {
   @override
-  _WeatherPageState createState() => _WeatherPageState();
+  State<WaitingPage> createState() => _WaitingPageState();
 }
 
-class _WeatherPageState extends State<WeatherPage> {
-  var temperature = '';
-  var humidity = '';
-  var chanceOfRain = '';
-  var wind = '';
+class _WaitingPageState extends State<WaitingPage> {
+  void connectToDriverChannel(String userId) {
+    IO.Socket socket =
+        IO.io('wss://streamer.lazynerdstudios.com', <String, dynamic>{
+      'transports': ['websocket'],
+    });
 
-  Future getWeatherData() async {
-    var lon = Provider.of<WeatherLocationState>(context, listen: false).long;
-    var lat = Provider.of<WeatherLocationState>(context, listen: false).lat;
+    socket.on('connect', (_) {
+      print('Connected');
+      socket.emit('watch driver', [userId]);
+    });
 
-    var response = await http.get(Uri.parse(
-        'https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=db56a9ab41e8ab1ab95dcffa4f67f119'));
-    //'https://api.openweathermap.org/data/3.0/onecall?lat=${lat}&lon=${lon}&exclude={part}&appid=db56a9ab41e8ab1ab95dcffa4f67f119'));
+    socket.on('stop-stream', (data) {
+      // Handle stop-stream event
+      print('Received stop-stream event');
+    });
 
-    if (response.statusCode == 200) {
-      var data = jsonDecode(response.body);
-      print(data);
-      Provider.of<WeatherLocationState>(context, listen: false)
-          .weatherApiResult = data;
-      setState(() {
-        temperature = (data['main']['temp'] - 273.15).toString() + '°C';
-        humidity = data['main']['humidity'].toString() + '%';
-        chanceOfRain = (data['clouds']['all'] / 100).toString();
-        wind = data['wind']['speed'].toString() + 'm/s';
-      });
-    } else {
-      print(response.reasonPhrase);
-      print('Failed to load data');
-    }
-  }
+    socket.on('start-stream', (data) {
+      // Handle start-stream event
+      print('Received start-stream event');
 
-  @override
-  void initState() {
-    super.initState();
-    getWeatherData();
+      Navigator.push(
+          context, MaterialPageRoute(builder: (context) => VideoPlayerApp()));
+    });
   }
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      home: Scaffold(
-        appBar: AppBar(
-          title: Text('Weather App'),
-        ),
-        body: Center(
+    connectToDriverChannel('26'); // Replace with the actual user ID
+    return Scaffold(
+      body: Container(
+          height: MediaQuery.of(context).size.height,
+          width: MediaQuery.of(context).size.width,
+          color: Colors.black,
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
-              Text('Temperature: $temperature'),
-              Text('Humidity: $humidity'),
-              Text('Chance of Rain: $chanceOfRain'),
-              Text('Wind: $wind'),
+            children: [
+              Image.asset('assets/images/Group (6).png'),
+              SizedBox(
+                height: 20,
+              ),
+              Text(
+                'Connecting ....',
+                style: TextStyles().whiteTextStyle().copyWith(fontSize: 20),
+              )
             ],
-          ),
-        ),
-      ),
+          )),
     );
   }
 }

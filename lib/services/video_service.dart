@@ -6,6 +6,7 @@ import 'package:advert24pass/services/network.dart/network.dart';
 import 'package:advert24pass/services/wether_service/weather_service.dart';
 import 'package:advert24pass/state/user_state.dart';
 import 'package:advert24pass/video_player1.dart';
+import 'package:advert24pass/weather.dart';
 import 'package:advert24pass/widget/loader.dart';
 import 'package:flutter/material.dart';
 import 'package:advert24pass/tools.dart' as tools;
@@ -30,7 +31,6 @@ class VideoService {
     HttpRequest('auth/login',
         context: context,
         body: body,
-        loader: LoaderType.popup,
         shouldPopOnError: false, onSuccess: (_, result) async {
       tools.putInStore('accessToken', result['data']['token']);
 
@@ -38,7 +38,7 @@ class VideoService {
       WeatherService().getWeatherData(context);
 
       Navigator.push(
-          context, MaterialPageRoute(builder: (context) => VideoPlayerApp()));
+          context, MaterialPageRoute(builder: (context) => WaitingPage()));
 
       debugPrint(result);
     }, onFailure: (_, result) {
