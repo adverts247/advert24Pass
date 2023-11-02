@@ -1,5 +1,4 @@
-
-import 'package:advert24pass/themes.dart';
+import 'package:adverts247Pass/themes.dart';
 import 'package:flutter/material.dart';
 //import 'package:provider/provider.dart';
 
@@ -19,7 +18,8 @@ class MyButton extends StatelessWidget {
       child: Container(
         height: 56,
         decoration: const BoxDecoration(
-            color: Colors.red, ),
+          color: Colors.red,
+        ),
         width: MediaQuery.of(context).size.width,
         child: Center(
             child: Text(
@@ -82,7 +82,8 @@ class IconTextButton extends StatelessWidget {
 }
 
 class SecondaryButton extends StatelessWidget {
-  const SecondaryButton({Key? key, required this.text, this.onPressed, this.height})
+  const SecondaryButton(
+      {Key? key, required this.text, this.onPressed, this.height})
       : super(key: key);
   final String text;
 
@@ -97,7 +98,8 @@ class SecondaryButton extends StatelessWidget {
       child: Container(
         height: 56,
         decoration: const BoxDecoration(
-            color: Color(0xffF6F6F6), ),
+          color: Color(0xffF6F6F6),
+        ),
         width: MediaQuery.of(context).size.width,
         child: Center(
             child: Text(

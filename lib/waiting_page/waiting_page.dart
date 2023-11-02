@@ -1,8 +1,6 @@
-import 'package:advert24pass/video_player1.dart';
+import 'package:adverts247Pass/video_player1.dart';
 import 'package:flutter/material.dart';
 import 'package:web_socket_channel/io.dart';
-
-
 
 class WebSocketListener extends StatefulWidget {
   @override
@@ -10,7 +8,8 @@ class WebSocketListener extends StatefulWidget {
 }
 
 class _WebSocketListenerState extends State<WebSocketListener> {
-  final channel = IOWebSocketChannel.connect('ws://echo.websocket.org'); // Replace with your WebSocket URL
+  final channel = IOWebSocketChannel.connect(
+      'ws://echo.websocket.org'); // Replace with your WebSocket URL
 
   @override
   void dispose() {
@@ -28,7 +27,9 @@ class _WebSocketListenerState extends State<WebSocketListener> {
             // Replace 'true' with the value you're expecting
             Navigator.push(
               context,
-              MaterialPageRoute(builder: (context) => VideoPlayerApp()), // Replace NextPage with your next page
+              MaterialPageRoute(
+                  builder: (context) =>
+                      VideoPlayerApp()), // Replace NextPage with your next page
             );
           }
         }

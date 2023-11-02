@@ -1,11 +1,11 @@
-import 'package:advert24pass/about_me.dart';
-import 'package:advert24pass/services/video_service.dart';
-import 'package:advert24pass/themes.dart';
-import 'package:advert24pass/video_player.dart';
-import 'package:advert24pass/video_player1.dart';
-import 'package:advert24pass/websocket.dart';
-import 'package:advert24pass/widget/button.dart';
-import 'package:advert24pass/widget/input_textform.dart';
+import 'package:adverts247Pass/about_me.dart';
+import 'package:adverts247Pass/services/video_service.dart';
+import 'package:adverts247Pass/themes.dart';
+import 'package:adverts247Pass/broadcast_videoplayer.dart';
+import 'package:adverts247Pass/video_player1.dart';
+import 'package:adverts247Pass/websocket.dart';
+import 'package:adverts247Pass/widget/button.dart';
+import 'package:adverts247Pass/widget/input_textform.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
@@ -72,7 +72,6 @@ class _AdsFormPageState extends State<AdsFormPage> {
                               SizedBox(
                                 height: 13,
                               ),
-                          
                               SizedBox(
                                 height: 50,
                               ),

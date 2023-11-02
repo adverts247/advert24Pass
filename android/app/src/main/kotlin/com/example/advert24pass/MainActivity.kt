@@ -1,4 +1,4 @@
-package com.production.advert24pass
+package com.production.adverts247Pass
 
 import io.flutter.embedding.android.FlutterActivity
 

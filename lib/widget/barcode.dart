@@ -1,4 +1,4 @@
-import 'package:advert24pass/themes.dart';
+import 'package:adverts247Pass/themes.dart';
 import 'package:flutter/material.dart';
 // ignore_for_file: always_specify_types
 
@@ -9,7 +9,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 
 class BarcodeDisplayWidget extends StatefulWidget {
   String? url;
-   BarcodeDisplayWidget({super.key,this.url});
+  BarcodeDisplayWidget({super.key, this.url});
   @override
   State<BarcodeDisplayWidget> createState() => _BarcodeDisplayWidgetState();
 }

@@ -1,6 +1,6 @@
 import 'dart:convert';
 
-import 'package:advert24pass/state/location_weather_state.dart';
+import 'package:adverts247Pass/state/location_weather_state.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:http/http.dart' as http;

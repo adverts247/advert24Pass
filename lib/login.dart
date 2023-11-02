@@ -1,13 +1,13 @@
 import 'dart:async';
 
-import 'package:advert24pass/about_me.dart';
-import 'package:advert24pass/services/video_service.dart';
-import 'package:advert24pass/themes.dart';
-import 'package:advert24pass/video_player.dart';
-import 'package:advert24pass/video_player1.dart';
-import 'package:advert24pass/websocket.dart';
-import 'package:advert24pass/widget/button.dart';
-import 'package:advert24pass/widget/input_textform.dart';
+import 'package:adverts247Pass/about_me.dart';
+import 'package:adverts247Pass/services/video_service.dart';
+import 'package:adverts247Pass/themes.dart';
+import 'package:adverts247Pass/broadcast_videoplayer.dart';
+import 'package:adverts247Pass/video_player1.dart';
+import 'package:adverts247Pass/websocket.dart';
+import 'package:adverts247Pass/widget/button.dart';
+import 'package:adverts247Pass/widget/input_textform.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
@@ -62,7 +62,7 @@ class _LoginPageState extends State<LoginPage> {
                   ),
                   Container(
                     height: MediaQuery.of(context).size.height > 450
-                        ? MediaQuery.of(context).size.height * .7
+                        ? MediaQuery.of(context).size.height * .8
                         : MediaQuery.of(context).size.height,
                     width: MediaQuery.of(context).size.width * .7,
                     child: Column(
@@ -76,7 +76,7 @@ class _LoginPageState extends State<LoginPage> {
                   ),
                   Center(
                     child: Container(
-                      height: MediaQuery.of(context).size.height * .6,
+                      height: MediaQuery.of(context).size.height * .8,
                       width: MediaQuery.of(context).size.width * .58,
                       decoration: BoxDecoration(
                         color: Colors.black,
@@ -97,23 +97,28 @@ class _LoginPageState extends State<LoginPage> {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.center,
                             children: [
-                              Text(
-                                'Welcome Back',
-                                style: TextStyles()
-                                    .whiteTextStyle()
-                                    .copyWith(
-                                        fontSize: 23,
-                                        fontWeight: FontWeight.w800),
+                              Image.asset(
+                                'assets/images/Group (6).png',
+                                height: 80,
+                                width: 350,
                               ),
                               SizedBox(
-                                height: 13,
+                                height: 17,
                               ),
                               Text(
-                                'Login your details',
-                                style: TextStyles().greyTextStyle400().copyWith(
-                                      fontSize: 16,
-                                    ),
+                                'Driver Sign-In',
+                                style: TextStyles().whiteTextStyle().copyWith(
+                                    fontSize: 23, fontWeight: FontWeight.w800),
                               ),
+                              // SizedBox(
+                              //   height: 13,
+                              // ),
+                              // Text(
+                              //   'Login your details',
+                              //   style: TextStyles().greyTextStyle400().copyWith(
+                              //         fontSize: 16,
+                              //       ),
+                              // ),
                               SizedBox(
                                 height: 50,
                               ),
@@ -143,7 +148,7 @@ class _LoginPageState extends State<LoginPage> {
                                   };
                                   print(body);
                                   VideoService().login(context, body);
-                                
+
                                   //  LocationWesocket().sendDriverPingAndListenForPong( 1, 3.222, 4.66666);
 
                                   // Navigator.push(

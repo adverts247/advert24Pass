@@ -6,7 +6,7 @@
 
 import 'dart:async';
 
-import 'package:advert24pass/login.dart';
+import 'package:adverts247Pass/login.dart';
 import 'package:flutter/material.dart';
 import 'package:top_snackbar_flutter/custom_snack_bar.dart';
 import 'package:top_snackbar_flutter/top_snack_bar.dart';
@@ -15,11 +15,12 @@ import 'package:top_snackbar_flutter/top_snack_bar.dart';
 import 'package:dio/dio.dart';
 import 'package:dio_http_cache/dio_http_cache.dart';
 
-import 'package:advert24pass/tools.dart' as tools;
+import 'package:adverts247Pass/tools.dart' as tools;
 
 // ignore: ant_identifier_names
-const String BACKEND_URL = 'https://ads24.lazynerdstudios.com/api/v1/driver/';
-//ads24.lazynerdstudios.com
+const String BACKEND_URL =
+    'https://ads247-center.lazynerdstudios.com/api/v1/driver/';
+//ads247-center.lazynerdstudios.com
 
 //178.128.163.25
 
@@ -247,7 +248,6 @@ class HttpRequest {
       response = e.response;
 
       if (e.type == DioErrorType.connectTimeout) {
-      
         //showSnackbar(context!, 'TimeOut');
 
         //  Modal().error('Timeout', context);
@@ -453,15 +453,15 @@ class HttpRequest {
 
     // Modal().error('Timeout', context);
     print('bad network ${error.message}');
-        showTopSnackBar(
-        Overlay.of(context!),
-        CustomSnackBar.error(
-          backgroundColor: Colors.black26,
-          borderRadius: BorderRadius.circular(5),
-          boxShadow: [],
-          message: 'Please check your network connection',
-        ),
-      );
+    showTopSnackBar(
+      Overlay.of(context!),
+      CustomSnackBar.error(
+        backgroundColor: Colors.black26,
+        borderRadius: BorderRadius.circular(5),
+        boxShadow: [],
+        message: 'Please check your network connection',
+      ),
+    );
 
     if (shouldPopOnError == true) {
       //Navigator.pop(context!);

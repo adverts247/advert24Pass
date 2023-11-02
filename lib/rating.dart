@@ -1,12 +1,12 @@
-import 'package:advert24pass/about_me.dart';
-import 'package:advert24pass/services/video_service.dart';
-import 'package:advert24pass/state/user_state.dart';
-import 'package:advert24pass/themes.dart';
-import 'package:advert24pass/video_player.dart';
+import 'package:adverts247Pass/about_me.dart';
+import 'package:adverts247Pass/services/video_service.dart';
+import 'package:adverts247Pass/state/user_state.dart';
+import 'package:adverts247Pass/themes.dart';
+import 'package:adverts247Pass/broadcast_videoplayer.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 
-import 'package:advert24pass/widget/button.dart';
-import 'package:advert24pass/widget/input_textform.dart';
+import 'package:adverts247Pass/widget/button.dart';
+import 'package:adverts247Pass/widget/input_textform.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
@@ -103,11 +103,8 @@ class _RatingPageState extends State<RatingPage> {
                             children: [
                               Text(
                                 'Thank You Watching',
-                                style: TextStyles()
-                                    .whiteTextStyle()
-                                    .copyWith(
-                                        fontSize: 20,
-                                        fontWeight: FontWeight.w800),
+                                style: TextStyles().whiteTextStyle().copyWith(
+                                    fontSize: 20, fontWeight: FontWeight.w800),
                               ),
                               // SizedBox(
                               //   height: 13,
@@ -167,7 +164,10 @@ class _RatingPageState extends State<RatingPage> {
                                       "rating": ratingValue.toString()
                                     };
                                     print(body);
-                                    VideoService().rateVideo(context, body,);
+                                    VideoService().rateVideo(
+                                      context,
+                                      body,
+                                    );
                                     //LocationWesocket().checkLocation();
 
                                     // showTopSnackBar(

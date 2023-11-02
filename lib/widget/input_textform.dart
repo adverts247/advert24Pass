@@ -1,4 +1,4 @@
-import 'package:advert24pass/themes.dart';
+import 'package:adverts247Pass/themes.dart';
 import 'package:flutter/material.dart';
 
 class OutlineInput extends StatefulWidget {
@@ -47,7 +47,9 @@ class _OutlineInputState extends State<OutlineInput> {
       children: [
         Text(
           widget.labelText.toString(),
-          style: TextStyles().whiteTextStyle().copyWith(fontSize: 16, fontWeight: FontWeight.w700),
+          style: TextStyles()
+              .whiteTextStyle()
+              .copyWith(fontSize: 16, fontWeight: FontWeight.w700),
         ),
         const SizedBox(
           height: 5,
@@ -106,8 +108,8 @@ class _OutlineInputState extends State<OutlineInput> {
             ),
             //   prefix: widget.preffixWidget,
             filled: true,
-          
-            fillColor:  Colors.black,
+
+            fillColor: Colors.black,
             focusedErrorBorder: const OutlineInputBorder(
               borderRadius: BorderRadius.all(Radius.circular(6)),
               borderSide: BorderSide(

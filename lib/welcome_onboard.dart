@@ -1,7 +1,7 @@
 //
-import 'package:advert24pass/login.dart';
-import 'package:advert24pass/themes.dart';
-import 'package:advert24pass/websocket.dart';
+import 'package:adverts247Pass/login.dart';
+import 'package:adverts247Pass/themes.dart';
+import 'package:adverts247Pass/websocket.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 

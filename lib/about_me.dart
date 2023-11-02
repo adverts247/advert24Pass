@@ -1,9 +1,10 @@
 import 'dart:async';
 
-import 'package:advert24pass/state/location_weather_state.dart';
-import 'package:advert24pass/state/user_state.dart';
-import 'package:advert24pass/themes.dart';
-import 'package:advert24pass/widget/loader.dart';
+import 'package:adverts247Pass/services/video_service.dart';
+import 'package:adverts247Pass/state/location_weather_state.dart';
+import 'package:adverts247Pass/state/user_state.dart';
+import 'package:adverts247Pass/themes.dart';
+import 'package:adverts247Pass/widget/loader.dart';
 import 'package:flutter/material.dart ';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:intl/intl.dart';
@@ -41,6 +42,8 @@ class _AboutMePageState extends State<AboutMePage> {
   }
 
   getWalletBalance() async {
+    VideoService().getWallet(context);
+
     setState(() {
       isLoading = true;
     });
@@ -102,7 +105,7 @@ class _AboutMePageState extends State<AboutMePage> {
                                     child: Image.network(
                                       walletDetail == null
                                           ? ' '
-                                          : 'https://ads24.lazynerdstudios.com/${walletDetail!['image']}',
+                                          : 'https://ads247-center.lazynerdstudios.com/${walletDetail!['image']}',
                                       height: screenHeight < 450 ? 130 : 200,
                                       width: screenHeight < 450 ? 130 : 200,
                                       fit: BoxFit.cover,

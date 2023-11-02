@@ -1,9 +1,11 @@
 //
-import 'package:advert24pass/login.dart';
-import 'package:advert24pass/themes.dart';
-import 'package:advert24pass/websocket.dart';
+import 'package:adverts247Pass/login.dart';
+import 'package:adverts247Pass/services/video_service.dart';
+import 'package:adverts247Pass/themes.dart';
+import 'package:adverts247Pass/websocket.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:adverts247Pass/tools.dart' as tools;
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -16,12 +18,31 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   void initState() {
     super.initState();
-   // LocationWesocket().determinePosition();
+    // LocationWesocket().determinePosition();
+    moveToNextPage();
+  }
 
-    Future.delayed(Duration(seconds: 2), () {
-      Navigator.push(
-          context, MaterialPageRoute(builder: (context) => LoginPage()));
-    });
+  Future<void> moveToNextPage() async {
+    var data = await tools.getFromStore('accessToken');
+    if (data == null) {
+      Future.delayed(Duration(seconds: 2), () {
+        Navigator.push(
+            context, MaterialPageRoute(builder: (context) => LoginPage()));
+      });
+    } else {
+      var storedEmail = await tools.getFromStore('email');
+      var storedPassword = await tools.getFromStore('password');
+
+      var body = {
+        'email': storedEmail,
+        'password': storedPassword
+
+        // 'email': 'tested@test.com',
+        // 'password': '12345678'
+      };
+
+      VideoService().login(context, body);
+    }
   }
 
   @override

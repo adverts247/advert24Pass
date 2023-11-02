@@ -1,8 +1,8 @@
 import 'dart:async';
 import 'dart:convert';
 
-import 'package:advert24pass/state/location_weather_state.dart';
-import 'package:advert24pass/state/user_state.dart';
+import 'package:adverts247Pass/state/location_weather_state.dart';
+import 'package:adverts247Pass/state/user_state.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
@@ -46,7 +46,7 @@ class LocationWesocket {
 
   sendLocation() async {
     final channel = WebSocketChannel.connect(
-        Uri.parse('wss://streamer.lazynerdstudios.com')
+        Uri.parse('wss://ads247-streaming.lazynerdstudios.com')
             .replace(queryParameters: {
       //'access_token': '',
     }));
@@ -136,9 +136,6 @@ class LocationWesocket {
       Provider.of<WeatherLocationState>(context, listen: false).lat =
           position.latitude.toString();
 
-        
-
-   
       print(position == null
           ? 'Unknown'
           : 'location ${position.latitude.toString()}, ${position.longitude.toString()}');
@@ -146,7 +143,7 @@ class LocationWesocket {
   }
 
   void connectToSocket(String serverUrl, driverId, latitude, lonitude) {
-    // final serverUrl = 'wss://streamer.lazynerdstudios.com';
+    // final serverUrl = 'wss://ads247-streaming.lazynerdstudios.com';
     // final driverId = 50; // Replace with the desired driver's ID
     // final latitude = 12.34; // Replace with the desired latitude
     // final longitude = 56.78; // Replace with the desired longitude

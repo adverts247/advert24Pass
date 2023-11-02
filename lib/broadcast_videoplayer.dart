@@ -26,19 +26,21 @@ import 'package:video_player/video_player.dart';
 import 'package:flutter_vlc_player/flutter_vlc_player.dart';
 import 'package:socket_io_client/socket_io_client.dart' as IO;
 
-class VideoPlayerApp extends StatefulWidget {
+class BroadCastVideoPlayer extends StatefulWidget {
+  String? path;
+  BroadCastVideoPlayer({super.key, this.path});
   @override
-  _VideoPlayerAppState createState() => _VideoPlayerAppState();
+  _BroadCastVideoPlayerState createState() => _BroadCastVideoPlayerState();
 }
 
-class _VideoPlayerAppState extends State<VideoPlayerApp>
+class _BroadCastVideoPlayerState extends State<BroadCastVideoPlayer>
     with SingleTickerProviderStateMixin {
   VideoPlayerController? _controller;
   int _currentIndex = 0;
   VideoModel? currentAds;
   List<VideoModel>? videoModelList;
   void data;
-  bool? isPhoto = true;
+  bool? isPhoto = false;
   Future<Uint8List>? futureValue;
   var video;
   bool? isLoading = true;
@@ -66,17 +68,23 @@ class _VideoPlayerAppState extends State<VideoPlayerApp>
 
   var _isMuted = false;
 
-  var displayWelcome = false;
+  var displayWelcome = true;
 
   @override
   void initState() {
-    getVideoList();
+    //  getVideoList();
     getWalletBalance();
+    Future.delayed(Duration(seconds: 3), () {
+      setState(() {
+        displayWelcome = false;
+      });
+
+      ifIsVideo();
+    });
 
     //send driver location
     Timer.periodic(Duration(seconds: 1), (timer) {
       LocationWesocket().checkLocation(context);
-      //print('yes');
     });
 
     super.initState();
@@ -84,10 +92,6 @@ class _VideoPlayerAppState extends State<VideoPlayerApp>
       vsync: this,
       duration: Duration(seconds: 2),
     );
-    // disLikeController = AnimationController(
-    //   vsync: this,
-    //   duration: Duration(seconds: 2),
-    // );
   }
 
   //get profile because of profile picture
@@ -98,6 +102,10 @@ class _VideoPlayerAppState extends State<VideoPlayerApp>
     walletDetail =
         await Provider.of<UserState>(context, listen: false).userDetails;
     print(walletDetail);
+    //hhj
+    // final mode = await getKioskMode().then((value) => print('started'));
+
+    // startKioskMode();
 
     setState(() {
       isLoading = false;
@@ -112,7 +120,7 @@ class _VideoPlayerAppState extends State<VideoPlayerApp>
   }
 
   //listen to exit app
-  void connectToDriverChannel(String userId) {
+  void connectToDriverChannel(int userId) {
     IO.Socket socket =
         IO.io('wss://ads247-streaming.lazynerdstudios.com', <String, dynamic>{
       'transports': ['websocket'],
@@ -127,11 +135,12 @@ class _VideoPlayerAppState extends State<VideoPlayerApp>
       // Handle stop-stream event
       print('Received stop-stream event');
       final mode = await getKioskMode().then((value) => print('ended'));
+      Provider.of<UserState>(context, listen: false).canStream = false;
 
-      stopKioskMode();
+      // stopKioskMode();
       if (isPhoto!) {
       } else {
-        _controller!.pause();
+        // _controller!.pause();
         _controller!.dispose();
       }
       Navigator.push(
@@ -144,87 +153,49 @@ class _VideoPlayerAppState extends State<VideoPlayerApp>
     });
   }
 
-  Future<void> getVideoList() async {
-    final mode = await getKioskMode().then((value) => print('started'));
-
-    startKioskMode();
-    //   getVideourl('3');
-    videoModelList = await VideoService().getVideo(context);
-    print(videoModelList);
-    currentAds = videoModelList![0];
-    ifIsVideo();
-  }
-
-  List<Widget> actionWidget = [
-    //QuestionPage(),
-    // BarcodeDisplayWidget(url : currentAds!.callToAction.url),
-    // AdsFormPage()
-  ];
-
   //Check if the next ads is a video or photo
 
   Future<void> ifIsVideo() async {
     setState(() {
       isLoading = true;
+      displayWelcome = false;
     });
-    print(currentAds!.id);
-    print(currentAds!.type.toString());
 
-    if (currentAds!.type.toString() == 'photo') {
+    video = await VideoService()
+        .fetchBroadcastVideo(widget.path.toString(), context);
+    var size = Provider.of<UserState>(context, listen: false).size;
+
+    if (video.toString().endsWith('mkv')) {
+      vlcController = VlcPlayerController.network(
+        video,
+        hwAcc: HwAcc.full,
+        autoPlay: true,
+        options: VlcPlayerOptions(),
+      );
+
       setState(() {
-        isPhoto = true;
-
-        futureValue = VideoService()
-            .fetchData(currentAds!.content.path.toString(), context);
+        isLoading = false;
       });
     } else {
-      setState(() {
-        isPhoto = false;
-      });
-
-      video = await VideoService()
-          .fetchVideo(currentAds!.content.path.toString(), context);
-      var size = Provider.of<UserState>(context, listen: false).size;
-
-      if (video.toString().endsWith('mkv')) {
-        vlcController = VlcPlayerController.network(
-          video,
-          hwAcc: HwAcc.full,
-          autoPlay: true,
-          options: VlcPlayerOptions(),
-        );
-      } else {
-        _controller = VideoPlayerController.file(File(video))
-          ..initialize().then((_) {
-            _controller!.play();
-            setState(() {});
+      _controller = VideoPlayerController.file(File(video))
+        ..initialize().then((_) {
+          _controller!.play();
+          setState(() {
+            isLoading = false;
           });
-
-        _controller!.addListener(() async {
-          print(_controller!.value.errorDescription);
-          print(_controller!.value.position);
-
-          print(" buffering ${_controller!.value.hasError}");
-          if (_controller!.value.isCompleted || _controller!.value.hasError) {
-            if (_currentIndex < videoModelList!.length - 1) {
-              nextAds();
-
-              _controller!.dispose();
-            } else {
-              setState(() {
-                _currentIndex = -1;
-              });
-              print('dsdsd ${_currentIndex}');
-              nextAds();
-              _controller!.dispose();
-            }
-          }
         });
-      }
+
+      _controller!.addListener(() async {
+        print(_controller!.value.errorDescription);
+        print(_controller!.value.position);
+
+        print(" buffering ${_controller!.value.hasError}");
+        if (_controller!.value.isCompleted || _controller!.value.hasError) {
+          _controller!.dispose();
+          nextAds();
+        }
+      });
     }
-    setState(() {
-      isLoading = false;
-    });
   }
 
   @override
@@ -234,90 +205,6 @@ class _VideoPlayerAppState extends State<VideoPlayerApp>
     super.dispose();
   }
 
-//   int _counter = 10;
-
-//   void _startTimer() {
-//     setState(() {
-//       _counter = 10;
-//     });
-
-//     _timer = Timer.periodic(Duration(seconds: 1), (timer) {
-//       _counter = 10;
-//       if (_counter > 0) {
-//         _counter--;
-//       } else {
-//         Navigator.pop(context);
-//         _timer.cancel(); // Cancel the timer when the counter reaches 0
-//         setState(() {
-//           rating = true;
-//         });
-//         Future.delayed(Duration(seconds: 5), () {
-//           setState(() {
-//             rating = false;
-//             _currentIndex++;
-//             currentAds = videoModelList![_currentIndex];
-//           });
-//           ifIsVideo();
-//         });
-//       }
-//     });
-//     // });
-//   }
-
-//   void _handleTap() {
-//     setState(() {
-//       _counter = 10; // Reset the counter when the screen is tapped
-//     });
-//   }
-
-// // Update the nextAds function
-//   void nextAds() {
-//     var actionIdex = Random().nextInt(3);
-//     if (currentAds!.callToAction.url.toString() == 'null') {
-//     } else {
-//      // _startTimer();
-//       showModalBottomSheet(
-//         context: context,
-//         isDismissible: false,
-//         shape: RoundedRectangleBorder(
-//           borderRadius: BorderRadius.only(
-//             topRight: Radius.circular(20),
-//             topLeft: Radius.circular(20),
-//           ),
-//         ),
-//         builder: (BuildContext context) {
-//           return GestureDetector(
-//             onTap: () {
-//               _handleTap();
-//             },
-//             child: BarcodeDisplayWidget(url: currentAds!.callToAction.url),
-//           );
-//         },
-//       );
-//     }
-//   }
-
-  // timer to pop if user didnt touch the screen
-  // _startTimer() {
-  //   _timer = Timer.periodic(Duration(seconds: 10), (timer) {
-  //     // Perform your function here when no tap is detected within 10 seconds
-  //     test();
-  //   });
-  // }
-
-  // void ede() {
-  //   setState(() {
-  //     next = true;
-  //   });
-  // }
-
-  // void _handleTap() {
-  //   // Restart the timer when a tap is detected
-  //   _timer.cancel();
-  //   print('keep tapping');
-  //   _startTimer();
-  // }
-
   void addToTheSecond() {
     setState(() {
       secondss = 10;
@@ -325,42 +212,7 @@ class _VideoPlayerAppState extends State<VideoPlayerApp>
   }
 
   nextAds() {
-    // Trigger the modal when a barcode is scanned
-    // var actionIdex = Random().nextInt(3);
-
-    // if (currentAds!.callToAction.url.toString() == 'null') {
-    // } else {
-    //   //_startTimer();
-    //   showModalBottomSheet(
-    //     context: context,
-    //     isDismissible: false,
-    //     //  isScrollControlled: true,
-    //     shape: RoundedRectangleBorder(
-    //       borderRadius: BorderRadius.only(
-    //         topRight: Radius.circular(20),
-    //         topLeft: Radius.circular(20),
-    //       ),
-    //     ),
-    //     builder: (BuildContext context) {
-    //       return StatefulBuilder(
-    //         builder: (BuildContext context, StateSetter setState) {
-    //           return GestureDetector(
-    //             onTap: () {
-    //               // secondss = 10;
-    //               // print(secondss);
-    //               // addToTheSecond();
-    //             },
-    //             child: BarcodeDisplayWidget(url: currentAds!.callToAction.url),
-    //           );
-    //         },
-    //       );
-    //     },
-    //   );
-    // }
-
-    Future.delayed(Duration(seconds: isPhoto! ? 10 : 1), () {
-      //   Navigator.pop(context);
-
+    Future.delayed(Duration(seconds: isPhoto! ? 10 : 0), () {
       setState(() {
         rating = true;
       });
@@ -369,27 +221,19 @@ class _VideoPlayerAppState extends State<VideoPlayerApp>
 
       Future.delayed(Duration(seconds: 5), () {
         setState(() {
-          rating = false;
           //delete video from storage
           if (isPhoto!) {
           } else {
             tools.deleteFile(video);
           }
 
-          //
-          displayWelcome = true;
-        });
-
-        Future.delayed(Duration(seconds: 10), () {
           setState(() {
-            displayWelcome = false;
-
-            _currentIndex++;
-
-            currentAds = videoModelList![_currentIndex];
+            rating = true;
           });
 
-          ifIsVideo();
+          //
+          Navigator.push(
+              context, MaterialPageRoute(builder: (context) => WaitingPage()));
         });
       });
     });
@@ -437,7 +281,9 @@ class _VideoPlayerAppState extends State<VideoPlayerApp>
 
   @override
   Widget build(BuildContext context) {
-    connectToDriverChannel('2');
+    var userData = Provider.of<UserState>(context, listen: false).userDetails;
+
+    connectToDriverChannel(userData['id']);
     return SafeArea(
       child: Scaffold(
           backgroundColor: Colors.black,
