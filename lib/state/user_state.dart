@@ -6,6 +6,7 @@ class UserState extends ChangeNotifier {
   String? sessionId;
   bool? canStream;
   bool? isFirstTime;
+  bool? enteringVideoPlayer;
   void getUserData(data) {
     userDetails = data;
     print(userDetails);

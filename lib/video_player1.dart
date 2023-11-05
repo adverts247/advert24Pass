@@ -25,6 +25,8 @@ import 'package:provider/provider.dart';
 import 'package:video_player/video_player.dart';
 import 'package:flutter_vlc_player/flutter_vlc_player.dart';
 import 'package:socket_io_client/socket_io_client.dart' as IO;
+import 'package:screen_brightness/screen_brightness.dart';
+import 'package:flutter_windowmanager/flutter_windowmanager.dart';
 
 class VideoPlayerApp extends StatefulWidget {
   @override
@@ -38,45 +40,39 @@ class _VideoPlayerAppState extends State<VideoPlayerApp>
   VideoModel? currentAds;
   List<VideoModel>? videoModelList;
   void data;
-  bool? isPhoto = true;
+  bool? isPhoto = false;
   Future<Uint8List>? futureValue;
   var video;
   bool? isLoading = true;
   double? _volume = 0.3;
   late BuildContext myContext;
   bool? showVolumeSlider = false;
-
+  double _brightness = 1;
   int chuncksPlayed = 0;
   VlcPlayerController? vlcController;
-
   AnimationController? likeController;
   AnimationController? disLikeController;
   bool _isLarge = false;
   var _isdisLikeLarge = false;
   late Timer _timer;
   bool? rating = false;
-
   bool? userdidntTaptheScreen = false;
-
   bool? next = false;
-
   int secondss = 10;
-
   var walletDetail;
-
   var _isMuted = false;
-
-  var displayWelcome = false;
+  var displayWelcome = true;
+  bool? showBrightnessSlider = false;
 
   @override
   void initState() {
     getVideoList();
     getWalletBalance();
+    setBrightness();
 
     //send driver location
     Timer.periodic(Duration(seconds: 1), (timer) {
       LocationWesocket().checkLocation(context);
-      //print('yes');
     });
 
     super.initState();
@@ -84,10 +80,6 @@ class _VideoPlayerAppState extends State<VideoPlayerApp>
       vsync: this,
       duration: Duration(seconds: 2),
     );
-    // disLikeController = AnimationController(
-    //   vsync: this,
-    //   duration: Duration(seconds: 2),
-    // );
   }
 
   //get profile because of profile picture
@@ -104,6 +96,10 @@ class _VideoPlayerAppState extends State<VideoPlayerApp>
     });
   }
 
+  Future<void> setBrightness() async {
+    ScreenBrightness().setScreenBrightness(_brightness);
+  }
+
   void _toggleMute() {
     setState(() {
       _isMuted = !_isMuted;
@@ -112,42 +108,11 @@ class _VideoPlayerAppState extends State<VideoPlayerApp>
   }
 
   //listen to exit app
-  void connectToDriverChannel(String userId) {
-    IO.Socket socket =
-        IO.io('wss://ads247-streaming.lazynerdstudios.com', <String, dynamic>{
-      'transports': ['websocket'],
-    });
-
-    socket.on('connect', (_) {
-      print('Connected');
-      socket.emit('watch driver', [userId]);
-    });
-
-    socket.on('stop-stream', (data) async {
-      // Handle stop-stream event
-      print('Received stop-stream event');
-      final mode = await getKioskMode().then((value) => print('ended'));
-
-      stopKioskMode();
-      if (isPhoto!) {
-      } else {
-        _controller!.pause();
-        _controller!.dispose();
-      }
-      Navigator.push(
-          context, MaterialPageRoute(builder: (context) => WaitingPage()));
-    });
-
-    socket.on('start-stream', (data) {
-      // Handle start-stream event
-      print('Received start-stream event');
-    });
-  }
 
   Future<void> getVideoList() async {
-    final mode = await getKioskMode().then((value) => print('started'));
+    //final mode = await getKioskMode().then((value) => print('started'));
 
-    startKioskMode();
+    //startKioskMode();
     //   getVideourl('3');
     videoModelList = await VideoService().getVideo(context);
     print(videoModelList);
@@ -166,6 +131,7 @@ class _VideoPlayerAppState extends State<VideoPlayerApp>
   Future<void> ifIsVideo() async {
     setState(() {
       isLoading = true;
+      displayWelcome = false;
     });
     print(currentAds!.id);
     print(currentAds!.type.toString());
@@ -184,6 +150,7 @@ class _VideoPlayerAppState extends State<VideoPlayerApp>
 
       video = await VideoService()
           .fetchVideo(currentAds!.content.path.toString(), context);
+      // video = 'assets/images/pexels-media-dung-9716407 (1080p).mp4';
       var size = Provider.of<UserState>(context, listen: false).size;
 
       if (video.toString().endsWith('mkv')) {
@@ -234,90 +201,6 @@ class _VideoPlayerAppState extends State<VideoPlayerApp>
     super.dispose();
   }
 
-//   int _counter = 10;
-
-//   void _startTimer() {
-//     setState(() {
-//       _counter = 10;
-//     });
-
-//     _timer = Timer.periodic(Duration(seconds: 1), (timer) {
-//       _counter = 10;
-//       if (_counter > 0) {
-//         _counter--;
-//       } else {
-//         Navigator.pop(context);
-//         _timer.cancel(); // Cancel the timer when the counter reaches 0
-//         setState(() {
-//           rating = true;
-//         });
-//         Future.delayed(Duration(seconds: 5), () {
-//           setState(() {
-//             rating = false;
-//             _currentIndex++;
-//             currentAds = videoModelList![_currentIndex];
-//           });
-//           ifIsVideo();
-//         });
-//       }
-//     });
-//     // });
-//   }
-
-//   void _handleTap() {
-//     setState(() {
-//       _counter = 10; // Reset the counter when the screen is tapped
-//     });
-//   }
-
-// // Update the nextAds function
-//   void nextAds() {
-//     var actionIdex = Random().nextInt(3);
-//     if (currentAds!.callToAction.url.toString() == 'null') {
-//     } else {
-//      // _startTimer();
-//       showModalBottomSheet(
-//         context: context,
-//         isDismissible: false,
-//         shape: RoundedRectangleBorder(
-//           borderRadius: BorderRadius.only(
-//             topRight: Radius.circular(20),
-//             topLeft: Radius.circular(20),
-//           ),
-//         ),
-//         builder: (BuildContext context) {
-//           return GestureDetector(
-//             onTap: () {
-//               _handleTap();
-//             },
-//             child: BarcodeDisplayWidget(url: currentAds!.callToAction.url),
-//           );
-//         },
-//       );
-//     }
-//   }
-
-  // timer to pop if user didnt touch the screen
-  // _startTimer() {
-  //   _timer = Timer.periodic(Duration(seconds: 10), (timer) {
-  //     // Perform your function here when no tap is detected within 10 seconds
-  //     test();
-  //   });
-  // }
-
-  // void ede() {
-  //   setState(() {
-  //     next = true;
-  //   });
-  // }
-
-  // void _handleTap() {
-  //   // Restart the timer when a tap is detected
-  //   _timer.cancel();
-  //   print('keep tapping');
-  //   _startTimer();
-  // }
-
   void addToTheSecond() {
     setState(() {
       secondss = 10;
@@ -325,39 +208,6 @@ class _VideoPlayerAppState extends State<VideoPlayerApp>
   }
 
   nextAds() {
-    // Trigger the modal when a barcode is scanned
-    // var actionIdex = Random().nextInt(3);
-
-    // if (currentAds!.callToAction.url.toString() == 'null') {
-    // } else {
-    //   //_startTimer();
-    //   showModalBottomSheet(
-    //     context: context,
-    //     isDismissible: false,
-    //     //  isScrollControlled: true,
-    //     shape: RoundedRectangleBorder(
-    //       borderRadius: BorderRadius.only(
-    //         topRight: Radius.circular(20),
-    //         topLeft: Radius.circular(20),
-    //       ),
-    //     ),
-    //     builder: (BuildContext context) {
-    //       return StatefulBuilder(
-    //         builder: (BuildContext context, StateSetter setState) {
-    //           return GestureDetector(
-    //             onTap: () {
-    //               // secondss = 10;
-    //               // print(secondss);
-    //               // addToTheSecond();
-    //             },
-    //             child: BarcodeDisplayWidget(url: currentAds!.callToAction.url),
-    //           );
-    //         },
-    //       );
-    //     },
-    //   );
-    // }
-
     Future.delayed(Duration(seconds: isPhoto! ? 10 : 1), () {
       //   Navigator.pop(context);
 
@@ -437,7 +287,6 @@ class _VideoPlayerAppState extends State<VideoPlayerApp>
 
   @override
   Widget build(BuildContext context) {
-    connectToDriverChannel('2');
     return SafeArea(
       child: Scaffold(
           backgroundColor: Colors.black,
@@ -478,164 +327,202 @@ class _VideoPlayerAppState extends State<VideoPlayerApp>
                                   ? Column(
                                       children: [
                                         Expanded(
-                                          child: AspectRatio(
-                                            aspectRatio: 16 / 9,
-                                            child: Stack(
-                                              children: [
-                                                InkWell(
-                                                    onTap: () {
-                                                      setState(() {
-                                                        showVolumeSlider =
-                                                            !showVolumeSlider!;
-                                                      });
-                                                    },
-                                                    child: VideoPlayer(
-                                                        _controller!)),
-                                                Column(
-                                                  mainAxisAlignment:
-                                                      MainAxisAlignment.end,
-                                                  children: [
-                                                    showVolumeSlider!
-                                                        ? Column(
-                                                            children: [
-                                                              Text(
-                                                                "${_volume! * 100}",
-                                                                style: TextStyles()
-                                                                    .blackTextStyle700()
-                                                                    .copyWith(
-                                                                        fontSize:
-                                                                            24),
-                                                              ),
-                                                              Slider(
-                                                                value: _volume!,
-                                                                activeColor:
-                                                                    Colors.red,
-                                                                inactiveColor:
-                                                                    Colors
-                                                                        .black,
-                                                                onChanged:
-                                                                    (newVolume) {
-                                                                  setState(() {
-                                                                    _volume =
-                                                                        newVolume;
-                                                                    _controller!
-                                                                        .setVolume(
-                                                                            _volume!);
-                                                                  });
-                                                                },
-                                                                min: 0.0,
-                                                                max: 1.0,
-                                                                divisions: 10,
-                                                                label:
-                                                                    "${_volume! * 100}",
-                                                              ),
-                                                            ],
-                                                          )
-                                                        : Container(),
-                                                    Padding(
-                                                      padding: const EdgeInsets
-                                                              .symmetric(
-                                                          horizontal: 20,
-                                                          vertical: 10),
-                                                      child: Container(
-                                                        decoration: BoxDecoration(
-                                                            color:
-                                                                Color.fromARGB(
-                                                                    138,
-                                                                    45,
-                                                                    45,
-                                                                    45),
-                                                            borderRadius:
-                                                                BorderRadius
-                                                                    .circular(
-                                                                        20)),
-                                                        child: Padding(
-                                                          padding:
-                                                              const EdgeInsets
-                                                                  .all(20.0),
-                                                          child: Row(
-                                                            children: [
-                                                              InkWell(
-                                                                onTap: () {
-                                                                  setState(() {
-                                                                    if (_controller!
-                                                                        .value
-                                                                        .isPlaying) {
-                                                                      _controller!
-                                                                          .pause();
-                                                                    } else {
-                                                                      _controller!
-                                                                          .play();
-                                                                    }
-                                                                  });
-                                                                },
-                                                                child: Icon(
+                                          child: Stack(
+                                            children: [
+                                              InkWell(
+                                                  onTap: () {
+                                                    setState(() {
+                                                      showVolumeSlider = false;
+                                                      showBrightnessSlider =
+                                                          false;
+                                                    });
+                                                  },
+                                                  child: VideoPlayer(
+                                                      _controller!)),
+                                              Column(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment.end,
+                                                children: [
+                                                  // volume slider  widget
+                                                  showVolumeSlider!
+                                                      ? Column(
+                                                          children: [
+                                                            Text(
+                                                              " Volume ${_volume! * 100}",
+                                                              style: TextStyles()
+                                                                  .blackTextStyle700()
+                                                                  .copyWith(
+                                                                      fontSize:
+                                                                          24,
+                                                                      color: Colors
+                                                                          .red),
+                                                            ),
+                                                            Slider(
+                                                              value: _volume!,
+                                                              activeColor:
+                                                                  Colors.red,
+                                                              inactiveColor:
+                                                                  Colors.black,
+                                                              onChanged:
+                                                                  (newVolume) {
+                                                                setState(() {
+                                                                  _volume =
+                                                                      newVolume;
                                                                   _controller!
-                                                                          .value
-                                                                          .isPlaying
-                                                                      ? Icons
-                                                                          .pause
-                                                                      : Icons
-                                                                          .play_arrow,
-                                                                  color: Colors
-                                                                      .white,
-                                                                ),
+                                                                      .setVolume(
+                                                                          _volume!);
+                                                                });
+                                                              },
+                                                              min: 0.0,
+                                                              max: 1.0,
+                                                              divisions: 10,
+                                                              label:
+                                                                  " Volumne ${_volume! * 100}",
+                                                            ),
+                                                          ],
+                                                        )
+                                                      : Container(),
+
+                                                  //Brightness Slider
+
+                                                  showBrightnessSlider!
+                                                      ? Column(
+                                                          children: [
+                                                            Text(
+                                                              "Brightness ${_brightness * 100}",
+                                                              style: TextStyles()
+                                                                  .blackTextStyle700()
+                                                                  .copyWith(
+                                                                      fontSize:
+                                                                          24,
+                                                                      color: Colors
+                                                                          .red),
+                                                            ),
+                                                            Slider(
+                                                              value:
+                                                                  _brightness,
+                                                              label:
+                                                                  "Brightness ${_brightness * 100}",
+                                                              onChanged:
+                                                                  (value) {
+                                                                setState(() {
+                                                                  _brightness =
+                                                                      value;
+                                                                  setBrightness();
+                                                                });
+                                                              },
+                                                              divisions: 10,
+                                                              activeColor:
+                                                                  Colors.red,
+                                                              inactiveColor:
+                                                                  Colors.black,
+                                                            ),
+                                                          ],
+                                                        )
+                                                      : Container(),
+
+                                                  Padding(
+                                                    padding: const EdgeInsets
+                                                            .symmetric(
+                                                        horizontal: 20,
+                                                        vertical: 10),
+                                                    child: Container(
+                                                      decoration: BoxDecoration(
+                                                          color: Color.fromARGB(
+                                                              138, 45, 45, 45),
+                                                          borderRadius:
+                                                              BorderRadius
+                                                                  .circular(
+                                                                      20)),
+                                                      child: Padding(
+                                                        padding:
+                                                            const EdgeInsets
+                                                                .all(20.0),
+                                                        child: Row(
+                                                          children: [
+                                                            InkWell(
+                                                              onTap: () {
+                                                                setState(() {
+                                                                  if (_controller!
+                                                                      .value
+                                                                      .isPlaying) {
+                                                                    _controller!
+                                                                        .pause();
+                                                                  } else {
+                                                                    _controller!
+                                                                        .play();
+                                                                  }
+                                                                });
+                                                              },
+                                                              child: Icon(
+                                                                _controller!
+                                                                        .value
+                                                                        .isPlaying
+                                                                    ? Icons
+                                                                        .pause
+                                                                    : Icons
+                                                                        .play_arrow,
+                                                                color: Colors
+                                                                    .white,
                                                               ),
-                                                              Expanded(
-                                                                child: Row(
-                                                                  crossAxisAlignment:
-                                                                      CrossAxisAlignment
-                                                                          .center,
-                                                                  children: [
-                                                                    // Text(
-                                                                    //   _controller!
-                                                                    //       .value.position
-                                                                    //       .toString(),
-                                                                    //   style: TextStyles()
-                                                                    //       .whiteTextStyle()
-                                                                    //       .copyWith(
-                                                                    //           fontWeight:
-                                                                    //               FontWeight
-                                                                    //                   .w300,
-                                                                    //           fontSize: 13),
-                                                                    // ),
-                                                                    Expanded(
-                                                                      child:
-                                                                          Padding(
-                                                                        padding:
-                                                                            const EdgeInsets.symmetric(horizontal: 10),
-                                                                        child: VideoProgressIndicator(
-                                                                            colors: VideoProgressColors(
-                                                                                playedColor: Colors.white,
-                                                                                bufferedColor: Colors.red,
-                                                                                backgroundColor: Colors.white30),
-                                                                            _controller!,
-                                                                            allowScrubbing: true),
-                                                                      ),
+                                                            ),
+                                                            Expanded(
+                                                              child: Row(
+                                                                crossAxisAlignment:
+                                                                    CrossAxisAlignment
+                                                                        .center,
+                                                                children: [
+                                                                  // Text(
+                                                                  //   _controller!
+                                                                  //       .value.position
+                                                                  //       .toString(),
+                                                                  //   style: TextStyles()
+                                                                  //       .whiteTextStyle()
+                                                                  //       .copyWith(
+                                                                  //           fontWeight:
+                                                                  //               FontWeight
+                                                                  //                   .w300,
+                                                                  //           fontSize: 13),
+                                                                  // ),
+                                                                  Expanded(
+                                                                    child:
+                                                                        Padding(
+                                                                      padding: const EdgeInsets
+                                                                              .symmetric(
+                                                                          horizontal:
+                                                                              10),
+                                                                      child: VideoProgressIndicator(
+                                                                          colors: VideoProgressColors(
+                                                                              playedColor: Colors.white,
+                                                                              bufferedColor: Colors.red,
+                                                                              backgroundColor: Colors.white30),
+                                                                          _controller!,
+                                                                          allowScrubbing: true),
                                                                     ),
-                                                                    Text(
-                                                                      _controller!
-                                                                          .value
-                                                                          .duration
-                                                                          .toString(),
-                                                                      style: TextStyles().whiteTextStyle().copyWith(
-                                                                          fontWeight: FontWeight
-                                                                              .w300,
-                                                                          fontSize:
-                                                                              13),
-                                                                    ),
-                                                                  ],
-                                                                ),
+                                                                  ),
+                                                                  Text(
+                                                                    _controller!
+                                                                        .value
+                                                                        .duration
+                                                                        .toString(),
+                                                                    style: TextStyles().whiteTextStyle().copyWith(
+                                                                        fontWeight:
+                                                                            FontWeight
+                                                                                .w300,
+                                                                        fontSize:
+                                                                            13),
+                                                                  ),
+                                                                ],
                                                               ),
-                                                            ],
-                                                          ),
+                                                            ),
+                                                          ],
                                                         ),
                                                       ),
                                                     ),
-                                                  ],
-                                                ),
-                                              ],
-                                            ),
+                                                  ),
+                                                ],
+                                              ),
+                                            ],
                                           ),
                                         ),
                                         bottomWidget(),
@@ -685,9 +572,9 @@ class _VideoPlayerAppState extends State<VideoPlayerApp>
 
   bottomWidget() {
     return Container(
-      height: 85,
+      //height: 85,
       child: Padding(
-        padding: const EdgeInsets.all(8.0),
+        padding: const EdgeInsets.all(5.0),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
@@ -725,8 +612,8 @@ class _VideoPlayerAppState extends State<VideoPlayerApp>
                         .likeVideo(context, body, currentAds!.content.path);
                   },
                   child: Container(
-                    height: 50,
-                    width: 60,
+                    height: 40,
+                    width: 50,
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
@@ -736,7 +623,7 @@ class _VideoPlayerAppState extends State<VideoPlayerApp>
                           child: Icon(
                             MdiIcons.thumbUpOutline,
                             color: Colors.blue,
-                            size: _isLarge ? 40.0 : 30.0,
+                            size: _isLarge ? 35.0 : 25.0,
                           ),
                         ),
                         // Container(
@@ -785,15 +672,15 @@ class _VideoPlayerAppState extends State<VideoPlayerApp>
                         .disLikeVideo(context, body, currentAds!.content.path);
                   },
                   child: Container(
-                    height: 50,
-                    width: 60,
+                    height: 40,
+                    width: 50,
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Icon(
                           MdiIcons.thumbDownOutline,
                           color: Colors.red,
-                          size: _isdisLikeLarge ? 40.0 : 30.0,
+                          size: _isdisLikeLarge ? 35.0 : 25.0,
                         ),
                         // Text(
                         //   'DisLike',
@@ -847,9 +734,9 @@ class _VideoPlayerAppState extends State<VideoPlayerApp>
       decoration: BoxDecoration(
           border: Border.all(color: Colors.white),
           borderRadius: BorderRadius.circular(20)),
-      height: 85,
+      //  height: 85,
       child: Padding(
-        padding: const EdgeInsets.all(10.0),
+        padding: const EdgeInsets.all(5.0),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
@@ -863,17 +750,25 @@ class _VideoPlayerAppState extends State<VideoPlayerApp>
                 ),
                 Row(
                   children: [
-                    Column(
-                      children: [
-                        Icon(MdiIcons.brightness4, color: Colors.white),
-                        Text(
-                          //'ugyg',
-                          'Brightness',
-                          style: TextStyles()
-                              .whiteTextStyle()
-                              .copyWith(fontSize: 13),
-                        ),
-                      ],
+                    InkWell(
+                      onTap: () {
+                        setState(() {
+                          showBrightnessSlider = true;
+                        });
+                        showBrightnessSlider = true;
+                      },
+                      child: Column(
+                        children: [
+                          Icon(MdiIcons.brightness4, color: Colors.white),
+                          Text(
+                            //'ugyg',
+                            'Brightness',
+                            style: TextStyles()
+                                .whiteTextStyle()
+                                .copyWith(fontSize: 13),
+                          ),
+                        ],
+                      ),
                     ),
                     SizedBox(
                       width: 30,

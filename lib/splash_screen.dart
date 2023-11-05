@@ -56,7 +56,22 @@ class _SplashScreenState extends State<SplashScreen> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Image.asset('assets/images/Group (6).png'),
+              Container(
+                width: MediaQuery.of(context).size.width * .4,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: [
+                    Image.asset('assets/images/Group (6).png'),
+                    SizedBox(height: 5),
+                    Text(
+                      '...reach your true target',
+                      textAlign: TextAlign.right,
+                      style:
+                          TextStyles().whiteTextStyle().copyWith(fontSize: 18),
+                    ),
+                  ],
+                ),
+              ),
               SizedBox(
                 height: 20,
               ),

@@ -80,7 +80,7 @@ class _RatingPageState extends State<RatingPage> {
                   ),
                   Center(
                     child: Container(
-                      height: MediaQuery.of(context).size.height * .5,
+                     // height: MediaQuery.of(context).size.height * .5,
                       width: MediaQuery.of(context).size.width * .58,
                       decoration: BoxDecoration(
                         color: Colors.black,
@@ -102,7 +102,7 @@ class _RatingPageState extends State<RatingPage> {
                             crossAxisAlignment: CrossAxisAlignment.center,
                             children: [
                               Text(
-                                'Thank You Watching',
+                                'Thank You For Watching',
                                 style: TextStyles().whiteTextStyle().copyWith(
                                     fontSize: 20, fontWeight: FontWeight.w800),
                               ),

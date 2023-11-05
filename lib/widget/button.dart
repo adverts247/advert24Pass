@@ -13,10 +13,11 @@ class MyButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    var height = MediaQuery.of(context).size.height;
     return InkWell(
       onTap: onPressed,
       child: Container(
-        height: 56,
+        height: height < 500 ? 35: 56,
         decoration: const BoxDecoration(
           color: Colors.red,
         ),
@@ -93,10 +94,11 @@ class SecondaryButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+     var height = MediaQuery.of(context).size.height;
     return InkWell(
       onTap: onPressed,
       child: Container(
-        height: 56,
+        height: height < 500 ? 35: 56,
         decoration: const BoxDecoration(
           color: Color(0xffF6F6F6),
         ),

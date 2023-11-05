@@ -42,7 +42,7 @@ class _AboutMePageState extends State<AboutMePage> {
   }
 
   getWalletBalance() async {
-    VideoService().getWallet(context);
+    //  VideoService().getWallet(context);
 
     setState(() {
       isLoading = true;
@@ -64,8 +64,6 @@ class _AboutMePageState extends State<AboutMePage> {
 
   @override
   Widget build(BuildContext context) {
-    print(MediaQuery.of(context).size.height);
-    print(MediaQuery.of(context).size.width);
     var screenHeight = MediaQuery.of(context).size.height;
 
     return Scaffold(
@@ -93,12 +91,27 @@ class _AboutMePageState extends State<AboutMePage> {
                           children: isLoading!
                               ? []
                               : [
-                                  Text(
-                                    //'ugyg',
-                                    'You are riding with   ${walletDetail == null ? 'Advert24' : walletDetail!['firstname']}',
-                                    style: TextStyles()
-                                        .whiteTextStyle()
-                                        .copyWith(fontSize: 24),
+                                  Column(
+                                    children: [
+                                      Text(
+                                        //'ugyg',
+                                        'You are riding with',
+                                        style: TextStyles()
+                                            .whiteTextStyle()
+                                            .copyWith(
+                                                fontSize:
+                                                    screenHeight < 450 ? 20 : 24),
+                                      ),
+                                      Text(
+                                        //'ugyg',
+                                        '${walletDetail == null ? 'Advert24' : walletDetail!['firstname']}',
+                                        style: TextStyles()
+                                            .whiteTextStyle()
+                                            .copyWith(
+                                                fontSize:
+                                                    screenHeight < 450 ? 22 : 24 , fontWeight: FontWeight.w800),
+                                      ),
+                                    ],
                                   ),
                                   ClipRRect(
                                     borderRadius: BorderRadius.circular(7000),
@@ -113,8 +126,8 @@ class _AboutMePageState extends State<AboutMePage> {
                                   ),
                                   Image.asset(
                                     'assets/images/Group (6).png',
-                                    height: screenHeight < 450 ? 70 : 200,
-                                    width: screenHeight < 450 ? 70 : 200,
+                                    height: screenHeight < 450 ? 80 : 200,
+                                    width: screenHeight < 450 ? 80 : 200,
                                   ),
                                 ],
                         ),
@@ -158,7 +171,7 @@ class _AboutMePageState extends State<AboutMePage> {
                                       height: 10,
                                     ),
                                     aboutMeCard(
-                                        'Favourite Food',
+                                        'Favourite Hobby',
                                         walletDetail!['driver']
                                             ['favourite_hobby']),
                                     SizedBox(
@@ -197,13 +210,15 @@ class _AboutMePageState extends State<AboutMePage> {
               children: [
                 Text(
                   firstText,
-                  style: TextStyles()
-                      .whiteTextStyle()
-                      .copyWith(fontSize: 20, fontWeight: FontWeight.w700),
+                  style: TextStyles().whiteTextStyle().copyWith(
+                      fontSize: screenHeight < 450 ?   12 : 14   ,
+                      fontWeight: FontWeight.w400),
                 ),
                 Text(
                   walletDetail == null ? 'Loading...' : SecondText,
-                  style: TextStyles().whiteTextStyle().copyWith(fontSize: 14),
+                  style: TextStyles()
+                      .whiteTextStyle()
+                      .copyWith(fontSize: screenHeight < 400 ?  17 : 24, fontWeight: FontWeight.bold),
                 )
               ],
             )
@@ -244,7 +259,8 @@ class _AboutMePageState extends State<AboutMePage> {
             ),
             Row(
               children: [
-                SvgPicture.asset('assets/login/brain shaped cloud.svg'),
+                Image.asset('assets/images/brain shaped cloud.png' , height: 50, width: 50,),
+                SizedBox(width: 30,),
                 Text(
                     (weatherApiResult['main']['temp'] - 273.15)
                             .toStringAsFixed(2) +
@@ -260,7 +276,7 @@ class _AboutMePageState extends State<AboutMePage> {
             Row(
               children: [
                 squareBox(
-                  'High/Low',
+                  'HIGH/LOW',
                   (weatherApiResult['main']['temp_max'] - 273)
                           .toStringAsFixed(1) +
                       '/' +
@@ -270,7 +286,7 @@ class _AboutMePageState extends State<AboutMePage> {
                 SizedBox(
                   width: 20,
                 ),
-                squareBox('winds',
+                squareBox('WIND',
                     weatherApiResult['wind']['speed'].toString() + 'm/s')
               ],
             ),
@@ -279,11 +295,11 @@ class _AboutMePageState extends State<AboutMePage> {
             ),
             Row(
               children: [
-                squareBox('Rain Chnage', 'Rain Change'),
+                squareBox('RAIN CHANCE', 'Rain Chance'),
                 SizedBox(
                   width: 20,
                 ),
-                squareBox('Humidity',
+                squareBox('HUMIDITY',
                     weatherApiResult['main']['humidity'].toString() + '%')
               ],
             )
@@ -294,25 +310,32 @@ class _AboutMePageState extends State<AboutMePage> {
   }
 
   squareBox(String topText, bottomText) {
+    var height = MediaQuery.of(context).size.height;
     return Container(
-        color: Color.fromARGB(104, 82, 82, 92),
-        height: 120,
-        width: 150,
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Text(topText,
-                style: TextStyles()
-                    .whiteTextStyle()
-                    .copyWith(fontSize: 16, fontWeight: FontWeight.w600)),
-            SizedBox(
-              height: 10,
-            ),
-            Text(bottomText,
-                style: TextStyles()
-                    .whiteTextStyle()
-                    .copyWith(fontSize: 16, fontWeight: FontWeight.w600))
-          ],
+        color:
+        //Colors.black,
+         Color(0xff66594e),
+        height: height < 500 ? 80 : 130,
+        width:  height < 500 ?140 : 180,
+        child: Padding(
+          padding:  EdgeInsets.all(height < 500 ? 10.0 : 15),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text(topText,
+                  style: TextStyles().whiteTextStyle().copyWith(
+                      fontSize: height < 500 ? 10 : 15,
+                      fontWeight: FontWeight.w600)),
+              SizedBox(
+                height: 10,
+              ),
+              Text(bottomText,
+                  style: TextStyles().whiteTextStyle().copyWith(
+                      fontSize: height < 500 ? 15 : 23,
+                      fontWeight: FontWeight.w600))
+            ],
+          ),
         ));
   }
 }

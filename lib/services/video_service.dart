@@ -3,10 +3,12 @@ import 'dart:async';
 import 'package:adverts247Pass/about_me.dart';
 import 'package:adverts247Pass/model/video_model.dart';
 import 'package:adverts247Pass/services/network.dart/network.dart';
+import 'package:adverts247Pass/services/network.dart/streaming-network.dart';
 import 'package:adverts247Pass/services/wether_service/weather_service.dart';
 import 'package:adverts247Pass/state/user_state.dart';
 import 'package:adverts247Pass/video_player1.dart';
 import 'package:adverts247Pass/waiting_Page.dart';
+import 'package:adverts247Pass/websocket.dart';
 import 'package:adverts247Pass/widget/loader.dart';
 import 'package:flutter/material.dart';
 import 'package:adverts247Pass/tools.dart' as tools;
@@ -39,6 +41,12 @@ class VideoService {
 
       await getWallet(context);
       WeatherService().getWeatherData(context);
+
+      LocationWesocket().broadcast(context);
+
+      //
+
+      //
 
       Navigator.push(
           context, MaterialPageRoute(builder: (context) => WaitingPage()));
@@ -132,10 +140,12 @@ class VideoService {
             backgroundColor: Colors.green.withOpacity(0.2)!,
             borderRadius: BorderRadius.circular(5),
             boxShadow: [],
-            message: 'Liked',
+             icon :const Icon(Icons.sentiment_very_satisfied, color: Color(0x15000000), size: 120),
+            message: 'Liked ',
           ));
     } else {
       // Error handling
+      
       print('Failed to make POST request: ${response.statusCode}');
       print('Response body: ${response.body}');
       showTopSnackBar(
@@ -172,6 +182,8 @@ class VideoService {
             backgroundColor: Colors.green.withOpacity(0.2)!,
             borderRadius: BorderRadius.circular(5),
             boxShadow: [],
+                         icon :const Icon(Icons.sentiment_dissatisfied, color: Color(0x15000000), size: 120),
+
             message: jsonDecode(response.body)['message'],
           ));
     } else {
@@ -314,71 +326,85 @@ class VideoService {
   }
 
   //for ads queue
-
-  Future<dynamic> fetchVideo(String path, context) async {
-    var userData = Provider.of<UserState>(context, listen: false).userDetails;
-
-    var headers = {
+Future<dynamic> fetchVideo(String path, context) async {
+  try {
+    final userState = Provider.of<UserState>(context, listen: false);
+    final userData = userState.userDetails;
+    final id = userData['id'].toString();
+    final url = 'https://ads247-streaming.lazynerdstudios.com';
+    final headers = {
       'Range': '0',
-      'driver-id': userData['id'].toString(),
-      'Accept': 'multipart/form-data'
+      'driver-id': id,
+      'Accept': 'multipart/form-data',
     };
-    print(headers);
 
-    var uri = Uri.parse('${path}?location=3.584494,1.090932');
-    print(uri);
+    final uri = Uri.parse('$path?location=3.584494,1.090932');
 
-    var request = http.Request('GET', uri);
-    request.headers.addAll(headers);
+    http.Response response = await http.get(uri, headers: headers);
 
-    try {
-      http.StreamedResponse response = await request.send();
+    if (response.statusCode >= 200 && response.statusCode < 300) {
+      final responseBody = json.decode(utf8.decode(response.bodyBytes));
+      final fileSize = responseBody['file_size'].toString();
+      final sessionId = response.headers['sessionid'].toString();
+      print(sessionId);
 
-      if (response.statusCode.toString().startsWith('2')) {
-        var responseBody = json.decode(await response.stream.bytesToString());
-        print(response.headers);
-        Provider.of<UserState>(context, listen: false).size =
-            responseBody['file_size'].toString();
+      userState.size = fileSize;
+      userState.sessionId = sessionId;
 
-        Provider.of<UserState>(context, listen: false).sessionId =
-            response.headers['sessionid'].toString();
-        print(responseBody);
-        print(' sessionId : ${response.headers['sessionid'].toString()}');
+      final videoUrl = '$url/${responseBody['url']}';
+      final filePath = await downloadVideo(videoUrl);
 
-        // var video = await fetchVideoSecondEndpoint(
-        //     path, responseBody['file_path'], response.headers['sessionid']);
-
-        // ignore: avoid_print
-
-        //    print(byteList);
-        //print('HTTP Error: ${response.statusCode}');
-        // final tempDir = await getApplicationDocumentsDirectory();
-        // final file = File('${tempDir.path}/video.mp4');
-        // // File().writeAsBytes(bytes)
-        // print(file.path);
-        // var videoFile = await file.writeAsBytes(byteList);
-        // print('converted${videoFile.path}');
-        var filePath = await downloadVideo(
-            "https://ads247-streaming.lazynerdstudios.com/${responseBody['url']}");
-        print(
-            "https://ads247-streaming.lazynerdstudios.com/${responseBody['url']}");
-
-        return filePath;
-      } else {
-        print('HTTP Error: ${response.statusCode}');
-        print(
-          'HTTP Error: ${response.statusCode} , ${uri}',
-        );
-        print(response.reasonPhrase);
-        return Uint8List(
-            0); // Return an empty Uint8List or handle the error accordingly.
-      }
-    } catch (e) {
-      print('Error: $e');
-      return Uint8List(
-          0); // Return an empty Uint8List or handle the error accordingly.
+      print('Downloaded file from: $videoUrl');
+      return filePath;
+    } else {
+      print(
+          'HTTP Error: ${response.statusCode} , ${uri}, ${response.reasonPhrase}');
+      return Uint8List(0); // Return an empty Uint8List or handle the error accordingly.
     }
+  } catch (e) {
+    print('Error: $e');
+    return Uint8List(0); // Return an empty Uint8List or handle the error accordingly.
   }
+}
+
+  // Future<dynamic> fetchVideo(String path, context) async {
+  //   var token = await tools.getFromStore('accessToken');
+  //   Completer<dynamic> completer = Completer<dynamic>();
+  //   final userState = Provider.of<UserState>(context, listen: false);
+  //   final userData = userState.userDetails;
+  //   final id = userData['id'].toString();
+  //   final url = 'https://ads247-streaming.lazynerdstudios.com';
+  //   final headers = {
+  //     'Range': '0',
+  //     'driver-id': id,
+  //     'Accept': 'multipart/form-data',
+  //   };
+
+  //   HttpRequestStreaming(
+  //     path,
+  //     method: 'GET',
+  //     context: context,
+  //     headers: headers,
+  //     shouldPopOnError: false,
+  //     onSuccess: (_, result) async {
+  //       // ignore: avoid_print
+  //       final videoUrl = '$url/${result['url']}';
+  //       final filePath = await downloadVideo(videoUrl);
+
+  //       print('Downloaded file from: $videoUrl');
+
+  //       completer.complete(filePath);
+  //     },
+  //     onFailure: (_, result) {
+  //       // ignore: avoid_print
+  //       print(result);
+  //       completer.completeError(result);
+  //     },
+  //   ).send();
+
+  //   return completer.future;
+  //   // }
+  // }
 
   //for broadcast ads
   Future<dynamic> fetchBroadcastVideo(String path, context) async {
@@ -411,19 +437,6 @@ class VideoService {
         print(responseBody);
         print(' sessionId : ${response.headers['sessionid'].toString()}');
 
-        // var video = await fetchVideoSecondEndpoint(
-        //     path, responseBody['file_path'], response.headers['sessionid']);
-
-        // ignore: avoid_print
-
-        //    print(byteList);
-        //print('HTTP Error: ${response.statusCode}');
-        // final tempDir = await getApplicationDocumentsDirectory();
-        // final file = File('${tempDir.path}/video.mp4');
-        // // File().writeAsBytes(bytes)
-        // print(file.path);
-        // var videoFile = await file.writeAsBytes(byteList);
-        // print('converted${videoFile.path}');
         var filePath = await downloadVideo(
             "https://ads247-streaming.lazynerdstudios.com/${responseBody['url']}");
         print(

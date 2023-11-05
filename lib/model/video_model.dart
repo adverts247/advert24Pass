@@ -2,7 +2,7 @@ class VideoModel {
   VideoModel({
     required this.id,
     required this.title,
-    required this.callToAction,
+ //   required this.callToAction,
     required this.duration,
     required this.description,
     required this.datetime,
@@ -11,7 +11,7 @@ class VideoModel {
   });
   late final int id;
   late final String title;
-  late final CallToAction callToAction;
+ // late final CallToAction callToAction;
   late final dynamic duration;
   late final String description;
   late final String datetime;
@@ -21,7 +21,7 @@ class VideoModel {
   VideoModel.fromJson(Map<String, dynamic> json){
     id = json['id'];
     title = json['title'];
-    callToAction = CallToAction.fromJson(json['call_to_action']);
+  //  callToAction = CallToAction.fromJson(json['call_to_action']);
     duration = json['duration'];
     description = json['description'];
     datetime = json['datetime'];
@@ -33,7 +33,7 @@ class VideoModel {
     final _data = <String, dynamic>{};
     _data['id'] = id;
     _data['title'] = title;
-    _data['call_to_action'] = callToAction.toJson();
+  //  _data['call_to_action'] = callToAction.toJson();
     _data['duration'] = duration;
     _data['description'] = description;
     _data['datetime'] = datetime;

@@ -1,12 +1,16 @@
 import 'dart:async';
 import 'dart:convert';
 
+import 'package:adverts247Pass/broadcast_videoplayer.dart';
 import 'package:adverts247Pass/state/location_weather_state.dart';
 import 'package:adverts247Pass/state/user_state.dart';
+
+import 'package:adverts247Pass/video_player1.dart';
+import 'package:adverts247Pass/waiting_Page.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
-
+import 'package:socket_io_client/socket_io_client.dart' as IO;
 import 'package:web_socket_channel/web_socket_channel.dart';
 import 'package:socket_io_client/socket_io_client.dart';
 import 'package:geolocator/geolocator.dart';
@@ -177,5 +181,65 @@ class LocationWesocket {
     });
 
     socket.connect();
+  }
+
+  ///
+  ///
+  ///webso cket to controller the app
+  ///
+  void broadcast(
+    context,
+  ) {
+    var userData = Provider.of<UserState>(context, listen: false).userDetails;
+    print('dfgfg ${userData}');
+    var userId = userData['id'];
+
+    IO.Socket socket =
+        IO.io('wss://ads247-streaming.lazynerdstudios.com', <String, dynamic>{
+      'transports': ['websocket'],
+    });
+
+    socket.on('connect', (_) {
+      print('Connected');
+      Provider.of<UserState>(context, listen: false).isFirstTime = false;
+
+      // Navigator.of(context, rootNavigator: true).pop();
+      socket.emit('watch driver', userId);
+    });
+
+    socket.on('stop-stream', (data) {
+      // Handle stop-stream event
+      // print('Received stop-stream event');
+      // Provider.of<UserState>(context, listen: false).canStream = false;
+       Navigator.push(
+          context, MaterialPageRoute(builder: (context) => WaitingPage()));
+    });
+
+    socket.on('start-stream', (data) {
+      // Handle start-stream event
+      print('Received start-stream event');
+      Provider.of<UserState>(context, listen: false).canStream = true;
+
+      Navigator.push(
+          context, MaterialPageRoute(builder: (context) => VideoPlayerApp()));
+    });
+
+    socket.on('ad-broadcast', (data) {
+      print('ad-broadcast');
+      print(data);
+      var canUserStream =
+          Provider.of<UserState>(context, listen: false).canStream;
+
+      print(canUserStream);
+      var adsData = jsonDecode(data);
+
+      if (canUserStream!) {
+        Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) =>
+                    BroadCastVideoPlayer(path: adsData['content']['path'])));
+      } else {}
+    });
   }
 }

@@ -3,7 +3,6 @@ import 'dart:io';
 import 'dart:math';
 import 'package:image_picker/image_picker.dart';
 
-import 'package:device_info_plus/device_info_plus.dart';
 
 /// Authors (avour, ...)
 // Set of tools for purscliq
@@ -547,18 +546,18 @@ String checkNetworkProvider(String phoneNumber) {
 
 //get device id
 
-Future<String?>? getId() async {
-  var deviceInfo = DeviceInfoPlugin();
-  if (Platform.isIOS) {
-    // import 'dart:io'
-    var iosDeviceInfo = await deviceInfo.iosInfo;
-    return iosDeviceInfo.identifierForVendor; // unique ID on iOS
-  } else if (Platform.isAndroid) {
-    var androidDeviceInfo = await deviceInfo.androidInfo;
-    return androidDeviceInfo.id; // unique ID on Android
-  }
-  return null;
-}
+// Future<String?>? getId() async {
+//   //var deviceInfo = DeviceInfoPlugin();
+//   if (Platform.isIOS) {
+//     // import 'dart:io'
+//     var iosDeviceInfo = await deviceInfo.iosInfo;
+//     return iosDeviceInfo.identifierForVendor; // unique ID on iOS
+//   } else if (Platform.isAndroid) {
+//     var androidDeviceInfo = await deviceInfo.androidInfo;
+//     return androidDeviceInfo.id; // unique ID on Android
+//   }
+//   return null;
+// }
 
 String convertPhoneNumber(String phoneNumber) {
   // Remove any non-digit characters from the phone number

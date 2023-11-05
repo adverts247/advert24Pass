@@ -72,18 +72,46 @@ class loader {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Image.asset('assets/images/Group (6).png'),
+                    Container(
+                      width: MediaQuery.of(context).size.width * .4,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.end,
+                        children: [
+                          Image.asset('assets/images/Group (6).png'),
+                          SizedBox(height: 5),
+                          Text(
+                            '...reach your true target',
+                            textAlign: TextAlign.right,
+                            style: TextStyles()
+                                .whiteTextStyle()
+                                .copyWith(fontSize: 18),
+                          ),
+                        ],
+                      ),
+                    ),
                     SizedBox(
                       height: 20,
                     ),
-                    Text(
-                      'Logging in ....',
-                      style:
-                          TextStyles().whiteTextStyle().copyWith(fontSize: 20),
+                    RichText(
+                      text: TextSpan(
+                        children: [
+                          TextSpan(
+                            text: 'Logging in ',
+                            style: TextStyles()
+                                .whiteTextStyle()
+                                .copyWith(fontSize: 20),
+                          ),
+                          TextSpan(
+                            text: '....',
+                            style: TextStyle(color: Colors.red, fontSize: 20),
+                          ),
+                        ],
+                      ),
                     ),
                     SizedBox(
                       height: 20,
                     ),
+
                     // Text(
                     //   '',
                     //   style:
