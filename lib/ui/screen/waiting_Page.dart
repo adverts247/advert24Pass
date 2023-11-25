@@ -1,9 +1,8 @@
 import 'dart:convert';
+import 'package:adverts247Pass/services/websocket.dart';
 import 'package:adverts247Pass/state/user_state.dart';
 import 'package:adverts247Pass/themes.dart';
-import 'package:adverts247Pass/broadcast_videoplayer.dart';
 
-import 'package:adverts247Pass/video_player1.dart';
 import 'package:adverts247Pass/widget/loader.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -24,6 +23,7 @@ class _WaitingPageState extends State<WaitingPage> {
   }
 
   Future<void> checkIfisFirstTime() async {
+    AppWebsocketService().broadcast(context);
     var isFirstTime =
         await Provider.of<UserState>(context, listen: false).isFirstTime;
     print(isFirstTime);
@@ -61,7 +61,7 @@ class _WaitingPageState extends State<WaitingPage> {
                   Text(
                     '...reach your true target',
                     textAlign: TextAlign.right,
-                    style: TextStyles().whiteTextStyle().copyWith(fontSize: 18),
+                    style: TextStyles().whiteTextStyle().copyWith(fontSize: 17),
                   ),
                 ],
               ),

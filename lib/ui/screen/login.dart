@@ -1,11 +1,9 @@
 import 'dart:async';
 
-import 'package:adverts247Pass/about_me.dart';
 import 'package:adverts247Pass/services/video_service.dart';
 import 'package:adverts247Pass/themes.dart';
-import 'package:adverts247Pass/broadcast_videoplayer.dart';
-import 'package:adverts247Pass/video_player1.dart';
-import 'package:adverts247Pass/websocket.dart';
+
+import 'package:adverts247Pass/services/websocket.dart';
 import 'package:adverts247Pass/widget/button.dart';
 import 'package:adverts247Pass/widget/input_textform.dart';
 import 'package:flutter/material.dart';
@@ -149,7 +147,7 @@ class _LoginPageState extends State<LoginPage> {
                                   print(body);
                                   VideoService().login(context, body);
 
-                                  //  LocationWesocket().sendDriverPingAndListenForPong( 1, 3.222, 4.66666);
+                                  //  AppWebsocketService().sendDriverPingAndListenForPong( 1, 3.222, 4.66666);
 
                                   // Navigator.push(
                                   //     context,

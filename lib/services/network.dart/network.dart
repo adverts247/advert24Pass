@@ -6,7 +6,7 @@
 
 import 'dart:async';
 
-import 'package:adverts247Pass/login.dart';
+import 'package:adverts247Pass/ui/screen/login.dart';
 import 'package:flutter/material.dart';
 import 'package:top_snackbar_flutter/custom_snack_bar.dart';
 import 'package:top_snackbar_flutter/top_snack_bar.dart';

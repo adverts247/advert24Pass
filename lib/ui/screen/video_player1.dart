@@ -2,31 +2,31 @@ import 'dart:async';
 import 'dart:io';
 import 'dart:math';
 import 'package:adverts247Pass/tools.dart' as tools;
-import 'package:adverts247Pass/about_me.dart';
+
 import 'package:adverts247Pass/after_ads_display/radio_button_question.dart';
-import 'package:adverts247Pass/login.dart';
+
 import 'package:adverts247Pass/model/video_model.dart';
-import 'package:adverts247Pass/rating.dart';
+
 import 'package:adverts247Pass/services/video_service.dart';
-import 'package:adverts247Pass/splash_screen.dart';
 import 'package:adverts247Pass/state/user_state.dart';
 import 'package:adverts247Pass/themes.dart';
-import 'package:adverts247Pass/waiting_Page.dart';
-import 'package:adverts247Pass/websocket.dart';
-import 'package:adverts247Pass/welcome_onboard.dart';
+import 'package:adverts247Pass/services/websocket.dart';
+import 'package:adverts247Pass/ui/screen/about_me.dart';
+import 'package:adverts247Pass/ui/screen/rating.dart';
+
 import 'package:adverts247Pass/widget/ads_form.dart';
 import 'package:adverts247Pass/widget/barcode.dart';
 import 'package:adverts247Pass/widget/button.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:kiosk_mode/kiosk_mode.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:video_player/video_player.dart';
-import 'package:flutter_vlc_player/flutter_vlc_player.dart';
+//import 'package:flutter_vlc_player/flutter_vlc_player.dart';
 import 'package:socket_io_client/socket_io_client.dart' as IO;
 import 'package:screen_brightness/screen_brightness.dart';
-import 'package:flutter_windowmanager/flutter_windowmanager.dart';
+
+import 'package:wakelock_plus/wakelock_plus.dart';
 
 class VideoPlayerApp extends StatefulWidget {
   @override
@@ -49,7 +49,7 @@ class _VideoPlayerAppState extends State<VideoPlayerApp>
   bool? showVolumeSlider = false;
   double _brightness = 1;
   int chuncksPlayed = 0;
-  VlcPlayerController? vlcController;
+  //VlcPlayerController? vlcController;
   AnimationController? likeController;
   AnimationController? disLikeController;
   bool _isLarge = false;
@@ -69,10 +69,11 @@ class _VideoPlayerAppState extends State<VideoPlayerApp>
     getVideoList();
     getWalletBalance();
     setBrightness();
+    WakelockPlus.toggle(enable: true);
 
     //send driver location
     Timer.periodic(Duration(seconds: 1), (timer) {
-      LocationWesocket().checkLocation(context);
+      AppWebsocketService().checkLocation(context);
     });
 
     super.initState();
@@ -154,12 +155,12 @@ class _VideoPlayerAppState extends State<VideoPlayerApp>
       var size = Provider.of<UserState>(context, listen: false).size;
 
       if (video.toString().endsWith('mkv')) {
-        vlcController = VlcPlayerController.network(
-          video,
-          hwAcc: HwAcc.full,
-          autoPlay: true,
-          options: VlcPlayerOptions(),
-        );
+        // vlcController = VlcPlayerController.network(
+        //   video,
+        //   hwAcc: HwAcc.full,
+        //   autoPlay: true,
+        //   options: VlcPlayerOptions(),
+        // );
       } else {
         _controller = VideoPlayerController.file(File(video))
           ..initialize().then((_) {
@@ -201,14 +202,8 @@ class _VideoPlayerAppState extends State<VideoPlayerApp>
     super.dispose();
   }
 
-  void addToTheSecond() {
-    setState(() {
-      secondss = 10;
-    });
-  }
-
   nextAds() {
-    Future.delayed(Duration(seconds: isPhoto! ? 10 : 1), () {
+    Future.delayed(Duration(seconds: isPhoto! ? 10 : 0), () {
       //   Navigator.pop(context);
 
       setState(() {
@@ -217,30 +212,29 @@ class _VideoPlayerAppState extends State<VideoPlayerApp>
 
       // After 5 sec turn rating value to false : This allows the rating wiget to leave the screen
 
+      //  Future.delayed(Duration(seconds: 5), () {
+      // setState(() {
+      //   rating = false;
+      //   //delete video from storage
+      //   if (isPhoto!) {
+      //   } else {
+      //     // tools.deleteFile(video);
+      //   }
+
+      //   //
+      //   displayWelcome = true;
+      // });
+
       Future.delayed(Duration(seconds: 5), () {
         setState(() {
           rating = false;
-          //delete video from storage
-          if (isPhoto!) {
-          } else {
-            tools.deleteFile(video);
-          }
 
-          //
-          displayWelcome = true;
+          _currentIndex++;
+
+          currentAds = videoModelList![_currentIndex];
         });
 
-        Future.delayed(Duration(seconds: 10), () {
-          setState(() {
-            displayWelcome = false;
-
-            _currentIndex++;
-
-            currentAds = videoModelList![_currentIndex];
-          });
-
-          ifIsVideo();
-        });
+        ifIsVideo();
       });
     });
   }
@@ -268,6 +262,7 @@ class _VideoPlayerAppState extends State<VideoPlayerApp>
   }
 
   previousAds() {
+    _controller!.dispose();
     setState(() {
       rating = false;
 
@@ -290,9 +285,11 @@ class _VideoPlayerAppState extends State<VideoPlayerApp>
     return SafeArea(
       child: Scaffold(
           backgroundColor: Colors.black,
-          body: displayWelcome
-              ? WelcomePage()
-              : rating!
+          body:
+              //  displayWelcome
+              //     ? WelcomePage()
+              //     :
+              rating!
                   ? RatingPage()
                   : isLoading!
                       ? AboutMePage()
@@ -300,27 +297,27 @@ class _VideoPlayerAppState extends State<VideoPlayerApp>
                           ? video.toString().endsWith('mkv')
                               ? Column(
                                   children: [
-                                    Expanded(
-                                      child: VlcPlayer(
-                                        controller: vlcController!,
-                                        aspectRatio: 16 / 9,
-                                        placeholder: Center(
-                                            child: CircularProgressIndicator()),
-                                      ),
-                                    ),
-                                    Slider(
-                                      value: vlcController!
-                                          .value.position.inMilliseconds
-                                          .toDouble(),
-                                      min: 0.0,
-                                      max: vlcController!
-                                          .value.duration.inMilliseconds
-                                          .toDouble(),
-                                      onChanged: (value) {
-                                        //   vlcController!.value. .setTime(value.toInt());
-                                      },
-                                    ),
-                                    bottomWidget()
+                                    // Expanded(
+                                    //   child: VlcPlayer(
+                                    //     controller: vlcController!,
+                                    //     aspectRatio: 16 / 9,
+                                    //     placeholder: Center(
+                                    //         child: CircularProgressIndicator()),
+                                    //   ),
+                                    // ),
+                                    // Slider(
+                                    //   value: vlcController!
+                                    //       .value.position.inMilliseconds
+                                    //       .toDouble(),
+                                    //   min: 0.0,
+                                    //   max: vlcController!
+                                    //       .value.duration.inMilliseconds
+                                    //       .toDouble(),
+                                    //   onChanged: (value) {
+                                    //     //   vlcController!.value. .setTime(value.toInt());
+                                    //   },
+                                    // ),
+                                    // bottomWidget()
                                   ],
                                 )
                               : _controller!.value.isInitialized
@@ -337,8 +334,10 @@ class _VideoPlayerAppState extends State<VideoPlayerApp>
                                                           false;
                                                     });
                                                   },
-                                                  child: VideoPlayer(
-                                                      _controller!)),
+                                                  child: Flexible(
+                                                    child: VideoPlayer(
+                                                        _controller!),
+                                                  )),
                                               Column(
                                                 mainAxisAlignment:
                                                     MainAxisAlignment.end,
@@ -571,6 +570,7 @@ class _VideoPlayerAppState extends State<VideoPlayerApp>
   }
 
   bottomWidget() {
+    var height = MediaQuery.of(context).size.height;
     return Container(
       //height: 85,
       child: Padding(
@@ -612,7 +612,7 @@ class _VideoPlayerAppState extends State<VideoPlayerApp>
                         .likeVideo(context, body, currentAds!.content.path);
                   },
                   child: Container(
-                    height: 40,
+                    height: height < 500 ? 30 : 40,
                     width: 50,
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
@@ -672,7 +672,7 @@ class _VideoPlayerAppState extends State<VideoPlayerApp>
                         .disLikeVideo(context, body, currentAds!.content.path);
                   },
                   child: Container(
-                    height: 40,
+                    height: height < 500 ? 30 : 40,
                     width: 50,
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
@@ -706,6 +706,8 @@ class _VideoPlayerAppState extends State<VideoPlayerApp>
                     child: SecondaryButton(
                       text: 'Prev',
                       onPressed: () {
+                        _controller!.dispose();
+
                         previousAds();
                       },
                     )),
@@ -717,7 +719,8 @@ class _VideoPlayerAppState extends State<VideoPlayerApp>
                     child: MyButton(
                       text: 'Next',
                       onPressed: () {
-                        //  nextVideo();
+                        _controller!.dispose();
+
                         nextAds();
                       },
                     ))

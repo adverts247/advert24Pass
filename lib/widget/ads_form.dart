@@ -1,9 +1,7 @@
-import 'package:adverts247Pass/about_me.dart';
 import 'package:adverts247Pass/services/video_service.dart';
 import 'package:adverts247Pass/themes.dart';
-import 'package:adverts247Pass/broadcast_videoplayer.dart';
-import 'package:adverts247Pass/video_player1.dart';
-import 'package:adverts247Pass/websocket.dart';
+
+import 'package:adverts247Pass/services/websocket.dart';
 import 'package:adverts247Pass/widget/button.dart';
 import 'package:adverts247Pass/widget/input_textform.dart';
 import 'package:flutter/material.dart';
@@ -101,7 +99,7 @@ class _AdsFormPageState extends State<AdsFormPage> {
                                   };
                                   print(body);
                                   VideoService().login(context, body);
-                                  //LocationWesocket().checkLocation();
+                                  //AppWebsocketService().checkLocation();
 
                                   // Navigator.push(
                                   //     context,

@@ -1,18 +1,19 @@
 import 'dart:async';
 
-import 'package:adverts247Pass/about_me.dart';
 import 'package:adverts247Pass/model/video_model.dart';
+import 'package:adverts247Pass/pre-streaming-screen/welcome_onbaording/welcome-onboarding_view.dart';
 import 'package:adverts247Pass/services/network.dart/network.dart';
 import 'package:adverts247Pass/services/network.dart/streaming-network.dart';
 import 'package:adverts247Pass/services/wether_service/weather_service.dart';
 import 'package:adverts247Pass/state/user_state.dart';
-import 'package:adverts247Pass/video_player1.dart';
-import 'package:adverts247Pass/waiting_Page.dart';
-import 'package:adverts247Pass/websocket.dart';
+import 'package:adverts247Pass/ui/screen/waiting_Page.dart';
+
+import 'package:adverts247Pass/services/websocket.dart';
 import 'package:adverts247Pass/widget/loader.dart';
 import 'package:flutter/material.dart';
 import 'package:adverts247Pass/tools.dart' as tools;
 import 'package:flutter/services.dart';
+import 'package:get/get.dart';
 // import 'package:provider/provider.dart';
 import 'dart:convert';
 import 'dart:io';
@@ -41,19 +42,19 @@ class VideoService {
 
       await getWallet(context);
       WeatherService().getWeatherData(context);
-
-      LocationWesocket().broadcast(context);
-
-      //
+      //    AppWebsocketService().broadcast(context);
 
       //
-
-      Navigator.push(
-          context, MaterialPageRoute(builder: (context) => WaitingPage()));
+      Get.to(
+        PreStreamingWelcomePage(),
+        transition: Transition.fadeIn,
+        curve: Curves.easeInOut,
+        duration: Duration(seconds: 1),
+      );
 
       debugPrint(result);
     }, onFailure: (_, result) {
-      //Navigator.pop(context);
+      Navigator.pop(context);
 
       debugPrint(result);
       return;
@@ -140,12 +141,13 @@ class VideoService {
             backgroundColor: Colors.green.withOpacity(0.2)!,
             borderRadius: BorderRadius.circular(5),
             boxShadow: [],
-             icon :const Icon(Icons.sentiment_very_satisfied, color: Color(0x15000000), size: 120),
+            icon: const Icon(Icons.sentiment_very_satisfied,
+                color: Color(0x15000000), size: 120),
             message: 'Liked ',
           ));
     } else {
       // Error handling
-      
+
       print('Failed to make POST request: ${response.statusCode}');
       print('Response body: ${response.body}');
       showTopSnackBar(
@@ -182,8 +184,8 @@ class VideoService {
             backgroundColor: Colors.green.withOpacity(0.2)!,
             borderRadius: BorderRadius.circular(5),
             boxShadow: [],
-                         icon :const Icon(Icons.sentiment_dissatisfied, color: Color(0x15000000), size: 120),
-
+            icon: const Icon(Icons.sentiment_dissatisfied,
+                color: Color(0x15000000), size: 120),
             message: jsonDecode(response.body)['message'],
           ));
     } else {
@@ -325,47 +327,89 @@ class VideoService {
     }
   }
 
-  //for ads queue
-Future<dynamic> fetchVideo(String path, context) async {
-  try {
-    final userState = Provider.of<UserState>(context, listen: false);
-    final userData = userState.userDetails;
-    final id = userData['id'].toString();
-    final url = 'https://ads247-streaming.lazynerdstudios.com';
-    final headers = {
-      'Range': '0',
-      'driver-id': id,
-      'Accept': 'multipart/form-data',
-    };
+  //for ads queueimport 'dart:async';
 
-    final uri = Uri.parse('$path?location=3.584494,1.090932');
+  Future<dynamic> fetchVideo(String path, context) async {
+    const maxRetries = 10;
+    const retryDelay = Duration(seconds: 3);
 
-    http.Response response = await http.get(uri, headers: headers);
+    for (var retryCount = 0; retryCount < maxRetries; retryCount++) {
+      try {
+        final userState = Provider.of<UserState>(context, listen: false);
+        final userData = userState.userDetails;
+        final id = userData['id'].toString();
+        final url = 'https://ads247-streaming.lazynerdstudios.com';
+        final headers = {
+          'Range': '0',
+          'driver-id': id,
+          'Accept': 'multipart/form-data',
+        };
 
-    if (response.statusCode >= 200 && response.statusCode < 300) {
-      final responseBody = json.decode(utf8.decode(response.bodyBytes));
-      final fileSize = responseBody['file_size'].toString();
-      final sessionId = response.headers['sessionid'].toString();
-      print(sessionId);
+        final uri = Uri.parse('$path?location=3.584494,1.090932');
 
-      userState.size = fileSize;
-      userState.sessionId = sessionId;
+        http.Response response = await http.get(uri, headers: headers);
 
-      final videoUrl = '$url/${responseBody['url']}';
-      final filePath = await downloadVideo(videoUrl);
+        if (response.statusCode >= 200 && response.statusCode < 300) {
+          final responseBody = json.decode(utf8.decode(response.bodyBytes));
+          final fileSize = responseBody['file_size'].toString();
+          final sessionId = response.headers['sessionid'].toString();
+          print(sessionId);
 
-      print('Downloaded file from: $videoUrl');
-      return filePath;
-    } else {
-      print(
-          'HTTP Error: ${response.statusCode} , ${uri}, ${response.reasonPhrase}');
-      return Uint8List(0); // Return an empty Uint8List or handle the error accordingly.
+          userState.size = fileSize;
+          userState.sessionId = sessionId;
+
+          final videoUrl = '$url/${responseBody['url']}';
+
+          var storeVideoPath = await tools.getFromStore(videoUrl);
+
+          // check if video is on local storage
+          if (storeVideoPath == null) {
+            //video is not in local storage
+
+            final filePath = await downloadVideo(videoUrl);
+            await tools.putInStore(videoUrl, filePath);
+            //remove from store after one week
+            performFunctionAfterOneWeek(filePath);
+
+            print('Downloaded file from: $videoUrl');
+            return filePath;
+          } else {
+            //remove from store after one week
+            performFunctionAfterOneWeek(storeVideoPath);
+
+            //vdeo is in local storage
+            return storeVideoPath;
+          }
+        } else {
+          print(
+              'HTTP Error: ${response.statusCode}, ${uri}, ${response.reasonPhrase}');
+          return Uint8List(
+              0); // Return an empty Uint8List or handle the error accordingly.
+        }
+      } catch (e) {
+        print('Error: $e');
+        if (retryCount < maxRetries - 1) {
+          print('Retrying in $retryDelay...');
+          await Future.delayed(retryDelay);
+        }
+      }
     }
-  } catch (e) {
-    print('Error: $e');
-    return Uint8List(0); // Return an empty Uint8List or handle the error accordingly.
+
+    print('Max retries reached, giving up.');
+    return Uint8List(
+        0); // Return an empty Uint8List or handle the error accordingly.
   }
-}
+
+  // delete item after 7b days
+  void performFunctionAfterOneWeek(String video) {
+    print("Function will be performed after one week.");
+
+    // Delay the function execution for one week
+    Future.delayed(Duration(days: 7), () {
+      // Your function code here
+      tools.deleteFile(video);
+    });
+  }
 
   // Future<dynamic> fetchVideo(String path, context) async {
   //   var token = await tools.getFromStore('accessToken');
@@ -571,7 +615,7 @@ Future<dynamic> fetchVideo(String path, context) async {
             backgroundColor: Colors.green.withOpacity(0.2)!,
             borderRadius: BorderRadius.circular(5),
             boxShadow: [],
-            message: 'Thank you for rating this ads ',
+            message: 'Thank you for rating this ad',
           ));
     } else {
       // Error handling

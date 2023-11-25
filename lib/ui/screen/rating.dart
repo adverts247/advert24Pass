@@ -1,8 +1,6 @@
-import 'package:adverts247Pass/about_me.dart';
 import 'package:adverts247Pass/services/video_service.dart';
 import 'package:adverts247Pass/state/user_state.dart';
 import 'package:adverts247Pass/themes.dart';
-import 'package:adverts247Pass/broadcast_videoplayer.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 
 import 'package:adverts247Pass/widget/button.dart';
@@ -80,7 +78,7 @@ class _RatingPageState extends State<RatingPage> {
                   ),
                   Center(
                     child: Container(
-                     // height: MediaQuery.of(context).size.height * .5,
+                      // height: MediaQuery.of(context).size.height * .5,
                       width: MediaQuery.of(context).size.width * .58,
                       decoration: BoxDecoration(
                         color: Colors.black,
@@ -168,7 +166,7 @@ class _RatingPageState extends State<RatingPage> {
                                       context,
                                       body,
                                     );
-                                    //LocationWesocket().checkLocation();
+                                    //AppWebsocketService().checkLocation();
 
                                     // showTopSnackBar(
                                     //     Overlay.of(context!),

@@ -84,7 +84,7 @@ class loader {
                             textAlign: TextAlign.right,
                             style: TextStyles()
                                 .whiteTextStyle()
-                                .copyWith(fontSize: 18),
+                                .copyWith(fontSize: 17),
                           ),
                         ],
                       ),

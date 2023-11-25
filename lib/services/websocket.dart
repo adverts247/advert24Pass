@@ -1,12 +1,11 @@
 import 'dart:async';
 import 'dart:convert';
 
-import 'package:adverts247Pass/broadcast_videoplayer.dart';
 import 'package:adverts247Pass/state/location_weather_state.dart';
 import 'package:adverts247Pass/state/user_state.dart';
+import 'package:adverts247Pass/ui/screen/video_player1.dart';
+import 'package:adverts247Pass/ui/screen/waiting_Page.dart';
 
-import 'package:adverts247Pass/video_player1.dart';
-import 'package:adverts247Pass/waiting_Page.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
@@ -16,7 +15,7 @@ import 'package:socket_io_client/socket_io_client.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:socket_io_client/socket_io_client.dart' as io;
 
-class LocationWesocket {
+class AppWebsocketService {
   void testWebsocket() async {
     /// Create the WebSocket channel
     final channel = WebSocketChannel.connect(
@@ -200,7 +199,7 @@ class LocationWesocket {
     });
 
     socket.on('connect', (_) {
-      print('Connected');
+      print('Connecteded');
       Provider.of<UserState>(context, listen: false).isFirstTime = false;
 
       // Navigator.of(context, rootNavigator: true).pop();
@@ -211,7 +210,7 @@ class LocationWesocket {
       // Handle stop-stream event
       // print('Received stop-stream event');
       // Provider.of<UserState>(context, listen: false).canStream = false;
-       Navigator.push(
+      Navigator.push(
           context, MaterialPageRoute(builder: (context) => WaitingPage()));
     });
 
@@ -233,13 +232,13 @@ class LocationWesocket {
       print(canUserStream);
       var adsData = jsonDecode(data);
 
-      if (canUserStream!) {
-        Navigator.push(
-            context,
-            MaterialPageRoute(
-                builder: (context) =>
-                    BroadCastVideoPlayer(path: adsData['content']['path'])));
-      } else {}
+      // if (canUserStream!) {
+      //   Navigator.push(
+      //       context,
+      //       MaterialPageRoute(
+      //           builder: (context) =>
+      //               BroadCastVideoPlayer(path: adsData['content']['path'])));
+      // } else {}
     });
   }
 }

@@ -1,8 +1,10 @@
 //
-import 'package:adverts247Pass/login.dart';
+
+import 'package:adverts247Pass/services/update_app.dart';
 import 'package:adverts247Pass/services/video_service.dart';
 import 'package:adverts247Pass/themes.dart';
-import 'package:adverts247Pass/websocket.dart';
+import 'package:adverts247Pass/services/websocket.dart';
+import 'package:adverts247Pass/ui/screen/login.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:adverts247Pass/tools.dart' as tools;
@@ -18,7 +20,8 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   void initState() {
     super.initState();
-    // LocationWesocket().determinePosition();
+    OtaService().checkifUpdateIsNeeded(context);
+    // AppWebsocketService().determinePosition();
     moveToNextPage();
   }
 
@@ -67,18 +70,18 @@ class _SplashScreenState extends State<SplashScreen> {
                       '...reach your true target',
                       textAlign: TextAlign.right,
                       style:
-                          TextStyles().whiteTextStyle().copyWith(fontSize: 18),
+                          TextStyles().whiteTextStyle().copyWith(fontSize: 17),
                     ),
                   ],
                 ),
               ),
-              SizedBox(
-                height: 20,
-              ),
-              Text(
-                'WELCOME ONBOARD',
-                style: TextStyles().whiteTextStyle().copyWith(fontSize: 20),
-              )
+              // SizedBox(
+              //   height: 20,
+              // ),
+              // Text(
+              //   'WELCOME ONBOARD',
+              //   style: TextStyles().whiteTextStyle().copyWith(fontSize: 20),
+              // )
             ],
           )),
     );

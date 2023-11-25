@@ -1,4 +1,5 @@
-import 'package:adverts247Pass/video_player1.dart';
+import 'package:adverts247Pass/ui/screen/video_player1.dart';
+
 import 'package:flutter/material.dart';
 import 'package:web_socket_channel/io.dart';
 
