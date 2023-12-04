@@ -5,7 +5,7 @@ import 'package:adverts247Pass/state/location_weather_state.dart';
 import 'package:adverts247Pass/state/user_state.dart';
 import 'package:adverts247Pass/themes.dart';
 import 'package:adverts247Pass/widget/loader.dart';
-import 'package:flutter/material.dart ';
+import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
@@ -99,8 +99,9 @@ class _AboutMePageState extends State<AboutMePage> {
                                         style: TextStyles()
                                             .whiteTextStyle()
                                             .copyWith(
-                                                fontSize:
-                                                    screenHeight < 450 ? 20 : 24),
+                                                fontSize: screenHeight < 450
+                                                    ? 20
+                                                    : 24),
                                       ),
                                       Text(
                                         //'ugyg',
@@ -108,8 +109,10 @@ class _AboutMePageState extends State<AboutMePage> {
                                         style: TextStyles()
                                             .whiteTextStyle()
                                             .copyWith(
-                                                fontSize:
-                                                    screenHeight < 450 ? 22 : 24 , fontWeight: FontWeight.w800),
+                                                fontSize: screenHeight < 450
+                                                    ? 22
+                                                    : 24,
+                                                fontWeight: FontWeight.w800),
                                       ),
                                     ],
                                   ),
@@ -211,14 +214,14 @@ class _AboutMePageState extends State<AboutMePage> {
                 Text(
                   firstText,
                   style: TextStyles().whiteTextStyle().copyWith(
-                      fontSize: screenHeight < 450 ?   12 : 14   ,
+                      fontSize: screenHeight < 450 ? 12 : 14,
                       fontWeight: FontWeight.w400),
                 ),
                 Text(
                   walletDetail == null ? 'Loading...' : SecondText,
-                  style: TextStyles()
-                      .whiteTextStyle()
-                      .copyWith(fontSize: screenHeight < 400 ?  17 : 24, fontWeight: FontWeight.bold),
+                  style: TextStyles().whiteTextStyle().copyWith(
+                      fontSize: screenHeight < 400 ? 17 : 24,
+                      fontWeight: FontWeight.bold),
                 )
               ],
             )
@@ -259,8 +262,14 @@ class _AboutMePageState extends State<AboutMePage> {
             ),
             Row(
               children: [
-                Image.asset('assets/images/brain shaped cloud.png' , height: 50, width: 50,),
-                SizedBox(width: 30,),
+                Image.asset(
+                  'assets/images/brain shaped cloud.png',
+                  height: 50,
+                  width: 50,
+                ),
+                SizedBox(
+                  width: 30,
+                ),
                 Text(
                     (weatherApiResult['main']['temp'] - 273.15)
                             .toStringAsFixed(2) +
@@ -313,12 +322,12 @@ class _AboutMePageState extends State<AboutMePage> {
     var height = MediaQuery.of(context).size.height;
     return Container(
         color:
-        //Colors.black,
-         Color(0xff66594e),
+            //Colors.black,
+            Color(0xff66594e),
         height: height < 500 ? 80 : 130,
-        width:  height < 500 ?140 : 180,
+        width: height < 500 ? 140 : 180,
         child: Padding(
-          padding:  EdgeInsets.all(height < 500 ? 10.0 : 15),
+          padding: EdgeInsets.all(height < 500 ? 10.0 : 15),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisAlignment: MainAxisAlignment.center,

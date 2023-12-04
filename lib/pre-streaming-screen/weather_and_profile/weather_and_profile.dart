@@ -6,7 +6,7 @@ import 'package:adverts247Pass/state/user_state.dart';
 import 'package:adverts247Pass/themes.dart';
 import 'package:adverts247Pass/ui/screen/waiting_Page.dart';
 import 'package:adverts247Pass/widget/loader.dart';
-import 'package:flutter/material.dart ';
+import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
@@ -38,12 +38,11 @@ class _ProfileWeatherViewState extends State<ProfileWeatherView> {
     });
 
     Future.delayed(Duration(seconds: 8), () {
-      Get.to(WaitingPage(),
+      Get.to(
+        WaitingPage(),
         transition: Transition.fadeIn,
         curve: Curves.easeIn,
-        duration: Duration(seconds: 1), 
-      
-      
+        duration: Duration(seconds: 1),
       );
     });
   }
@@ -389,7 +388,10 @@ class _ProfileWeatherViewState extends State<ProfileWeatherView> {
       children: [
         Row(
           children: [
-            SvgPicture.asset('assets/images/Group 48095515.svg', height: screenHeight < 450 ? 35 :50,),
+            SvgPicture.asset(
+              'assets/images/Group 48095515.svg',
+              height: screenHeight < 450 ? 35 : 50,
+            ),
             SizedBox(
               width: 30,
             ),
