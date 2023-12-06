@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:adverts247Pass/model/video_model.dart';
+import 'package:adverts247Pass/services/update_app.dart';
 import 'package:adverts247Pass/pre-streaming-screen/welcome_onbaording/welcome-onboarding_view.dart';
 import 'package:adverts247Pass/services/network.dart/network.dart';
 import 'package:adverts247Pass/services/network.dart/streaming-network.dart';
@@ -36,14 +37,13 @@ class VideoService {
         body: body,
         shouldPopOnError: false, onSuccess: (_, result) async {
       tools.putInStore('accessToken', result['data']['token']);
-
       tools.putInStore('email', body['email']);
       tools.putInStore('password', body['password']);
 
       await getWallet(context);
       WeatherService().getWeatherData(context);
       //    AppWebsocketService().broadcast(context);
-
+      OtaService().checkifUpdateIsNeeded(context);
       //
       Get.to(
         PreStreamingWelcomePage(),

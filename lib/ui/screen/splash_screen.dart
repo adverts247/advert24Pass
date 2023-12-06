@@ -20,32 +20,31 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   void initState() {
     super.initState();
-    OtaService().checkifUpdateIsNeeded(context);
     // AppWebsocketService().determinePosition();
     moveToNextPage();
   }
 
   Future<void> moveToNextPage() async {
-    var data = await tools.getFromStore('accessToken');
-    if (data == null) {
-      Future.delayed(Duration(seconds: 2), () {
+  //  var data = await tools.getFromStore('accessToken');
+  //  if (data == null) {
+  //    Future.delayed(Duration(seconds: 2), () {
         Navigator.push(
             context, MaterialPageRoute(builder: (context) => LoginPage()));
-      });
-    } else {
-      var storedEmail = await tools.getFromStore('email');
-      var storedPassword = await tools.getFromStore('password');
+  //    });
+  //  } else {
+  //    var storedEmail = await tools.getFromStore('email');
+  //    var storedPassword = await tools.getFromStore('password');
 
-      var body = {
-        'email': storedEmail,
-        'password': storedPassword
+  //    var body = {
+  //      'email': storedEmail,
+  //      'password': storedPassword
 
         // 'email': 'tested@test.com',
         // 'password': '12345678'
-      };
+  //    };
 
-      VideoService().login(context, body);
-    }
+  //    VideoService().login(context, body);
+  //  }
   }
 
   @override

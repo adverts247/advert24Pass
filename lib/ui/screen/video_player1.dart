@@ -334,7 +334,9 @@ class _VideoPlayerAppState extends State<VideoPlayerApp>
                                                           false;
                                                     });
                                                   },
-                                                  child: Expanded(
+                                                  child: Container(
+                                                    width: double.infinity,
+                                                    height: double.infinity,
                                                     child: VideoPlayer(
                                                         _controller!),
                                                   )),
@@ -384,43 +386,45 @@ class _VideoPlayerAppState extends State<VideoPlayerApp>
 
                                                   //Brightness Slider
 
-                                       //           showBrightnessSlider!
-                                       //               ? Column(
-                                       //                   children: [
-                                       //                     Text(
-                                       //                       "Brightness ${_brightness * 100}",
-                                       //                       style: TextStyles()
-                                       //                           .blackTextStyle700()
-                                       //                           .copyWith(
-                                       //                               fontSize:
-                                       //                                   24,
-                                       //                               color: Colors
-                                       //                                   .red),
-                                       //                     ),
-                                       //                     Slider(
-                                       //                       value:
-                                       //                           _brightness,
-                                       //                       label:
-                                       //                           "Brightness ${_brightness * 100}",
-                                       //                       onChanged:
-                                       //                           (value) {
-                                       //                         setState(() {
-                                       //                           _brightness =
-                                       //                               value;
-                                       //                           setBrightness();
-                                       //                         });
-                                       //                       },
-                                       //                       divisions: 10,
-                                       //                       activeColor:
-                                       //                           Colors.red,
-                                       //                       inactiveColor:
-                                       //                           Colors.black,
-                                       //                     ),
-                                       //                   ],
-                                       //                 )
-                                                        Container(
-                                                          margin: EdgeInsets.symmetric(vertical: 20),
-                                                        ),
+                                                  //           showBrightnessSlider!
+                                                  //               ? Column(
+                                                  //                   children: [
+                                                  //                     Text(
+                                                  //                       "Brightness ${_brightness * 100}",
+                                                  //                       style: TextStyles()
+                                                  //                           .blackTextStyle700()
+                                                  //                           .copyWith(
+                                                  //                               fontSize:
+                                                  //                                   24,
+                                                  //                               color: Colors
+                                                  //                                   .red),
+                                                  //                     ),
+                                                  //                     Slider(
+                                                  //                       value:
+                                                  //                           _brightness,
+                                                  //                       label:
+                                                  //                           "Brightness ${_brightness * 100}",
+                                                  //                       onChanged:
+                                                  //                           (value) {
+                                                  //                         setState(() {
+                                                  //                           _brightness =
+                                                  //                               value;
+                                                  //                           setBrightness();
+                                                  //                         });
+                                                  //                       },
+                                                  //                       divisions: 10,
+                                                  //                       activeColor:
+                                                  //                           Colors.red,
+                                                  //                       inactiveColor:
+                                                  //                           Colors.black,
+                                                  //                     ),
+                                                  //                   ],
+                                                  //                 )
+                                                  Container(
+                                                    margin:
+                                                        EdgeInsets.symmetric(
+                                                            vertical: 20),
+                                                  ),
 
                                                   Padding(
                                                     padding: const EdgeInsets
