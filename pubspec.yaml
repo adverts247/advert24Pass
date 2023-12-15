@@ -69,6 +69,7 @@ dependencies:
  
   chewie: ^1.7.1
   screen_brightness: ^0.2.2+1
+  connectivity_plus: ^5.0.2
 
  
   

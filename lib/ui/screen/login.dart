@@ -2,7 +2,7 @@ import 'dart:async';
 
 import 'package:adverts247Pass/services/video_service.dart';
 import 'package:adverts247Pass/themes.dart';
-
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:adverts247Pass/services/websocket.dart';
 import 'package:adverts247Pass/widget/button.dart';
 import 'package:adverts247Pass/widget/input_textform.dart';
@@ -19,10 +19,20 @@ class LoginPage extends StatefulWidget {
 class _LoginPageState extends State<LoginPage> {
   TextEditingController? loginEmail;
   TextEditingController? password;
+
+  StreamSubscription<ConnectivityResult>? subscription;
   @override
   void initState() {
     loginEmail = TextEditingController();
     password = TextEditingController();
+
+    subscription = Connectivity()
+        .onConnectivityChanged
+        .listen((ConnectivityResult result) {
+      print(result);
+
+      // Got a new connectivity status!
+    });
     super.initState();
   }
 
