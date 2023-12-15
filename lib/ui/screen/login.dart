@@ -7,7 +7,9 @@ import 'package:adverts247Pass/services/websocket.dart';
 import 'package:adverts247Pass/widget/button.dart';
 import 'package:adverts247Pass/widget/input_textform.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:adverts247Pass/tools.dart' as tools;
 
 class LoginPage extends StatefulWidget {
@@ -20,12 +22,34 @@ class LoginPage extends StatefulWidget {
 class _LoginPageState extends State<LoginPage> {
   TextEditingController? loginEmail;
   TextEditingController? password;
+  StreamSubscription<ConnectivityResult>? subscription;
   @override
   void initState() {
     loginEmail = TextEditingController();
     password = TextEditingController();
+    subscription = Connectivity()
+        .onConnectivityChanged
+        .listen((ConnectivityResult result) {
+      if (ConnectivityResult == ConnectivityResult.none) {
+      } else {
+        autoLogin();
+      }
+
+      // Got a new connectivity status!
+    });
 
     super.initState();
+  }
+
+  Future<void> autoLogin() async {
+    var storedEmail = await tools.getFromStore('email');
+    var storedPassword = await tools.getFromStore('password');
+
+    if (storedEmail != null) {
+      var body = {'email': storedEmail, 'password': storedPassword};
+
+      VideoService().login(context, body);
+    } else {}
   }
 
   @override

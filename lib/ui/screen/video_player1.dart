@@ -92,9 +92,9 @@ class _VideoPlayerAppState extends State<VideoPlayerApp>
         await Provider.of<UserState>(context, listen: false).userDetails;
     print(walletDetail);
 
-    setState(() {
-      isLoading = false;
-    });
+    // setState(() {
+    //   isLoading = false;
+    // });
   }
 
   Future<void> setBrightness() async {
