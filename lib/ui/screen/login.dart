@@ -2,12 +2,9 @@ import 'dart:async';
 
 import 'package:adverts247Pass/services/video_service.dart';
 import 'package:adverts247Pass/themes.dart';
-import 'package:adverts247Pass/services/update_app.dart';
-import 'package:adverts247Pass/services/websocket.dart';
 import 'package:adverts247Pass/widget/button.dart';
 import 'package:adverts247Pass/widget/input_textform.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:adverts247Pass/tools.dart' as tools;
@@ -62,14 +59,14 @@ class _LoginPageState extends State<LoginPage> {
           height: MediaQuery.of(context).size.height,
           width: MediaQuery.of(context).size.width,
           child: Center(
-            child: Container(
+            child: SizedBox(
               height: MediaQuery.of(context).size.height > 450
                   ? MediaQuery.of(context).size.height * .7
                   : MediaQuery.of(context).size.height,
               width: MediaQuery.of(context).size.width * .7,
               child: Stack(
                 children: [
-                  Container(
+                  SizedBox(
                     height: MediaQuery.of(context).size.height > 450
                         ? MediaQuery.of(context).size.height * .72
                         : MediaQuery.of(context).size.height,
@@ -84,7 +81,7 @@ class _LoginPageState extends State<LoginPage> {
                       ],
                     ),
                   ),
-                  Container(
+                  SizedBox(
                     height: MediaQuery.of(context).size.height > 450
                         ? MediaQuery.of(context).size.height * .8
                         : MediaQuery.of(context).size.height,
@@ -126,7 +123,7 @@ class _LoginPageState extends State<LoginPage> {
                                 height: 80,
                                 width: 350,
                               ),
-                              SizedBox(
+                              const SizedBox(
                                 height: 17,
                               ),
                               Text(
@@ -143,21 +140,21 @@ class _LoginPageState extends State<LoginPage> {
                               //         fontSize: 16,
                               //       ),
                               // ),
-                              SizedBox(
+                              const SizedBox(
                                 height: 50,
                               ),
                               OutlineInput(
                                 labelText: 'Email',
                                 controller: loginEmail,
                               ),
-                              SizedBox(
+                              const SizedBox(
                                 height: 23,
                               ),
                               OutlineInput(
                                 labelText: 'Password',
                                 controller: password,
                               ),
-                              SizedBox(
+                              const SizedBox(
                                 height: 23,
                               ),
                               MyButton(
@@ -172,13 +169,7 @@ class _LoginPageState extends State<LoginPage> {
                                   };
                                   print(body);
                                   VideoService().login(context, body);
-                                  //  AppWebsocketService().sendDriverPingAndListenForPong( 1, 3.222, 4.66666);
-
-                                  // Navigator.push(
-                                  //     context,
-                                  //     MaterialPageRoute(
-                                  //         builder: (context) =>
-                                  //             VideoPlayerApp()));
+                                
                                 },
                               )
                             ],

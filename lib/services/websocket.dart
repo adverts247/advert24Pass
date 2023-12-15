@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 
+import 'package:adverts247Pass/pre-streaming-screen/welcome_onbaording/welcome-onboarding_view.dart';
 import 'package:adverts247Pass/state/location_weather_state.dart';
 import 'package:adverts247Pass/state/user_state.dart';
 import 'package:adverts247Pass/ui/screen/video_player1.dart';
@@ -10,13 +11,11 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
 import 'package:socket_io_client/socket_io_client.dart' as IO;
-import 'package:web_socket_channel/web_socket_channel.dart';
-import 'package:socket_io_client/socket_io_client.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:socket_io_client/socket_io_client.dart' as io;
 
 class AppWebsocketService {
-  void testWebsocket() async {
+  Future<void> testWebsocket() async {
     /// Create the WebSocket channel
     final channel = WebSocketChannel.connect(
       Uri.parse('wss://ws-feed.pro.coinbase.com'),
@@ -25,12 +24,12 @@ class AppWebsocketService {
     channel.sink.add(
       jsonEncode(
         {
-          "type": "subscribe",
-          "channels": [
+          'type': 'subscribe',
+          'channels': [
             {
-              "name": "ticker",
-              "product_ids": [
-                "BTC-EUR",
+              'name': 'ticker',
+              'product_ids': [
+                'BTC-EUR',
               ]
             }
           ]
@@ -124,7 +123,7 @@ class AppWebsocketService {
   }
 
   void checkLocation(context) {
-    final LocationSettings locationSettings = LocationSettings(
+    const LocationSettings locationSettings = LocationSettings(
       accuracy: LocationAccuracy.high,
       distanceFilter: 100,
     );
@@ -165,7 +164,7 @@ class AppWebsocketService {
         'long': lonitude,
       };
 
-      socket!.emit('send_message', {
+      socket.emit('send_message', {
         'roomName': roomName,
         'message': 'fdf',
         'content': content,
@@ -190,7 +189,7 @@ class AppWebsocketService {
     context,
   ) {
     var userData = Provider.of<UserState>(context, listen: false).userDetails;
-    print('dfgfg ${userData}');
+    print('dfgfg $userData');
     var userId = userData['id'];
 
     IO.Socket socket =
@@ -210,8 +209,8 @@ class AppWebsocketService {
       // Handle stop-stream event
       // print('Received stop-stream event');
       // Provider.of<UserState>(context, listen: false).canStream = false;
-      Navigator.push(
-          context, MaterialPageRoute(builder: (context) => WaitingPage()));
+      Navigator.push(context,
+          MaterialPageRoute(builder: (context) => const WaitingPage()));
     });
 
     socket.on('start-stream', (data) {
@@ -220,7 +219,12 @@ class AppWebsocketService {
       Provider.of<UserState>(context, listen: false).canStream = true;
 
       Navigator.push(
-          context, MaterialPageRoute(builder: (context) => VideoPlayerApp()));
+          context,
+          MaterialPageRoute(
+              builder: (context) => const PreStreamingWelcomePage()));
+
+      // Navigator.push(context,
+      //     MaterialPageRoute(builder: (context) => const VideoPlayerApp()));
     });
 
     socket.on('ad-broadcast', (data) {

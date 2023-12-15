@@ -3,6 +3,8 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 
 class MyHomePage extends StatefulWidget {
+  const MyHomePage({super.key});
+
   @override
   _MyHomePageState createState() => _MyHomePageState();
 }
@@ -14,7 +16,7 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   void initState() {
     super.initState();
-    _timer = Timer.periodic(Duration(seconds: 10), (_) {
+    _timer = Timer.periodic(const Duration(seconds: 10), (_) {
       if (!_showModal) {
         showModal();
         
@@ -45,7 +47,7 @@ class _MyHomePageState extends State<MyHomePage> {
           child: Container(
             height: 200,
             color: Colors.white,
-            child: Center(
+            child: const Center(
               child: Text('Modal content'),
             ),
           ),
@@ -70,7 +72,7 @@ class _MyHomePageState extends State<MyHomePage> {
             showModal();
           }
         },
-        child: Center(
+        child: const Center(
           child: Text('Tap here'),
         ),
       ),

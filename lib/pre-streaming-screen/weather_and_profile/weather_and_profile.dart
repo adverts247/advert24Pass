@@ -1,11 +1,10 @@
 import 'dart:async';
 
-import 'package:adverts247Pass/services/video_service.dart';
 import 'package:adverts247Pass/state/location_weather_state.dart';
 import 'package:adverts247Pass/state/user_state.dart';
 import 'package:adverts247Pass/themes.dart';
+import 'package:adverts247Pass/ui/screen/video_player1.dart';
 import 'package:adverts247Pass/ui/screen/waiting_Page.dart';
-import 'package:adverts247Pass/widget/loader.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:intl/intl.dart';
@@ -31,22 +30,23 @@ class _ProfileWeatherViewState extends State<ProfileWeatherView> {
   void initState() {
     getWalletBalance();
     super.initState();
-    _timer = Timer.periodic(Duration(seconds: 5), (timer) {
+    _timer = Timer.periodic(const Duration(seconds: 5), (timer) {
       setState(() {
         showWeather = !showWeather;
       });
     });
 
-    Future.delayed(Duration(seconds: 8), () {
+    Future.delayed(const Duration(seconds: 10), () {
       Get.to(
-        WaitingPage(),
+        const VideoPlayerApp(),
         transition: Transition.fadeIn,
         curve: Curves.easeIn,
-        duration: Duration(seconds: 1),
+        duration: const Duration(seconds: 1),
       );
     });
   }
 
+  @override
   void dispose() {
     _timer?.cancel();
     super.dispose();
@@ -82,7 +82,7 @@ class _ProfileWeatherViewState extends State<ProfileWeatherView> {
           body: isLoading!
               ? Container(
                   color: Colors.black,
-                  child: Center(
+                  child: const Center(
                     child: CircularProgressIndicator(),
                   ),
                 )
@@ -92,7 +92,7 @@ class _ProfileWeatherViewState extends State<ProfileWeatherView> {
                       child: Container(
                         width: MediaQuery.of(context).size.width * .5,
                         height: MediaQuery.of(context).size.height,
-                        decoration: BoxDecoration(color: Colors.black),
+                        decoration: const BoxDecoration(color: Colors.black),
                         child: Padding(
                           padding: EdgeInsets.symmetric(
                               vertical: screenHeight < 450
@@ -130,7 +130,7 @@ class _ProfileWeatherViewState extends State<ProfileWeatherView> {
                                                           : 80,
                                                     ),
                                                   ),
-                                                  SizedBox(
+                                                  const SizedBox(
                                                     width: 10,
                                                   ),
                                                   Column(
@@ -145,7 +145,7 @@ class _ProfileWeatherViewState extends State<ProfileWeatherView> {
                                                             .copyWith(
                                                                 fontSize: 15),
                                                       ),
-                                                      SizedBox(
+                                                      const SizedBox(
                                                         height: 5,
                                                       ),
                                                       Text(
@@ -184,21 +184,21 @@ class _ProfileWeatherViewState extends State<ProfileWeatherView> {
                                                   'Favourite Food',
                                                   walletDetail!['driver']
                                                       ['favourite_food']),
-                                              SizedBox(
+                                              const SizedBox(
                                                 height: 10,
                                               ),
                                               leftAboutMeCard(
                                                   'Favourite Hobby',
                                                   walletDetail!['driver']
                                                       ['favourite_hobby']),
-                                              SizedBox(
+                                              const SizedBox(
                                                 height: 10,
                                               ),
                                               leftAboutMeCard(
                                                   ' Ask Me',
                                                   walletDetail!['driver']
                                                       ['ask_me']),
-                                              SizedBox(
+                                              const SizedBox(
                                                 height: 10,
                                               ),
                                               leftAboutMeCard(
@@ -267,9 +267,9 @@ class _ProfileWeatherViewState extends State<ProfileWeatherView> {
                       child: Container(
                         width: MediaQuery.of(context).size.width * .5,
                         height: MediaQuery.of(context).size.height,
-                        decoration: BoxDecoration(color: Colors.red),
+                        decoration: const BoxDecoration(color: Colors.red),
                         child: AnimatedSwitcher(
-                            duration: Duration(seconds: 4),
+                            duration: const Duration(seconds: 4),
                             transitionBuilder:
                                 (Widget child, Animation<double> animation) {
                               return FadeTransition(
@@ -302,26 +302,26 @@ class _ProfileWeatherViewState extends State<ProfileWeatherView> {
                                               .whiteTextStyle()
                                               .copyWith(fontSize: 24),
                                         ),
-                                        SizedBox(
+                                        const SizedBox(
                                           height: 40,
                                         ),
                                         aboutMeCard(
                                             'Favourite Food',
                                             walletDetail!['driver']
                                                 ['favourite_food']),
-                                        SizedBox(
+                                        const SizedBox(
                                           height: 10,
                                         ),
                                         aboutMeCard(
                                             'Favourite Hobby',
                                             walletDetail!['driver']
                                                 ['favourite_hobby']),
-                                        SizedBox(
+                                        const SizedBox(
                                           height: 10,
                                         ),
                                         aboutMeCard(' Ask Me',
                                             walletDetail!['driver']['ask_me']),
-                                        SizedBox(
+                                        const SizedBox(
                                           height: 10,
                                         ),
                                         aboutMeCard(
@@ -339,14 +339,14 @@ class _ProfileWeatherViewState extends State<ProfileWeatherView> {
     );
   }
 
-  aboutMeCard(String firstText, SecondText) {
+  Column aboutMeCard(String firstText, SecondText) {
     var screenHeight = MediaQuery.of(context).size.height;
     return Column(
       children: [
         Row(
           children: [
             SvgPicture.asset('assets/images/Group 48095515.svg'),
-            SizedBox(
+            const SizedBox(
               width: 30,
             ),
             Column(
@@ -371,7 +371,7 @@ class _ProfileWeatherViewState extends State<ProfileWeatherView> {
         SizedBox(
           height: screenHeight < 450 ? 5 : 15,
         ),
-        Divider(
+        const Divider(
           height: 0.1,
           color: Color(0xffD6DDEB),
         ),
@@ -382,7 +382,7 @@ class _ProfileWeatherViewState extends State<ProfileWeatherView> {
     );
   }
 
-  leftAboutMeCard(String firstText, SecondText) {
+  Column leftAboutMeCard(String firstText, SecondText) {
     var screenHeight = MediaQuery.of(context).size.height;
     return Column(
       children: [
@@ -392,7 +392,7 @@ class _ProfileWeatherViewState extends State<ProfileWeatherView> {
               'assets/images/Group 48095515.svg',
               height: screenHeight < 450 ? 35 : 50,
             ),
-            SizedBox(
+            const SizedBox(
               width: 30,
             ),
             Column(
@@ -417,7 +417,7 @@ class _ProfileWeatherViewState extends State<ProfileWeatherView> {
         SizedBox(
           height: screenHeight < 450 ? 2 : 15,
         ),
-        Divider(
+        const Divider(
           height: 0.1,
           color: Color(0xffD6DDEB),
         ),
@@ -428,13 +428,13 @@ class _ProfileWeatherViewState extends State<ProfileWeatherView> {
     );
   }
 
-  weatherWidget() {
+  Padding weatherWidget() {
     var now = DateTime.now();
     var formatter = DateFormat('EEEE, MMMM d, y');
     String formattedDate = formatter.format(now);
     return Padding(
       padding: const EdgeInsets.all(20.0),
-      child: Container(
+      child: SizedBox(
         height: MediaQuery.of(context).size.height,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -444,7 +444,7 @@ class _ProfileWeatherViewState extends State<ProfileWeatherView> {
                 style: TextStyles()
                     .whiteTextStyle()
                     .copyWith(fontSize: 22, fontWeight: FontWeight.w800)),
-            SizedBox(
+            const SizedBox(
               height: 20,
             ),
             Row(
@@ -454,7 +454,7 @@ class _ProfileWeatherViewState extends State<ProfileWeatherView> {
                   height: 50,
                   width: 50,
                 ),
-                SizedBox(
+                const SizedBox(
                   width: 30,
                 ),
                 Text(
@@ -466,7 +466,7 @@ class _ProfileWeatherViewState extends State<ProfileWeatherView> {
                         .copyWith(fontSize: 22, fontWeight: FontWeight.w800))
               ],
             ),
-            SizedBox(
+            const SizedBox(
               height: 20,
             ),
             Row(
@@ -479,24 +479,23 @@ class _ProfileWeatherViewState extends State<ProfileWeatherView> {
                       (weatherApiResult['main']['temp_min'] - 273.1)
                           .toStringAsFixed(1),
                 ),
-                SizedBox(
+                const SizedBox(
                   width: 20,
                 ),
-                squareBox('WIND',
-                    weatherApiResult['wind']['speed'].toString() + 'm/s')
+                squareBox('WIND', '${weatherApiResult['wind']['speed']}m/s')
               ],
             ),
-            SizedBox(
+            const SizedBox(
               height: 20,
             ),
             Row(
               children: [
                 squareBox('RAIN CHANCE', 'Rain Chance'),
-                SizedBox(
+                const SizedBox(
                   width: 20,
                 ),
-                squareBox('HUMIDITY',
-                    weatherApiResult['main']['humidity'].toString() + '%')
+                squareBox(
+                    'HUMIDITY', '${weatherApiResult['main']['humidity']}%')
               ],
             )
           ],
@@ -505,12 +504,12 @@ class _ProfileWeatherViewState extends State<ProfileWeatherView> {
     );
   }
 
-  squareBox(String topText, bottomText) {
+  Container squareBox(String topText, bottomText) {
     var height = MediaQuery.of(context).size.height;
     return Container(
         color:
             //Colors.black,
-            Color(0xff66594e),
+            const Color(0xff66594e),
         height: height < 500 ? 80 : 130,
         width: height < 500 ? 140 : 180,
         child: Padding(
@@ -523,7 +522,7 @@ class _ProfileWeatherViewState extends State<ProfileWeatherView> {
                   style: TextStyles().whiteTextStyle().copyWith(
                       fontSize: height < 500 ? 10 : 15,
                       fontWeight: FontWeight.w600)),
-              SizedBox(
+              const SizedBox(
                 height: 10,
               ),
               Text(bottomText,

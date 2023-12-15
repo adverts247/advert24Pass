@@ -1,4 +1,3 @@
-import 'dart:convert';
 import 'package:adverts247Pass/services/websocket.dart';
 import 'package:adverts247Pass/state/user_state.dart';
 import 'package:adverts247Pass/themes.dart';
@@ -6,10 +5,9 @@ import 'package:adverts247Pass/themes.dart';
 import 'package:adverts247Pass/widget/loader.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:socket_io_client/socket_io_client.dart' as IO;
 
 class WaitingPage extends StatefulWidget {
-  WaitingPage({Key? key}) : super(key: key);
+  const WaitingPage({Key? key}) : super(key: key);
 
   @override
   _WaitingPageState createState() => _WaitingPageState();
@@ -25,12 +23,12 @@ class _WaitingPageState extends State<WaitingPage> {
   Future<void> checkIfisFirstTime() async {
     AppWebsocketService().broadcast(context);
     var isFirstTime =
-        await Provider.of<UserState>(context, listen: false).isFirstTime;
+        Provider.of<UserState>(context, listen: false).isFirstTime;
     print(isFirstTime);
 
     if (isFirstTime == null) {
       loader().circularModalLoading(context);
-      Future.delayed(Duration(seconds: 6), () {
+      Future.delayed(const Duration(seconds: 6), () {
         Navigator.pop(context);
       });
     } else {
@@ -51,13 +49,13 @@ class _WaitingPageState extends State<WaitingPage> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Container(
+            SizedBox(
               width: MediaQuery.of(context).size.width * .4,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
                   Image.asset('assets/images/Group (6).png'),
-                  SizedBox(height: 5),
+                  const SizedBox(height: 5),
                   Text(
                     '...reach your true target',
                     textAlign: TextAlign.right,
@@ -66,7 +64,7 @@ class _WaitingPageState extends State<WaitingPage> {
                 ],
               ),
             ),
-            SizedBox(
+            const SizedBox(
               height: 20,
             ),
             RichText(
@@ -76,7 +74,7 @@ class _WaitingPageState extends State<WaitingPage> {
                     text: 'Connecting ',
                     style: TextStyles().whiteTextStyle().copyWith(fontSize: 20),
                   ),
-                  TextSpan(
+                  const TextSpan(
                     text: '....',
                     style: TextStyle(color: Colors.red, fontSize: 20),
                   ),

@@ -602,8 +602,8 @@ Future<String?> showDatePickerDialog(BuildContext context) async {
         data: ThemeData.light().copyWith(
           primaryColor: Colors.blue,
           //  accentColor: Colors.blue,
-          colorScheme: ColorScheme.light(primary: Colors.blue),
-          buttonTheme: ButtonThemeData(textTheme: ButtonTextTheme.primary),
+          colorScheme: const ColorScheme.light(primary: Colors.blue),
+          buttonTheme: const ButtonThemeData(textTheme: ButtonTextTheme.primary),
         ),
         child: child!,
       );
@@ -619,10 +619,10 @@ Future<String?> showDatePickerDialog(BuildContext context) async {
 }
 
 Future<String?> pickImagePath() async {
-  final ImagePicker _picker = ImagePicker();
+  final ImagePicker picker = ImagePicker();
 
   try {
-    final XFile? image = await _picker.pickImage(source: ImageSource.gallery);
+    final XFile? image = await picker.pickImage(source: ImageSource.gallery);
 
     if (image != null) {
     

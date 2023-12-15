@@ -3,7 +3,6 @@ import 'package:adverts247Pass/pre-streaming-screen/welcome_onbaording/welcome_o
 import 'package:adverts247Pass/themes.dart';
 import 'package:adverts247Pass/services/websocket.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:stacked/stacked.dart';
 import 'package:get/get.dart';
 
@@ -21,11 +20,11 @@ class _PreStreamingWelcomePageState extends State<PreStreamingWelcomePage> {
     super.initState();
     AppWebsocketService().determinePosition();
 
-    Future.delayed(Duration(seconds: 10), () {
-      Get.to(ProfileImage(),
+    Future.delayed(const Duration(seconds: 10), () {
+      Get.to(const ProfileImage(),
       transition: Transition.fadeIn,
         curve: Curves.easeIn,
-        duration: Duration(seconds: 1),
+        duration: const Duration(seconds: 1),
       
       );
     });
@@ -45,13 +44,13 @@ class _PreStreamingWelcomePageState extends State<PreStreamingWelcomePage> {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Container(
+                    SizedBox(
                       width: MediaQuery.of(context).size.width * .3,
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.end,
                         children: [
                           Image.asset('assets/images/Group (6).png'),
-                          SizedBox(height: 5),
+                          const SizedBox(height: 5),
                           Text(
                             '...reach your true target',
                             textAlign: TextAlign.right,
@@ -62,7 +61,7 @@ class _PreStreamingWelcomePageState extends State<PreStreamingWelcomePage> {
                         ],
                       ),
                     ),
-                    SizedBox(
+                    const SizedBox(
                       height: 20,
                     ),
                     Text(

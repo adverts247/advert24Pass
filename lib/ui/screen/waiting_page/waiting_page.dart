@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:web_socket_channel/io.dart';
 
 class WebSocketListener extends StatefulWidget {
+  const WebSocketListener({super.key});
+
   @override
   _WebSocketListenerState createState() => _WebSocketListenerState();
 }
@@ -30,13 +32,13 @@ class _WebSocketListenerState extends State<WebSocketListener> {
               context,
               MaterialPageRoute(
                   builder: (context) =>
-                      VideoPlayerApp()), // Replace NextPage with your next page
+                      const VideoPlayerApp()), // Replace NextPage with your next page
             );
           }
         }
         return Scaffold(
           appBar: AppBar(
-            title: Text('WebSocket Listener'),
+            title: const Text('WebSocket Listener'),
           ),
           body: Center(
             child: Text(snapshot.hasData ? '${snapshot.data}' : 'No data'),

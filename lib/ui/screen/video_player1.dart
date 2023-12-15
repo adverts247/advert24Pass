@@ -1,9 +1,6 @@
 import 'dart:async';
 import 'dart:io';
-import 'dart:math';
-import 'package:adverts247Pass/tools.dart' as tools;
 
-import 'package:adverts247Pass/after_ads_display/radio_button_question.dart';
 
 import 'package:adverts247Pass/model/video_model.dart';
 
@@ -14,8 +11,6 @@ import 'package:adverts247Pass/services/websocket.dart';
 import 'package:adverts247Pass/ui/screen/about_me.dart';
 import 'package:adverts247Pass/ui/screen/rating.dart';
 
-import 'package:adverts247Pass/widget/ads_form.dart';
-import 'package:adverts247Pass/widget/barcode.dart';
 import 'package:adverts247Pass/widget/button.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -23,12 +18,13 @@ import 'package:material_design_icons_flutter/material_design_icons_flutter.dart
 import 'package:provider/provider.dart';
 import 'package:video_player/video_player.dart';
 //import 'package:flutter_vlc_player/flutter_vlc_player.dart';
-import 'package:socket_io_client/socket_io_client.dart' as IO;
 import 'package:screen_brightness/screen_brightness.dart';
 
 import 'package:wakelock_plus/wakelock_plus.dart';
 
 class VideoPlayerApp extends StatefulWidget {
+  const VideoPlayerApp({super.key});
+
   @override
   _VideoPlayerAppState createState() => _VideoPlayerAppState();
 }
@@ -47,7 +43,7 @@ class _VideoPlayerAppState extends State<VideoPlayerApp>
   double? _volume = 0.3;
   late BuildContext myContext;
   bool? showVolumeSlider = false;
-  double _brightness = 1;
+  final double _brightness = 1;
   int chuncksPlayed = 0;
   //VlcPlayerController? vlcController;
   AnimationController? likeController;
@@ -72,14 +68,14 @@ class _VideoPlayerAppState extends State<VideoPlayerApp>
     WakelockPlus.toggle(enable: true);
 
     //send driver location
-    Timer.periodic(Duration(seconds: 1), (timer) {
+    Timer.periodic(const Duration(seconds: 1), (timer) {
       AppWebsocketService().checkLocation(context);
     });
 
     super.initState();
     likeController = AnimationController(
       vsync: this,
-      duration: Duration(seconds: 2),
+      duration: const Duration(seconds: 2),
     );
   }
 
@@ -172,7 +168,7 @@ class _VideoPlayerAppState extends State<VideoPlayerApp>
           print(_controller!.value.errorDescription);
           print(_controller!.value.position);
 
-          print(" buffering ${_controller!.value.hasError}");
+          print(' buffering ${_controller!.value.hasError}');
           if (_controller!.value.isCompleted || _controller!.value.hasError) {
             if (_currentIndex < videoModelList!.length - 1) {
               nextAds();
@@ -182,7 +178,7 @@ class _VideoPlayerAppState extends State<VideoPlayerApp>
               setState(() {
                 _currentIndex = -1;
               });
-              print('dsdsd ${_currentIndex}');
+              print('dsdsd $_currentIndex');
               nextAds();
               _controller!.dispose();
             }
@@ -225,7 +221,7 @@ class _VideoPlayerAppState extends State<VideoPlayerApp>
       //   displayWelcome = true;
       // });
 
-      Future.delayed(Duration(seconds: 5), () {
+      Future.delayed(const Duration(seconds: 5), () {
         setState(() {
           rating = false;
 
@@ -246,7 +242,7 @@ class _VideoPlayerAppState extends State<VideoPlayerApp>
       rating = true;
     });
 
-    Future.delayed(Duration(seconds: 5), () {
+    Future.delayed(const Duration(seconds: 5), () {
       setState(() {
         rating = false;
 
@@ -290,12 +286,12 @@ class _VideoPlayerAppState extends State<VideoPlayerApp>
               //     ? WelcomePage()
               //     :
               rating!
-                  ? RatingPage()
+                  ? const RatingPage()
                   : isLoading!
-                      ? AboutMePage()
+                      ? const AboutMePage()
                       : !isPhoto!
                           ? video.toString().endsWith('mkv')
-                              ? Column(
+                              ? const Column(
                                   children: [
                                     // Expanded(
                                     //   child: VlcPlayer(
@@ -334,7 +330,7 @@ class _VideoPlayerAppState extends State<VideoPlayerApp>
                                                           false;
                                                     });
                                                   },
-                                                  child: Container(
+                                                  child: SizedBox(
                                                     width: double.infinity,
                                                     height: double.infinity,
                                                     child: VideoPlayer(
@@ -349,7 +345,7 @@ class _VideoPlayerAppState extends State<VideoPlayerApp>
                                                       ? Column(
                                                           children: [
                                                             Text(
-                                                              " Volume ${_volume! * 100}",
+                                                              ' Volume ${_volume! * 100}',
                                                               style: TextStyles()
                                                                   .blackTextStyle700()
                                                                   .copyWith(
@@ -378,7 +374,7 @@ class _VideoPlayerAppState extends State<VideoPlayerApp>
                                                               max: 1.0,
                                                               divisions: 10,
                                                               label:
-                                                                  " Volumne ${_volume! * 100}",
+                                                                  ' Volumne ${_volume! * 100}',
                                                             ),
                                                           ],
                                                         )
@@ -422,7 +418,7 @@ class _VideoPlayerAppState extends State<VideoPlayerApp>
                                                   //                 )
                                                   Container(
                                                     margin:
-                                                        EdgeInsets.symmetric(
+                                                        const EdgeInsets.symmetric(
                                                             vertical: 20),
                                                   ),
 
@@ -433,7 +429,7 @@ class _VideoPlayerAppState extends State<VideoPlayerApp>
                                                         vertical: 10),
                                                     child: Container(
                                                       decoration: BoxDecoration(
-                                                          color: Color.fromARGB(
+                                                          color: const Color.fromARGB(
                                                               138, 45, 45, 45),
                                                           borderRadius:
                                                               BorderRadius
@@ -497,7 +493,7 @@ class _VideoPlayerAppState extends State<VideoPlayerApp>
                                                                           horizontal:
                                                                               10),
                                                                       child: VideoProgressIndicator(
-                                                                          colors: VideoProgressColors(
+                                                                          colors: const VideoProgressColors(
                                                                               playedColor: Colors.white,
                                                                               bufferedColor: Colors.red,
                                                                               backgroundColor: Colors.white30),
@@ -534,20 +530,20 @@ class _VideoPlayerAppState extends State<VideoPlayerApp>
                                         bottomBottomWidget()
                                       ],
                                     )
-                                  : AboutMePage()
+                                  : const AboutMePage()
                           : FutureBuilder<Uint8List>(
                               future: futureValue,
                               builder: (context, snapshot) {
                                 if (snapshot.connectionState ==
                                     ConnectionState.waiting) {
-                                  return AboutMePage();
+                                  return const AboutMePage();
                                 } else if (snapshot.hasError) {
                                   return Text('Error: ${snapshot.error}');
                                 } else {
                                   final imageBytes = snapshot.data;
 
                                   if (imageBytes != null) {
-                                    Future.delayed(Duration(seconds: 5), () {
+                                    Future.delayed(const Duration(seconds: 5), () {
                                       nextAds();
                                     });
                                     return Column(
@@ -567,7 +563,7 @@ class _VideoPlayerAppState extends State<VideoPlayerApp>
                                       ],
                                     );
                                   } else {
-                                    return Text('No image data received');
+                                    return const Text('No image data received');
                                   }
                                 }
                               },
@@ -575,7 +571,7 @@ class _VideoPlayerAppState extends State<VideoPlayerApp>
     );
   }
 
-  bottomWidget() {
+  Container bottomWidget() {
     var height = MediaQuery.of(context).size.height;
     return Container(
       //height: 85,
@@ -586,7 +582,7 @@ class _VideoPlayerAppState extends State<VideoPlayerApp>
           children: [
             Row(
               children: [
-                SizedBox(
+                const SizedBox(
                   width: 40,
                 ),
                 InkWell(
@@ -600,7 +596,7 @@ class _VideoPlayerAppState extends State<VideoPlayerApp>
                       if (_isLarge) {
                         likeController!.forward();
 
-                        Future.delayed(Duration(milliseconds: 110), () {
+                        Future.delayed(const Duration(milliseconds: 110), () {
                           setState(() {
                             _isLarge = !_isLarge;
                           });
@@ -611,13 +607,13 @@ class _VideoPlayerAppState extends State<VideoPlayerApp>
                     });
 
                     var sessionId =
-                        await Provider.of<UserState>(context, listen: false)
+                        Provider.of<UserState>(context, listen: false)
                             .sessionId;
-                    var body = {"sessionId": sessionId};
+                    var body = {'sessionId': sessionId};
                     VideoService()
                         .likeVideo(context, body, currentAds!.content.path);
                   },
-                  child: Container(
+                  child: SizedBox(
                     height: height < 500 ? 30 : 40,
                     width: 50,
                     child: Column(
@@ -625,7 +621,7 @@ class _VideoPlayerAppState extends State<VideoPlayerApp>
                       children: [
                         AnimatedContainer(
                           curve: Curves.easeInOut,
-                          duration: Duration(milliseconds: 210),
+                          duration: const Duration(milliseconds: 210),
                           child: Icon(
                             MdiIcons.thumbUpOutline,
                             color: Colors.blue,
@@ -646,7 +642,7 @@ class _VideoPlayerAppState extends State<VideoPlayerApp>
                     ),
                   ),
                 ),
-                SizedBox(
+                const SizedBox(
                   width: 40,
                 ),
                 InkWell(
@@ -660,7 +656,7 @@ class _VideoPlayerAppState extends State<VideoPlayerApp>
                       if (_isdisLikeLarge) {
                         likeController!.forward();
 
-                        Future.delayed(Duration(milliseconds: 110), () {
+                        Future.delayed(const Duration(milliseconds: 110), () {
                           setState(() {
                             _isdisLikeLarge = !_isdisLikeLarge;
                           });
@@ -671,13 +667,13 @@ class _VideoPlayerAppState extends State<VideoPlayerApp>
                     });
 
                     var sessionId =
-                        await Provider.of<UserState>(context, listen: false)
+                        Provider.of<UserState>(context, listen: false)
                             .sessionId;
-                    var body = {"sessionId": sessionId};
+                    var body = {'sessionId': sessionId};
                     VideoService()
                         .disLikeVideo(context, body, currentAds!.content.path);
                   },
-                  child: Container(
+                  child: SizedBox(
                     height: height < 500 ? 30 : 40,
                     width: 50,
                     child: Column(
@@ -707,7 +703,7 @@ class _VideoPlayerAppState extends State<VideoPlayerApp>
             // ),
             Row(
               children: [
-                Container(
+                SizedBox(
                     width: 70,
                     child: SecondaryButton(
                       text: 'Prev',
@@ -717,10 +713,10 @@ class _VideoPlayerAppState extends State<VideoPlayerApp>
                         previousAds();
                       },
                     )),
-                SizedBox(
+                const SizedBox(
                   width: 20,
                 ),
-                Container(
+                SizedBox(
                     width: 70,
                     child: MyButton(
                       text: 'Next',
@@ -738,7 +734,7 @@ class _VideoPlayerAppState extends State<VideoPlayerApp>
     );
   }
 
-  bottomBottomWidget() {
+  Container bottomBottomWidget() {
     return Container(
       decoration: BoxDecoration(
           border: Border.all(color: Colors.white),
@@ -779,7 +775,7 @@ class _VideoPlayerAppState extends State<VideoPlayerApp>
                         ],
                       ),
                     ),
-                    SizedBox(
+                    const SizedBox(
                       width: 30,
                     ),
                     InkWell(
@@ -789,7 +785,7 @@ class _VideoPlayerAppState extends State<VideoPlayerApp>
                       },
                       child: Column(
                         children: [
-                          Icon(Icons.volume_off, color: Colors.white),
+                          const Icon(Icons.volume_off, color: Colors.white),
                           Text(
                             //'ugyg',
                             'Mute',
@@ -800,7 +796,7 @@ class _VideoPlayerAppState extends State<VideoPlayerApp>
                         ],
                       ),
                     ),
-                    SizedBox(
+                    const SizedBox(
                       width: 30,
                     ),
                     Column(
@@ -828,7 +824,7 @@ class _VideoPlayerAppState extends State<VideoPlayerApp>
                         ),
                       ],
                     ),
-                    SizedBox(
+                    const SizedBox(
                       width: 40,
                     ),
                     ClipRRect(

@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 
 class FadeInPageRoute<T> extends PageRouteBuilder<T> {
-  final Widget page;
 
   FadeInPageRoute({required this.page})
       : super(
@@ -24,4 +23,5 @@ class FadeInPageRoute<T> extends PageRouteBuilder<T> {
             );
           },
         );
+  final Widget page;
 }

@@ -1,7 +1,6 @@
 import 'package:adverts247Pass/pre-streaming-screen/weather_and_profile/weather_and_profile.dart';
 import 'package:adverts247Pass/state/user_state.dart';
 import 'package:adverts247Pass/themes.dart';
-import 'package:adverts247Pass/widget/clipper_page.dart/clipper_widget.dart';
 import 'package:get/get.dart';
 
 import 'package:flutter/material.dart';
@@ -15,15 +14,16 @@ class ProfileImage extends StatefulWidget {
 }
 
 class _ProfileImageState extends State<ProfileImage> {
+  @override
   void initState() {
     super.initState();
 
-    Future.delayed(Duration(seconds: 8), () {
-      Get.to(ProfileWeatherView(),
+    Future.delayed(const Duration(seconds: 10), () {
+      Get.to(const ProfileWeatherView(),
 
         transition: Transition.fadeIn,
         curve: Curves.easeInOut,
-        duration: Duration(seconds: 1),
+        duration: const Duration(seconds: 1),
       
       );
     });
@@ -36,7 +36,7 @@ class _ProfileImageState extends State<ProfileImage> {
       backgroundColor: Colors.black,
       body: Stack(
         children: [
-          Container(
+          SizedBox(
             height: MediaQuery.of(context).size.height,
             width: MediaQuery.of(context).size.width,
             child: Column(
@@ -54,7 +54,7 @@ class _ProfileImageState extends State<ProfileImage> {
               ],
             ),
           ),
-          Container(
+          SizedBox(
             height: MediaQuery.of(context).size.height,
             width: MediaQuery.of(context).size.width,
             child: Column(
@@ -65,7 +65,7 @@ class _ProfileImageState extends State<ProfileImage> {
                   'You are riding with',
                   style: TextStyles().whiteTextStyle().copyWith(fontSize: 30),
                 ),
-                SizedBox(
+                const SizedBox(
                   height: 20,
                 ),
                 Text(
@@ -74,7 +74,7 @@ class _ProfileImageState extends State<ProfileImage> {
                       .whiteTextStyle()
                       .copyWith(fontSize: 50, fontWeight: FontWeight.w700),
                 ),
-                SizedBox(
+                const SizedBox(
                   height: 20,
                 ),
                 ClipRRect(

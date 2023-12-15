@@ -1,9 +1,7 @@
-import 'package:adverts247Pass/pre-streaming-screen/profile_display/profile_image_display.dart';
 import 'package:adverts247Pass/state/location_weather_state.dart';
 import 'package:adverts247Pass/state/user_state.dart';
 import 'package:get/get.dart';
 
-import 'package:adverts247Pass/services/websocket.dart';
 import 'package:adverts247Pass/ui/screen/splash_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -13,7 +11,7 @@ void main() {
   WidgetsFlutterBinding.ensureInitialized();
   SystemChrome.setPreferredOrientations([DeviceOrientation.landscapeLeft])
       .then((_) {
-    runApp(new MyApp());
+    runApp(const MyApp());
   });
 }
 
@@ -41,7 +39,7 @@ class MyApp extends StatelessWidget {
         ),
 
         
-        home: SplashScreen(),
+        home: const SplashScreen(),
 
       ),
     );

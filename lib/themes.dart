@@ -11,7 +11,7 @@ class themes {
   Color whiteColor = Colors.white;
   Color blackColor = Colors.black;
   Color blueColor = const Color(0xff6C6AEB);
-  Color greyText = Color.fromARGB(171, 50, 71, 92);
+  Color greyText = const Color.fromARGB(171, 50, 71, 92);
   Color cardColor = const Color(0xff282C4A);
   Color pinkColor = const Color(0xffFF6E91);
 

@@ -2,6 +2,8 @@ import 'package:adverts247Pass/themes.dart';
 import 'package:flutter/material.dart';
 
 class AnimatedImage extends StatefulWidget {
+  const AnimatedImage({super.key});
+
   @override
   _AnimatedImageState createState() => _AnimatedImageState();
 }
@@ -23,7 +25,7 @@ class _AnimatedImageState extends State<AnimatedImage> {
       _isAnimating = !_isAnimating;
     });
 
-    Future.delayed(Duration(milliseconds: 550), () {
+    Future.delayed(const Duration(milliseconds: 550), () {
       setState(() {
         _imageSize = _isAnimating ? 400.0 : 100.0;
         _imageheigh = _isAnimating ? 150.0 : 90.0;
@@ -41,7 +43,7 @@ class _AnimatedImageState extends State<AnimatedImage> {
   Widget build(BuildContext context) {
     return Container(
       child: AnimatedContainer(
-        duration: Duration(microseconds: 550),
+        duration: const Duration(microseconds: 550),
         curve: Curves.easeInOut,
 
         color: Colors.transparent,
@@ -72,13 +74,13 @@ class loader {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Container(
+                    SizedBox(
                       width: MediaQuery.of(context).size.width * .4,
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.end,
                         children: [
                           Image.asset('assets/images/Group (6).png'),
-                          SizedBox(height: 5),
+                          const SizedBox(height: 5),
                           Text(
                             '...reach your true target',
                             textAlign: TextAlign.right,
@@ -89,7 +91,7 @@ class loader {
                         ],
                       ),
                     ),
-                    SizedBox(
+                    const SizedBox(
                       height: 20,
                     ),
                     RichText(
@@ -101,14 +103,14 @@ class loader {
                                 .whiteTextStyle()
                                 .copyWith(fontSize: 20),
                           ),
-                          TextSpan(
+                          const TextSpan(
                             text: '....',
                             style: TextStyle(color: Colors.red, fontSize: 20),
                           ),
                         ],
                       ),
                     ),
-                    SizedBox(
+                    const SizedBox(
                       height: 20,
                     ),
 

@@ -1,7 +1,6 @@
 // IMPORT PACKAGE
 import 'dart:async';
 
-import 'package:adverts247Pass/services/network.dart/network.dart';
 import 'package:adverts247Pass/services/network.dart/streaming-network.dart';
 import 'package:ota_update/ota_update.dart';
 import 'package:flutter/material.dart';

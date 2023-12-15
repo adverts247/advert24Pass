@@ -4,12 +4,9 @@ import 'package:adverts247Pass/themes.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 
 import 'package:adverts247Pass/widget/button.dart';
-import 'package:adverts247Pass/widget/input_textform.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
-import 'package:top_snackbar_flutter/custom_snack_bar.dart';
-import 'package:top_snackbar_flutter/top_snack_bar.dart';
 
 class RatingPage extends StatefulWidget {
   const RatingPage({super.key});
@@ -40,14 +37,14 @@ class _RatingPageState extends State<RatingPage> {
           width: MediaQuery.of(context).size.width,
           color: Colors.black,
           child: Center(
-            child: Container(
+            child: SizedBox(
               height: MediaQuery.of(context).size.height > 450
                   ? MediaQuery.of(context).size.height * .7
                   : MediaQuery.of(context).size.height,
               width: MediaQuery.of(context).size.width * .7,
               child: Stack(
                 children: [
-                  Container(
+                  SizedBox(
                     height: MediaQuery.of(context).size.height > 450
                         ? MediaQuery.of(context).size.height * .7
                         : MediaQuery.of(context).size.height,
@@ -62,7 +59,7 @@ class _RatingPageState extends State<RatingPage> {
                       ],
                     ),
                   ),
-                  Container(
+                  SizedBox(
                     height: MediaQuery.of(context).size.height > 450
                         ? MediaQuery.of(context).size.height * .7
                         : MediaQuery.of(context).size.height,
@@ -89,7 +86,7 @@ class _RatingPageState extends State<RatingPage> {
                                 Colors.grey.withOpacity(0.08), // Shadow color
                             spreadRadius: 5, // How much the shadow spreads
                             blurRadius: 9, // How blurry the shadow is
-                            offset: Offset(0, 2), // Offset of the shadow
+                            offset: const Offset(0, 2), // Offset of the shadow
                           ),
                         ],
                       ),
@@ -113,7 +110,7 @@ class _RatingPageState extends State<RatingPage> {
                               //         fontSize: 16,
                               //       ),
                               // ),
-                              SizedBox(
+                              const SizedBox(
                                 height: 50,
                               ),
                               Text(
@@ -122,7 +119,7 @@ class _RatingPageState extends State<RatingPage> {
                                       fontSize: 20,
                                     ),
                               ),
-                              SizedBox(
+                              const SizedBox(
                                 height: 30,
                               ),
                               RatingBar.builder(
@@ -133,8 +130,8 @@ class _RatingPageState extends State<RatingPage> {
                                 allowHalfRating: true,
                                 itemCount: 5,
                                 itemPadding:
-                                    EdgeInsets.symmetric(horizontal: 4.0),
-                                itemBuilder: (context, _) => Icon(
+                                    const EdgeInsets.symmetric(horizontal: 4.0),
+                                itemBuilder: (context, _) => const Icon(
                                   Icons.star,
                                   color: Colors.amber,
                                 ),
@@ -145,21 +142,21 @@ class _RatingPageState extends State<RatingPage> {
                                   });
                                 },
                               ),
-                              SizedBox(
+                              const SizedBox(
                                 height: 30,
                               ),
-                              Container(
+                              SizedBox(
                                 width: 150,
                                 child: MyButton(
                                   text: 'Submit',
                                   onPressed: () async {
                                     var sessionId =
-                                        await Provider.of<UserState>(context,
+                                        Provider.of<UserState>(context,
                                                 listen: false)
                                             .sessionId;
                                     var body = {
-                                      "sessionId": sessionId.toString(),
-                                      "rating": ratingValue.toString()
+                                      'sessionId': sessionId.toString(),
+                                      'rating': ratingValue.toString()
                                     };
                                     print(body);
                                     VideoService().rateVideo(

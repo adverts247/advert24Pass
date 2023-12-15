@@ -4,12 +4,10 @@ import 'package:adverts247Pass/model/video_model.dart';
 import 'package:adverts247Pass/services/update_app.dart';
 import 'package:adverts247Pass/pre-streaming-screen/welcome_onbaording/welcome-onboarding_view.dart';
 import 'package:adverts247Pass/services/network.dart/network.dart';
-import 'package:adverts247Pass/services/network.dart/streaming-network.dart';
 import 'package:adverts247Pass/services/wether_service/weather_service.dart';
 import 'package:adverts247Pass/state/user_state.dart';
 import 'package:adverts247Pass/ui/screen/waiting_Page.dart';
 
-import 'package:adverts247Pass/services/websocket.dart';
 import 'package:adverts247Pass/widget/loader.dart';
 import 'package:flutter/material.dart';
 import 'package:adverts247Pass/tools.dart' as tools;
@@ -46,10 +44,10 @@ class VideoService {
       OtaService().checkifUpdateIsNeeded(context);
       //
       Get.to(
-        PreStreamingWelcomePage(),
+        const WaitingPage(),
         transition: Transition.fadeIn,
         curve: Curves.easeInOut,
-        duration: Duration(seconds: 1),
+        duration: const Duration(seconds: 1),
       );
 
       debugPrint(result);
@@ -119,8 +117,8 @@ class VideoService {
   //   }).send();
   // }
 
-  void likeVideo(context, dynamic body, path) async {
-    final url = Uri.parse('${path}/like'); //
+  Future<void> likeVideo(context, dynamic body, path) async {
+    final url = Uri.parse('$path/like'); //
     print(url);
     print(body);
 
@@ -138,9 +136,9 @@ class VideoService {
       showTopSnackBar(
           Overlay.of(context!),
           CustomSnackBar.success(
-            backgroundColor: Colors.green.withOpacity(0.2)!,
+            backgroundColor: Colors.green.withOpacity(0.2),
             borderRadius: BorderRadius.circular(5),
-            boxShadow: [],
+            boxShadow: const [],
             icon: const Icon(Icons.sentiment_very_satisfied,
                 color: Color(0x15000000), size: 120),
             message: 'Liked ',
@@ -155,15 +153,15 @@ class VideoService {
         CustomSnackBar.error(
           backgroundColor: Colors.black26,
           borderRadius: BorderRadius.circular(5),
-          boxShadow: [],
+          boxShadow: const [],
           message: jsonDecode(response.body)['message'],
         ),
       );
     }
   }
 
-  void disLikeVideo(context, dynamic body, path) async {
-    final url = Uri.parse('${path}/dislike'); //
+  Future<void> disLikeVideo(context, dynamic body, path) async {
+    final url = Uri.parse('$path/dislike'); //
     print(url);
     print(body);
 
@@ -181,9 +179,9 @@ class VideoService {
       showTopSnackBar(
           Overlay.of(context!),
           CustomSnackBar.success(
-            backgroundColor: Colors.green.withOpacity(0.2)!,
+            backgroundColor: Colors.green.withOpacity(0.2),
             borderRadius: BorderRadius.circular(5),
-            boxShadow: [],
+            boxShadow: const [],
             icon: const Icon(Icons.sentiment_dissatisfied,
                 color: Color(0x15000000), size: 120),
             message: jsonDecode(response.body)['message'],
@@ -197,7 +195,7 @@ class VideoService {
         CustomSnackBar.error(
           backgroundColor: Colors.black26,
           borderRadius: BorderRadius.circular(5),
-          boxShadow: [],
+          boxShadow: const [],
           message: jsonDecode(response.body)['message'],
         ),
       );
@@ -233,7 +231,7 @@ class VideoService {
       method: 'GET',
       context: context,
       headers: {
-        'Authorization': 'Bearer ${token}',
+        'Authorization': 'Bearer $token',
       },
       shouldPopOnError: false,
       onSuccess: (_, result) async {
@@ -265,7 +263,7 @@ class VideoService {
       method: 'GET',
       context: context,
       headers: {
-        'Authorization': 'Bearer ${token}',
+        'Authorization': 'Bearer $token',
       },
       shouldPopOnError: false,
       onSuccess: (_, result) async {
@@ -298,7 +296,7 @@ class VideoService {
     };
 
     //var uri = Uri.parse('${path}?location=3.584494,1.090932');
-    var uri = Uri.parse('${path}');
+    var uri = Uri.parse(path);
 
     var request = http.Request('GET', uri);
     request.headers.addAll(headers);
@@ -312,7 +310,7 @@ class VideoService {
         return Uint8List.fromList(byteList);
       } else {
         print(
-          'HTTP Error: ${response.statusCode} , ${uri}',
+          'HTTP Error: ${response.statusCode} , $uri',
         );
         print(response.reasonPhrase);
 
@@ -338,7 +336,7 @@ class VideoService {
         final userState = Provider.of<UserState>(context, listen: false);
         final userData = userState.userDetails;
         final id = userData['id'].toString();
-        final url = 'https://ads247-streaming.lazynerdstudios.com';
+        const url = 'https://ads247-streaming.lazynerdstudios.com';
         final headers = {
           'Range': '0',
           'driver-id': id,
@@ -382,7 +380,7 @@ class VideoService {
           }
         } else {
           print(
-              'HTTP Error: ${response.statusCode}, ${uri}, ${response.reasonPhrase}');
+              'HTTP Error: ${response.statusCode}, $uri, ${response.reasonPhrase}');
           return Uint8List(
               0); // Return an empty Uint8List or handle the error accordingly.
         }
@@ -402,10 +400,10 @@ class VideoService {
 
   // delete item after 7b days
   void performFunctionAfterOneWeek(String video) {
-    print("Function will be performed after one week.");
+    print('Function will be performed after one week.');
 
     // Delay the function execution for one week
-    Future.delayed(Duration(days: 7), () {
+    Future.delayed(const Duration(days: 7), () {
       // Your function code here
       tools.deleteFile(video);
     });
@@ -461,7 +459,7 @@ class VideoService {
     };
     print(headers);
 
-    var uri = Uri.parse('${path}?location=3.584494,1.090932');
+    var uri = Uri.parse('$path?location=3.584494,1.090932');
     print(uri);
 
     var request = http.Request('GET', uri);
@@ -490,7 +488,7 @@ class VideoService {
       } else {
         print('HTTP Error: ${response.statusCode}');
         print(
-          'HTTP Error: ${response.statusCode} , ${uri}',
+          'HTTP Error: ${response.statusCode} , $uri',
         );
         print(response.reasonPhrase);
         return Uint8List(
@@ -513,26 +511,26 @@ class VideoService {
         final appDir = await getApplicationDocumentsDirectory();
 
         // Generate a unique file name for the downloaded video
-        final fileName = DateTime.now().toIso8601String() + ".mp4";
+        final fileName = '${DateTime.now().toIso8601String()}.mp4';
 
         // Combine the directory path and the file name to create a complete file path
-        final filePath = "${appDir.path}/$fileName";
+        final filePath = '${appDir.path}/$fileName';
 
         // Write the downloaded video data to the file
         File videoFile = File(filePath);
         await videoFile.writeAsBytes(response.bodyBytes, flush: true);
-        print('download ${filePath}');
+        print('download $filePath');
 
         // Return the file path of the downloaded video
         return filePath;
       } catch (e) {
         // Handle errors (e.g., file write error)
-        print("Error writing video file: $e");
+        print('Error writing video file: $e');
         return 'nhh';
       }
     } else {
       // Handle HTTP request error
-      print("HTTP request error: ${response.statusCode}");
+      print('HTTP request error: ${response.statusCode}');
       return 'nhn';
     }
   }
@@ -548,7 +546,7 @@ class VideoService {
     };
 
     var uri = Uri.parse(
-        'http://178.128.163.25:4036/stream?path=${path}&sessionId=${sessionId}');
+        'http://178.128.163.25:4036/stream?path=$path&sessionId=$sessionId');
 
     var request = http.Request('GET', uri);
     request.headers.addAll(headers);
@@ -589,7 +587,7 @@ class VideoService {
 
   ///////rate ads ///////////////////////////////////////
   ///
-  void rateVideo(
+  Future<void> rateVideo(
     context,
     dynamic body,
   ) async {
@@ -612,9 +610,9 @@ class VideoService {
       showTopSnackBar(
           Overlay.of(context!),
           CustomSnackBar.success(
-            backgroundColor: Colors.green.withOpacity(0.2)!,
+            backgroundColor: Colors.green.withOpacity(0.2),
             borderRadius: BorderRadius.circular(5),
-            boxShadow: [],
+            boxShadow: const [],
             message: 'Thank you for rating this ad',
           ));
     } else {
@@ -626,7 +624,7 @@ class VideoService {
         CustomSnackBar.error(
           backgroundColor: Colors.black26,
           borderRadius: BorderRadius.circular(5),
-          boxShadow: [],
+          boxShadow: const [],
           message: jsonDecode(response.body)['message'],
         ),
       );

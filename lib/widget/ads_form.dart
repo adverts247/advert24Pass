@@ -1,11 +1,9 @@
 import 'package:adverts247Pass/services/video_service.dart';
 import 'package:adverts247Pass/themes.dart';
 
-import 'package:adverts247Pass/services/websocket.dart';
 import 'package:adverts247Pass/widget/button.dart';
 import 'package:adverts247Pass/widget/input_textform.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 
 class AdsFormPage extends StatefulWidget {
   const AdsFormPage({super.key});
@@ -29,7 +27,7 @@ class _AdsFormPageState extends State<AdsFormPage> {
     print(MediaQuery.of(context).size.height);
     return Scaffold(
       body: SafeArea(
-        child: Container(
+        child: SizedBox(
           height: MediaQuery.of(context).size.height,
           width: MediaQuery.of(context).size.width,
           child: Center(
@@ -49,7 +47,7 @@ class _AdsFormPageState extends State<AdsFormPage> {
                                 Colors.grey.withOpacity(0.08), // Shadow color
                             spreadRadius: 5, // How much the shadow spreads
                             blurRadius: 9, // How blurry the shadow is
-                            offset: Offset(0, 2), // Offset of the shadow
+                            offset: const Offset(0, 2), // Offset of the shadow
                           ),
                         ],
                       ),
@@ -67,24 +65,24 @@ class _AdsFormPageState extends State<AdsFormPage> {
                                         fontSize: 23,
                                         fontWeight: FontWeight.w800),
                               ),
-                              SizedBox(
+                              const SizedBox(
                                 height: 13,
                               ),
-                              SizedBox(
+                              const SizedBox(
                                 height: 50,
                               ),
                               OutlineInput(
                                 labelText: 'Email',
                                 controller: loginEmail,
                               ),
-                              SizedBox(
+                              const SizedBox(
                                 height: 23,
                               ),
                               OutlineInput(
                                 labelText: 'Age',
                                 controller: password,
                               ),
-                              SizedBox(
+                              const SizedBox(
                                 height: 23,
                               ),
                               MyButton(

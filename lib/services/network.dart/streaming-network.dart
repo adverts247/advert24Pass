@@ -459,7 +459,7 @@ class HttpRequestStreaming {
       CustomSnackBar.error(
         backgroundColor: Colors.black26,
         borderRadius: BorderRadius.circular(5),
-        boxShadow: [],
+        boxShadow: const [],
         message: 'Please check your network connection',
       ),
     );

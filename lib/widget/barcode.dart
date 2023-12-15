@@ -2,14 +2,11 @@ import 'package:adverts247Pass/themes.dart';
 import 'package:flutter/material.dart';
 // ignore_for_file: always_specify_types
 
-import 'dart:io';
 import 'package:barcode_widget/barcode_widget.dart';
-import 'package:barcode/barcode.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 
 class BarcodeDisplayWidget extends StatefulWidget {
-  String? url;
   BarcodeDisplayWidget({super.key, this.url});
+  String? url;
   @override
   State<BarcodeDisplayWidget> createState() => _BarcodeDisplayWidgetState();
 }
@@ -18,7 +15,7 @@ class _BarcodeDisplayWidgetState extends State<BarcodeDisplayWidget> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      decoration: BoxDecoration(
+      decoration: const BoxDecoration(
           borderRadius: BorderRadius.only(
               topLeft: Radius.circular(20), topRight: Radius.circular(20))),
       child: Scaffold(
@@ -34,7 +31,7 @@ class _BarcodeDisplayWidgetState extends State<BarcodeDisplayWidget> {
                         fontSize: 16,
                       ),
                 ),
-                SizedBox(
+                const SizedBox(
                   height: 30,
                 ),
                 BarcodeWidget(

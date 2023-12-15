@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 
 class QuestionPage extends StatefulWidget {
+  const QuestionPage({super.key});
+
   @override
   _QuestionPageState createState() => _QuestionPageState();
 }
@@ -18,7 +20,7 @@ class _QuestionPageState extends State<QuestionPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Yes or No Questions'),
+        title: const Text('Yes or No Questions'),
       ),
       body: ListView.builder(
         itemCount: questions.length,
@@ -41,20 +43,20 @@ class _QuestionPageState extends State<QuestionPage> {
 }
 
 class Question {
-  final String text;
 
   Question(this.text);
+  final String text;
 }
 
 class QuestionWidget extends StatelessWidget {
+
+  QuestionWidget(
+      {super.key, required this.question, required this.onYes, required this.onNo});
   final Question question;
   final VoidCallback onYes;
   final VoidCallback onNo;
 
   bool clicked = false;
-
-  QuestionWidget(
-      {required this.question, required this.onYes, required this.onNo});
 
   @override
   Widget build(BuildContext context) {
@@ -64,7 +66,7 @@ class QuestionWidget extends StatelessWidget {
           padding: const EdgeInsets.all(16.0),
           child: Text(
             question.text,
-            style: TextStyle(fontSize: 24),
+            style: const TextStyle(fontSize: 24),
           ),
         ),
         Row(
@@ -75,17 +77,17 @@ class QuestionWidget extends StatelessWidget {
               onPressed: () {
                 onYes;
               },
-              child: Text('Yes'),
+              child: const Text('Yes'),
             ),
-            SizedBox(width: 16),
+            const SizedBox(width: 16),
             ElevatedButton(
                       autofocus: !clicked,
               onPressed: onNo,
-              child: Text('No'),
+              child: const Text('No'),
             ),
           ],
         ),
-        Divider(), // Add a divider between questions
+        const Divider(), // Add a divider between questions
       ],
     );
   }
