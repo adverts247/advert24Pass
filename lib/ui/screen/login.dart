@@ -29,7 +29,7 @@ class _LoginPageState extends State<LoginPage> {
         .listen((ConnectivityResult result) {
       if (ConnectivityResult == ConnectivityResult.none) {
       } else {
-        autoLogin();
+       autoLogin();
       }
 
       // Got a new connectivity status!

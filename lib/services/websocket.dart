@@ -48,8 +48,7 @@ class AppWebsocketService {
 
   sendLocation() async {
     final channel = WebSocketChannel.connect(
-        Uri.parse('wss://ads247-streaming.lazynerdstudios.com')
-            .replace(queryParameters: {
+        Uri.parse('wss://streamer.adverts247.xyz').replace(queryParameters: {
       //'access_token': '',
     }));
     final position = await Geolocator.getCurrentPosition(
@@ -145,7 +144,7 @@ class AppWebsocketService {
   }
 
   void connectToSocket(String serverUrl, driverId, latitude, lonitude) {
-    // final serverUrl = 'wss://ads247-streaming.lazynerdstudios.com';
+    // final serverUrl = 'wss://streamer.adverts247.xyz';
     // final driverId = 50; // Replace with the desired driver's ID
     // final latitude = 12.34; // Replace with the desired latitude
     // final longitude = 56.78; // Replace with the desired longitude
@@ -192,8 +191,7 @@ class AppWebsocketService {
     print('dfgfg $userData');
     var userId = userData['id'];
 
-    IO.Socket socket =
-        IO.io('wss://ads247-streaming.lazynerdstudios.com', <String, dynamic>{
+    IO.Socket socket = IO.io('wss://streamer.adverts247.xyz', <String, dynamic>{
       'transports': ['websocket'],
     });
 

@@ -6,7 +6,6 @@
 
 import 'dart:async';
 
-
 import 'package:adverts247Pass/ui/screen/login.dart';
 import 'package:flutter/material.dart';
 import 'package:top_snackbar_flutter/custom_snack_bar.dart';
@@ -19,11 +18,10 @@ import 'package:dio_http_cache/dio_http_cache.dart';
 import 'package:adverts247Pass/tools.dart' as tools;
 
 // ignore: ant_identifier_names
-const String BACKEND_URL =
-    '';
-//ads247-center.lazynerdstudios.com
+const String BACKEND_URL = '';
+//central.adverts247.xyz
 
-//178.128.163.25
+//178.128.163.2
 
 //  live ip 138.68.168.255
 // test ip :  46.101.94.15

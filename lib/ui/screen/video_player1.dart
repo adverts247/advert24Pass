@@ -1,7 +1,6 @@
 import 'dart:async';
 import 'dart:io';
 
-
 import 'package:adverts247Pass/model/video_model.dart';
 
 import 'package:adverts247Pass/services/video_service.dart';
@@ -12,6 +11,7 @@ import 'package:adverts247Pass/ui/screen/about_me.dart';
 import 'package:adverts247Pass/ui/screen/rating.dart';
 
 import 'package:adverts247Pass/widget/button.dart';
+import 'package:barcode_widget/barcode_widget.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
@@ -43,8 +43,8 @@ class _VideoPlayerAppState extends State<VideoPlayerApp>
   double? _volume = 0.3;
   late BuildContext myContext;
   bool? showVolumeSlider = false;
-  final double _brightness = 1;
-  int chuncksPlayed = 0;
+  double _brightness = 1;
+
   //VlcPlayerController? vlcController;
   AnimationController? likeController;
   AnimationController? disLikeController;
@@ -60,6 +60,8 @@ class _VideoPlayerAppState extends State<VideoPlayerApp>
   var displayWelcome = true;
   bool? showBrightnessSlider = false;
 
+  bool? showQrCode;
+
   @override
   void initState() {
     getVideoList();
@@ -68,9 +70,9 @@ class _VideoPlayerAppState extends State<VideoPlayerApp>
     WakelockPlus.toggle(enable: true);
 
     //send driver location
-    Timer.periodic(const Duration(seconds: 1), (timer) {
-      AppWebsocketService().checkLocation(context);
-    });
+    // Timer.periodic(const Duration(seconds: 3), (timer) {
+    //   AppWebsocketService().checkLocation(context);
+    // });
 
     super.initState();
     likeController = AnimationController(
@@ -107,10 +109,6 @@ class _VideoPlayerAppState extends State<VideoPlayerApp>
   //listen to exit app
 
   Future<void> getVideoList() async {
-    //final mode = await getKioskMode().then((value) => print('started'));
-
-    //startKioskMode();
-    //   getVideourl('3');
     videoModelList = await VideoService().getVideo(context);
     print(videoModelList);
     currentAds = videoModelList![0];
@@ -178,6 +176,7 @@ class _VideoPlayerAppState extends State<VideoPlayerApp>
               setState(() {
                 _currentIndex = -1;
               });
+              videoModelList = await VideoService().getVideo(context);
               print('dsdsd $_currentIndex');
               nextAds();
               _controller!.dispose();
@@ -198,39 +197,76 @@ class _VideoPlayerAppState extends State<VideoPlayerApp>
     super.dispose();
   }
 
+  void _showQrcode(BuildContext context) {
+    final String data =
+        currentAds!.callToAction.url; // Replace with your barcode data
+
+    showModalBottomSheet(
+      context: context,
+      builder: (BuildContext context) {
+        return Padding(
+          padding: const EdgeInsets.all(20.0),
+          child: Column(
+            // mainAxisSize: MainAxisSize.min,
+            children: <Widget>[
+              Text('Scan to complete this action',
+                  style: TextStyle(fontSize: 25)),
+              SizedBox(
+                height: 10,
+              ),
+              BarcodeWidget(
+                barcode: Barcode.qrCode(), // Use the barcode type you want
+                data: data,
+                height: MediaQuery.of(context).size.height * .45,
+                width: MediaQuery.of(context).size.width * .30,
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
   nextAds() {
+    //if the ads  is a photo it waits for 10 secs broe
     Future.delayed(Duration(seconds: isPhoto! ? 10 : 0), () {
-      //   Navigator.pop(context);
+      if (currentAds!.callToAction.url.toString() != "null" ||
+          currentAds!.callToAction.url.toString().isNotEmpty) {
+        _showQrcode(context);
+      }
 
-      setState(() {
-        rating = true;
-      });
+      Future.delayed(
+          Duration(
+              seconds: currentAds!.callToAction.url.toString() != "null"
+                  ? 10
+                  : 0), () {
+        if (currentAds!.callToAction.url.toString() != "null" ||
+            currentAds!.callToAction.url.toString().isNotEmpty) {
+          Navigator.pop(context);
+        }
 
-      // After 5 sec turn rating value to false : This allows the rating wiget to leave the screen
-
-      //  Future.delayed(Duration(seconds: 5), () {
-      // setState(() {
-      //   rating = false;
-      //   //delete video from storage
-      //   if (isPhoto!) {
-      //   } else {
-      //     // tools.deleteFile(video);
-      //   }
-
-      //   //
-      //   displayWelcome = true;
-      // });
-
-      Future.delayed(const Duration(seconds: 5), () {
         setState(() {
-          rating = false;
-
-          _currentIndex++;
-
-          currentAds = videoModelList![_currentIndex];
+          rating = true;
         });
 
-        ifIsVideo();
+        Future.delayed(const Duration(seconds: 5), () {
+          setState(() async {
+            rating = false;
+
+            _currentIndex++;
+
+            if (_currentIndex > videoModelList!.length - 1) {
+              setState(() {
+                _currentIndex = 0;
+              });
+                  videoModelList = await VideoService().getVideo(context);
+            }
+
+            currentAds = videoModelList![_currentIndex];
+          });
+
+          ifIsVideo();
+        });
       });
     });
   }
@@ -328,6 +364,7 @@ class _VideoPlayerAppState extends State<VideoPlayerApp>
                                                       showVolumeSlider = false;
                                                       showBrightnessSlider =
                                                           false;
+                                                      _isMuted = false;
                                                     });
                                                   },
                                                   child: SizedBox(
@@ -341,6 +378,15 @@ class _VideoPlayerAppState extends State<VideoPlayerApp>
                                                     MainAxisAlignment.end,
                                                 children: [
                                                   // volume slider  widget
+
+                                                  _isMuted
+                                                      ? Icon(
+                                                          Icons.volume_off,
+                                                          color: Colors.red,
+                                                          size: 100,
+                                                        )
+                                                      : Container(),
+
                                                   showVolumeSlider!
                                                       ? Column(
                                                           children: [
@@ -382,44 +428,45 @@ class _VideoPlayerAppState extends State<VideoPlayerApp>
 
                                                   //Brightness Slider
 
-                                                  //           showBrightnessSlider!
-                                                  //               ? Column(
-                                                  //                   children: [
-                                                  //                     Text(
-                                                  //                       "Brightness ${_brightness * 100}",
-                                                  //                       style: TextStyles()
-                                                  //                           .blackTextStyle700()
-                                                  //                           .copyWith(
-                                                  //                               fontSize:
-                                                  //                                   24,
-                                                  //                               color: Colors
-                                                  //                                   .red),
-                                                  //                     ),
-                                                  //                     Slider(
-                                                  //                       value:
-                                                  //                           _brightness,
-                                                  //                       label:
-                                                  //                           "Brightness ${_brightness * 100}",
-                                                  //                       onChanged:
-                                                  //                           (value) {
-                                                  //                         setState(() {
-                                                  //                           _brightness =
-                                                  //                               value;
-                                                  //                           setBrightness();
-                                                  //                         });
-                                                  //                       },
-                                                  //                       divisions: 10,
-                                                  //                       activeColor:
-                                                  //                           Colors.red,
-                                                  //                       inactiveColor:
-                                                  //                           Colors.black,
-                                                  //                     ),
-                                                  //                   ],
-                                                  //                 )
+                                                  showBrightnessSlider!
+                                                      ? Column(
+                                                          children: [
+                                                            Text(
+                                                              "Brightness ${_brightness * 100}",
+                                                              style: TextStyles()
+                                                                  .blackTextStyle700()
+                                                                  .copyWith(
+                                                                      fontSize:
+                                                                          24,
+                                                                      color: Colors
+                                                                          .red),
+                                                            ),
+                                                            Slider(
+                                                              value:
+                                                                  _brightness,
+                                                              label:
+                                                                  "Brightness ${_brightness * 100}",
+                                                              onChanged:
+                                                                  (value) {
+                                                                setState(() {
+                                                                  _brightness =
+                                                                      value;
+                                                                  setBrightness();
+                                                                });
+                                                              },
+                                                              divisions: 10,
+                                                              activeColor:
+                                                                  Colors.red,
+                                                              inactiveColor:
+                                                                  Colors.black,
+                                                            ),
+                                                          ],
+                                                        )
+                                                      : Container(),
                                                   Container(
-                                                    margin:
-                                                        const EdgeInsets.symmetric(
-                                                            vertical: 20),
+                                                    margin: const EdgeInsets
+                                                            .symmetric(
+                                                        vertical: 20),
                                                   ),
 
                                                   Padding(
@@ -429,7 +476,8 @@ class _VideoPlayerAppState extends State<VideoPlayerApp>
                                                         vertical: 10),
                                                     child: Container(
                                                       decoration: BoxDecoration(
-                                                          color: const Color.fromARGB(
+                                                          color: const Color
+                                                                  .fromARGB(
                                                               138, 45, 45, 45),
                                                           borderRadius:
                                                               BorderRadius
@@ -543,7 +591,8 @@ class _VideoPlayerAppState extends State<VideoPlayerApp>
                                   final imageBytes = snapshot.data;
 
                                   if (imageBytes != null) {
-                                    Future.delayed(const Duration(seconds: 5), () {
+                                    Future.delayed(const Duration(seconds: 10),
+                                        () {
                                       nextAds();
                                     });
                                     return Column(
@@ -832,7 +881,7 @@ class _VideoPlayerAppState extends State<VideoPlayerApp>
                       child: Image.network(
                         walletDetail == null
                             ? ' '
-                            : 'https://ads247-center.lazynerdstudios.com/${walletDetail!['image']}',
+                            : 'https://central.adverts247.xyz/${walletDetail!['image']}',
                         height: 50,
                         width: 50,
                         fit: BoxFit.cover,

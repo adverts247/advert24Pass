@@ -120,7 +120,7 @@ class _ProfileWeatherViewState extends State<ProfileWeatherView> {
                                                         BorderRadius.circular(
                                                             2000),
                                                     child: Image.network(
-                                                      'https://ads247-center.lazynerdstudios.com/${walletDetail!['image']}',
+                                                      'https://central.adverts247.xyz/${walletDetail!['image']}',
                                                       fit: BoxFit.cover,
                                                       height: screenHeight < 400
                                                           ? 20
@@ -245,7 +245,7 @@ class _ProfileWeatherViewState extends State<ProfileWeatherView> {
                                           child: Image.network(
                                             walletDetail == null
                                                 ? ' '
-                                                : 'https://ads247-center.lazynerdstudios.com/${walletDetail!['image']}',
+                                                : 'https://central.adverts247.xyz/${walletDetail!['image']}',
                                             height:
                                                 screenHeight < 450 ? 130 : 200,
                                             width:

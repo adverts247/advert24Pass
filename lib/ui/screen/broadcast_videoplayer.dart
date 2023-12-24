@@ -122,7 +122,7 @@
 //   //listen to exit app
 //   void connectToDriverChannel(int userId) {
 //     IO.Socket socket =
-//         IO.io('wss://ads247-streaming.lazynerdstudios.com', <String, dynamic>{
+//         IO.io('wss://streamer.adverts247.xyz', <String, dynamic>{
 //       'transports': ['websocket'],
 //     });
 
@@ -778,7 +778,7 @@
 //                       child: Image.network(
 //                         walletDetail == null
 //                             ? ' '
-//                             : 'https://ads247-center.lazynerdstudios.com/${walletDetail!['image']}',
+//                             : 'https://central.adverts247.xyz/${walletDetail!['image']}',
 //                         height: 50,
 //                         width: 50,
 //                         fit: BoxFit.cover,

@@ -329,14 +329,14 @@ class VideoService {
 
   Future<dynamic> fetchVideo(String path, context) async {
     const maxRetries = 10;
-    const retryDelay = Duration(seconds: 3);
+    const retryDelay = Duration(seconds: 2);
 
     for (var retryCount = 0; retryCount < maxRetries; retryCount++) {
       try {
         final userState = Provider.of<UserState>(context, listen: false);
         final userData = userState.userDetails;
         final id = userData['id'].toString();
-        const url = 'https://ads247-streaming.lazynerdstudios.com';
+        const url = 'https://streamer.adverts247.xyz';
         final headers = {
           'Range': '0',
           'driver-id': id,
@@ -415,7 +415,7 @@ class VideoService {
   //   final userState = Provider.of<UserState>(context, listen: false);
   //   final userData = userState.userDetails;
   //   final id = userData['id'].toString();
-  //   final url = 'https://ads247-streaming.lazynerdstudios.com';
+  //   final url = 'https://streamer.adverts247.xyz';
   //   final headers = {
   //     'Range': '0',
   //     'driver-id': id,
@@ -450,7 +450,7 @@ class VideoService {
 
   //for broadcast ads
   Future<dynamic> fetchBroadcastVideo(String path, context) async {
-    // var path = 'https://ads247-streaming.lazynerdstudios.com/ads/${id}';
+    // var path = 'https://streamer.adverts247.xyz/ads/${id}';
     var userData = Provider.of<UserState>(context, listen: false).userDetails;
     var headers = {
       'Range': '0',
@@ -480,9 +480,8 @@ class VideoService {
         print(' sessionId : ${response.headers['sessionid'].toString()}');
 
         var filePath = await downloadVideo(
-            "https://ads247-streaming.lazynerdstudios.com/${responseBody['url']}");
-        print(
-            "https://ads247-streaming.lazynerdstudios.com/${responseBody['url']}");
+            "https://streamer.adverts247.xyz/${responseBody['url']}");
+        print("https://streamer.adverts247.xyz/${responseBody['url']}");
 
         return filePath;
       } else {
@@ -591,8 +590,7 @@ class VideoService {
     context,
     dynamic body,
   ) async {
-    final url =
-        Uri.parse('https://ads247-streaming.lazynerdstudios.com/rate-ad'); //
+    final url = Uri.parse('https://streamer.adverts247.xyz/rate-ad'); //
     print(url);
     print(body);
 

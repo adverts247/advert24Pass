@@ -1,9 +1,14 @@
+import 'dart:convert';
+import 'package:flutter/material.dart';
+
 class VideoModel {
-  
-  VideoModel.fromJson(Map<String, dynamic> json){
+  VideoModel.fromJson(Map<String, dynamic> json) {
     id = json['id'];
     title = json['title'];
-  //  callToAction = CallToAction.fromJson(json['call_to_action']);
+    callToAction = CallToAction.fromJson(json['call_to_action'] == null
+            ? {}
+            : jsonDecode(json['call_to_action']) //json['call_to_action']
+        );
     duration = json['duration'];
     description = json['description'];
     datetime = json['datetime'];
@@ -13,7 +18,7 @@ class VideoModel {
   VideoModel({
     required this.id,
     required this.title,
- //   required this.callToAction,
+    required this.callToAction,
     required this.duration,
     required this.description,
     required this.datetime,
@@ -22,7 +27,7 @@ class VideoModel {
   });
   late final int id;
   late final String title;
- // late final CallToAction callToAction;
+  late final CallToAction callToAction;
   late final dynamic duration;
   late final String description;
   late final String datetime;
@@ -33,7 +38,7 @@ class VideoModel {
     final data = <String, dynamic>{};
     data['id'] = id;
     data['title'] = title;
-  //  _data['call_to_action'] = callToAction.toJson();
+    //  _data['call_to_action'] = callToAction.toJson();
     data['duration'] = duration;
     data['description'] = description;
     data['datetime'] = datetime;
@@ -44,9 +49,8 @@ class VideoModel {
 }
 
 class CallToAction {
-  
-  CallToAction.fromJson(Map<String, dynamic> json){
-    url = json['url'];
+  CallToAction.fromJson(Map<String, dynamic> json) {
+    url = json['url'] == null ? 'null' : json['url'];
   }
   CallToAction({
     required this.url,
@@ -61,8 +65,7 @@ class CallToAction {
 }
 
 class Content {
-  
-  Content.fromJson(Map<String, dynamic> json){
+  Content.fromJson(Map<String, dynamic> json) {
     id = json['id'];
     path = json['path'];
     skipAfter = json['skip_after'];
