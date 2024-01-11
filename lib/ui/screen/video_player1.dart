@@ -200,6 +200,10 @@ class _VideoPlayerAppState extends State<VideoPlayerApp>
 
               Future.delayed(Duration(seconds: 10), () {
                 Navigator.pop(context);
+                // setState(() {
+                //   rating = true;
+                // });
+
                 Get.to(AboutMePage());
 
                 Future.delayed(Duration(seconds: 10), () {
@@ -645,9 +649,9 @@ class _VideoPlayerAppState extends State<VideoPlayerApp>
                                         Future.delayed(Duration(seconds: 10),
                                             () {
                                           Navigator.pop(context);
-                                          setState(() {
-                                            rating = true;
-                                          });
+                                          // setState(() {
+                                          //   rating = true;
+                                          // });
 
                                           Get.to(AboutMePage());
 
