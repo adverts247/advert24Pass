@@ -12,7 +12,6 @@ import 'package:provider/provider.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
 import 'package:socket_io_client/socket_io_client.dart' as IO;
 import 'package:geolocator/geolocator.dart';
-import 'package:socket_io_client/socket_io_client.dart' as io;
 
 class AppWebsocketService {
   Future<void> testWebsocket() async {
@@ -143,43 +142,6 @@ class AppWebsocketService {
     });
   }
 
-  void connectToSocket(String serverUrl, driverId, latitude, lonitude) {
-    // final serverUrl = 'wss://streamer.adverts247.xyz';
-    // final driverId = 50; // Replace with the desired driver's ID
-    // final latitude = 12.34; // Replace with the desired latitude
-    // final longitude = 56.78; // Replace with the desired longitude
-    io.Socket socket;
-    socket = io.io(serverUrl, <String, dynamic>{
-      'transports': ['websocket'],
-    });
-
-    socket.on('connect', (_) {
-      print('Connected to the Socket.IO server');
-      final roomName = 'driver-$driverId';
-      socket.emit('join_room', {'roomName': roomName});
-      final content = {
-        'driverId': driverId,
-        'lat': latitude,
-        'long': lonitude,
-      };
-
-      socket.emit('send_message', {
-        'roomName': roomName,
-        'message': 'fdf',
-        'content': content,
-      });
-    });
-
-    socket.on('driver pong', (data) {
-      // Handle the received location data (latitude and longitude)
-      final location = data['data'];
-      print(
-          'Received driver location: Latitude: ${location['lat']}, Longitude: ${location['long']}');
-    });
-
-    socket.connect();
-  }
-
   ///
   ///
   ///webso cket to controller the app
@@ -189,7 +151,7 @@ class AppWebsocketService {
   ) {
     var userData = Provider.of<UserState>(context, listen: false).userDetails;
     print('dfgfg $userData');
-    var userId = userData['id'];
+    var userId = userData['driver']['id'];
 
     IO.Socket socket = IO.io('wss://streamer.adverts247.xyz', <String, dynamic>{
       'transports': ['websocket'],
@@ -242,5 +204,75 @@ class AppWebsocketService {
       //               BroadCastVideoPlayer(path: adsData['content']['path'])));
       // } else {}
     });
+  }
+
+  Future<Position?> getCurrentLocation() async {
+    LocationPermission permission = await Geolocator.checkPermission();
+
+    if (permission == LocationPermission.denied ||
+        permission == LocationPermission.deniedForever) {
+      permission = await Geolocator.requestPermission();
+      if (permission == LocationPermission.deniedForever) {
+        // Handle the case where the user denied location permission permanently
+        print('Location permission denied forever');
+        return null;
+      } else if (permission == LocationPermission.denied) {
+        // Handle the case where the user denied location permission
+        print('Location permission denied');
+        return null;
+      }
+    }
+
+    try {
+      Position position = await Geolocator.getCurrentPosition(
+        desiredAccuracy: LocationAccuracy.high,
+      );
+      return position;
+    } catch (e) {
+      print(e);
+      return null;
+    }
+  }
+
+  ///check code
+  ///
+  connectToSocket(context, dynamic lat, long) {
+    var userData = Provider.of<UserState>(context, listen: false).userDetails;
+    final serverUrl = 'wss://streamer.adverts247.xyz';
+    final driverId =
+        userData['driver']['id']; // Replace with the desired driver's ID
+    final latitude = lat; // Replace with the desired latitude
+    final longitude = long; // Replace with the desired longitude
+
+    IO.Socket socket;
+    socket = IO.io(serverUrl, <String, dynamic>{
+      'transports': ['websocket'],
+    });
+
+    socket.on('connect', (_) {
+      print('Connected to the Socket.IO server');
+
+      final content = {
+        'driverId': driverId,
+        'lat': latitude,
+        'long': longitude,
+      };
+      print(content);
+
+      socket.emit('driver ping', {
+        // 'roomName': roomName,
+        jsonEncode(content),
+      });
+      print('yes');
+    });
+
+    // socket.on('driver pong', (data) {
+    //   // Handle the received location data (latitude and longitude)
+    //   final location = data['data'];
+    //   print(
+    //       'Received driver location: Latitude: ${location['lat']}, Longitude: ${location['long']}');
+    // });
+
+    socket.connect();
   }
 }

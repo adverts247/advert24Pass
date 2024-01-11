@@ -19,11 +19,7 @@ class OtaService {
       OtaUpdate()
           .execute(
         urlUpdate,
-        // urlUpdate,
-       // destinationFilename: 'flutter_hello_world.apk',
-        //FOR NOW ANDROID ONLY - ABILITY TO VALIDATE CHECKSUM OF FILE:
-        //  sha256checksum:
-        //     'f6535d938944f2cc4e32c95a846c61d90b0f0647e2d7d252c08b3a5aeaf3614d',
+   
       )
           .listen(
         (OtaEvent event) async {
@@ -62,9 +58,9 @@ class OtaService {
 
     //Loaders().showModalLoading(context);
     HttpRequestStreaming('https://ads247-center.lazynerdstudios.com/api/v1/apk',
-   // https://ads247-center.lazynerdstudios.com/api/v1/apk
-   //https://central.adverts247.xyz/api/v1/apk
-      
+        // https://ads247-center.lazynerdstudios.com/api/v1/apk
+        //https://central.adverts247.xyz/api/v1/apk
+
         context: context,
         headers: {
           'Authorization': 'Bearer $token',

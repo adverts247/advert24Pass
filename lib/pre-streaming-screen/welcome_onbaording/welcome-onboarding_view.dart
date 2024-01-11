@@ -67,7 +67,7 @@ class _PreStreamingWelcomePageState extends State<PreStreamingWelcomePage> {
                     Text(
                       'WELCOME ONBOARD',
                       style:
-                          TextStyles().whiteTextStyle().copyWith(fontSize: 30),
+                          TextStyles().whiteTextStyle().copyWith(fontSize: 70),
                     )
                   ],
                 )),

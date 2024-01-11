@@ -51,15 +51,19 @@ class VideoModel {
 class CallToAction {
   CallToAction.fromJson(Map<String, dynamic> json) {
     url = json['url'] == null ? 'null' : json['url'];
+    description = json['description'] == null ? 'null' : json['description'];
   }
   CallToAction({
     required this.url,
+    required this.description,
   });
   late final String url;
+  late final String description;
 
   Map<String, dynamic> toJson() {
     final data = <String, dynamic>{};
     data['url'] = url;
+    data['description'] = url;
     return data;
   }
 }

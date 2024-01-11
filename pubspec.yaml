@@ -44,7 +44,7 @@ dependencies:
   geolocator: ^10.1.0
   stacked: 
   stacked_services: 
- 
+  
   image_picker: ^1.0.4
   intl: ^0.17.0
   local_auth: ^2.1.7

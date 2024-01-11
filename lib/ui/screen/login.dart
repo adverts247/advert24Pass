@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:adverts247Pass/services/video_service.dart';
+import 'package:adverts247Pass/services/websocket.dart';
 import 'package:adverts247Pass/themes.dart';
 import 'package:adverts247Pass/widget/button.dart';
 import 'package:adverts247Pass/widget/input_textform.dart';
@@ -8,6 +9,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:adverts247Pass/tools.dart' as tools;
+import 'package:geolocator/geolocator.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -29,7 +31,7 @@ class _LoginPageState extends State<LoginPage> {
         .listen((ConnectivityResult result) {
       if (ConnectivityResult == ConnectivityResult.none) {
       } else {
-       autoLogin();
+        autoLogin();
       }
 
       // Got a new connectivity status!
@@ -159,7 +161,7 @@ class _LoginPageState extends State<LoginPage> {
                               ),
                               MyButton(
                                 text: 'Login',
-                                onPressed: () {
+                                onPressed: () async {
                                   var body = {
                                     'email': loginEmail?.text,
                                     'password': password?.text
@@ -168,8 +170,14 @@ class _LoginPageState extends State<LoginPage> {
                                     // 'password': '12345678'
                                   };
                                   print(body);
+                                 
                                   VideoService().login(context, body);
-                                
+                                  // AppWebsocketService socket =
+                                  //     AppWebsocketService();
+
+                                  // Position position =
+                                  //     await socket.getCurrentLocation();
+                                  //print(position);
                                 },
                               )
                             ],

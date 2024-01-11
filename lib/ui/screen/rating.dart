@@ -19,7 +19,7 @@ class _RatingPageState extends State<RatingPage> {
   TextEditingController? loginEmail;
   TextEditingController? password;
 
-  double? ratingValue = 0;
+  double? ratingValue = 3;
   @override
   void initState() {
     loginEmail = TextEditingController();
@@ -123,7 +123,7 @@ class _RatingPageState extends State<RatingPage> {
                                 height: 30,
                               ),
                               RatingBar.builder(
-                                initialRating: 3,
+                                initialRating: ratingValue!,
                                 minRating: 1,
                                 unratedColor: Colors.white,
                                 direction: Axis.horizontal,

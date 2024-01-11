@@ -4,6 +4,7 @@ import 'package:adverts247Pass/model/video_model.dart';
 import 'package:adverts247Pass/services/update_app.dart';
 import 'package:adverts247Pass/pre-streaming-screen/welcome_onbaording/welcome-onboarding_view.dart';
 import 'package:adverts247Pass/services/network.dart/network.dart';
+import 'package:adverts247Pass/services/websocket.dart';
 import 'package:adverts247Pass/services/wether_service/weather_service.dart';
 import 'package:adverts247Pass/state/user_state.dart';
 import 'package:adverts247Pass/ui/screen/waiting_Page.dart';
@@ -12,6 +13,7 @@ import 'package:adverts247Pass/widget/loader.dart';
 import 'package:flutter/material.dart';
 import 'package:adverts247Pass/tools.dart' as tools;
 import 'package:flutter/services.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
 // import 'package:provider/provider.dart';
 import 'dart:convert';
@@ -40,7 +42,16 @@ class VideoService {
 
       await getWallet(context);
       WeatherService().getWeatherData(context);
-      //    AppWebsocketService().broadcast(context);
+
+      Position? currentLocation =
+          await AppWebsocketService().getCurrentLocation();
+
+      AppWebsocketService().connectToSocket(
+          context, currentLocation!.latitude, currentLocation.longitude);
+
+      //   AppWebsocketService().connectToSocket(
+      // context, currentLocation!.latitude, currentLocation.longitude);
+
       OtaService().checkifUpdateIsNeeded(context);
       //
       Get.to(
@@ -49,8 +60,6 @@ class VideoService {
         curve: Curves.easeInOut,
         duration: const Duration(seconds: 1),
       );
-
-      debugPrint(result);
     }, onFailure: (_, result) {
       Navigator.pop(context);
 
@@ -136,11 +145,11 @@ class VideoService {
       showTopSnackBar(
           Overlay.of(context!),
           CustomSnackBar.success(
-            backgroundColor: Colors.green.withOpacity(0.2),
+            backgroundColor: Colors.blue.withOpacity(0.7),
             borderRadius: BorderRadius.circular(5),
             boxShadow: const [],
             icon: const Icon(Icons.sentiment_very_satisfied,
-                color: Color(0x15000000), size: 120),
+                color: Color.fromARGB(164, 0, 0, 0), size: 120),
             message: 'Liked ',
           ));
     } else {
@@ -179,11 +188,11 @@ class VideoService {
       showTopSnackBar(
           Overlay.of(context!),
           CustomSnackBar.success(
-            backgroundColor: Colors.green.withOpacity(0.2),
+            backgroundColor: Colors.red.withOpacity(0.7),
             borderRadius: BorderRadius.circular(5),
             boxShadow: const [],
             icon: const Icon(Icons.sentiment_dissatisfied,
-                color: Color(0x15000000), size: 120),
+                color: Color.fromARGB(164, 0, 0, 0), size: 120),
             message: jsonDecode(response.body)['message'],
           ));
     } else {
@@ -291,12 +300,19 @@ class VideoService {
 
     var headers = {
       'Range': '0',
-      'driver-id': userData['id'].toString(),
+      'driver-id': userData['driver']['id'].toString(),
       'Accept': 'multipart/form-data'
     };
+    print(headers);
 
     //var uri = Uri.parse('${path}?location=3.584494,1.090932');
-    var uri = Uri.parse(path);
+
+    Position? currentLocation =
+        await AppWebsocketService().getCurrentLocation();
+
+    var uri = Uri.parse(
+        '$path?lat=${currentLocation!.latitude}&lon=${currentLocation.longitude}');
+    print(uri);
 
     var request = http.Request('GET', uri);
     request.headers.addAll(headers);
@@ -307,6 +323,11 @@ class VideoService {
       if (response.statusCode.toString().startsWith('2')) {
         final List<int> byteList = await response.stream.toBytes();
         print('HTTP Error: ${response.statusCode}');
+
+        
+
+
+        
         return Uint8List.fromList(byteList);
       } else {
         print(
@@ -335,7 +356,7 @@ class VideoService {
       try {
         final userState = Provider.of<UserState>(context, listen: false);
         final userData = userState.userDetails;
-        final id = userData['id'].toString();
+        final id = userData['driver']['id'].toString();
         const url = 'https://streamer.adverts247.xyz';
         final headers = {
           'Range': '0',
@@ -343,7 +364,14 @@ class VideoService {
           'Accept': 'multipart/form-data',
         };
 
-        final uri = Uri.parse('$path?location=3.584494,1.090932');
+          print(headers);
+
+        Position? currentLocation =
+            await AppWebsocketService().getCurrentLocation();
+
+        var uri = Uri.parse(
+            '$path?lat=${currentLocation!.latitude}&lon=${currentLocation.longitude}');
+        print(uri);
 
         http.Response response = await http.get(uri, headers: headers);
 
@@ -459,7 +487,11 @@ class VideoService {
     };
     print(headers);
 
-    var uri = Uri.parse('$path?location=3.584494,1.090932');
+    Position? currentLocation =
+        await AppWebsocketService().getCurrentLocation();
+
+    var uri = Uri.parse(
+        '$path?lat=${currentLocation!.latitude}&lon=${currentLocation.longitude}}');
     print(uri);
 
     var request = http.Request('GET', uri);
@@ -608,9 +640,11 @@ class VideoService {
       showTopSnackBar(
           Overlay.of(context!),
           CustomSnackBar.success(
-            backgroundColor: Colors.green.withOpacity(0.2),
+            backgroundColor: Colors.green.withOpacity(0.5),
             borderRadius: BorderRadius.circular(5),
             boxShadow: const [],
+            icon: const Icon(Icons.sentiment_very_satisfied,
+                color: Color.fromARGB(164, 0, 0, 0), size: 120),
             message: 'Thank you for rating this ad',
           ));
     } else {

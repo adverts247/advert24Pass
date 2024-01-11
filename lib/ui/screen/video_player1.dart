@@ -2,7 +2,7 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:adverts247Pass/model/video_model.dart';
-
+import 'package:get/get.dart';
 import 'package:adverts247Pass/services/video_service.dart';
 import 'package:adverts247Pass/state/user_state.dart';
 import 'package:adverts247Pass/themes.dart';
@@ -14,6 +14,7 @@ import 'package:adverts247Pass/widget/button.dart';
 import 'package:barcode_widget/barcode_widget.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:video_player/video_player.dart';
@@ -67,11 +68,16 @@ class _VideoPlayerAppState extends State<VideoPlayerApp>
     getVideoList();
     getWalletBalance();
     setBrightness();
+    sendLocationUpdate();
     WakelockPlus.toggle(enable: true);
 
     //send driver location
-    // Timer.periodic(const Duration(seconds: 3), (timer) {
-    //   AppWebsocketService().checkLocation(context);
+
+    AppWebsocketService socket = AppWebsocketService();
+    // socket.checkLocationPermission();
+
+    // Timer.periodic(Duration(seconds: 2), (timer) {
+    //   socket.connectToSocket(context);
     // });
 
     super.initState();
@@ -79,6 +85,20 @@ class _VideoPlayerAppState extends State<VideoPlayerApp>
       vsync: this,
       duration: const Duration(seconds: 2),
     );
+  }
+
+  // send location update
+  void sendLocationUpdate() {
+    StreamSubscription<Position> positionStream = Geolocator.getPositionStream(
+        locationSettings: LocationSettings(
+      accuracy: LocationAccuracy.high,
+      distanceFilter: 100,
+    )).listen((Position? position) {
+      AppWebsocketService()
+          .connectToSocket(context, position!.latitude, position.longitude);
+
+      // do what you want to do with the position here
+    });
   }
 
   //get profile because of profile picture
@@ -173,13 +193,19 @@ class _VideoPlayerAppState extends State<VideoPlayerApp>
 
               _controller!.dispose();
             } else {
-              setState(() {
-                _currentIndex = -1;
+              if (currentAds!.callToAction.url.toString() != "null" ||
+                  currentAds!.callToAction.url.toString().isNotEmpty) {
+                _showQrcode(context);
+              }
+
+              Future.delayed(Duration(seconds: 10), () {
+                Navigator.pop(context);
+                Get.to(AboutMePage());
+
+                Future.delayed(Duration(seconds: 10), () {
+                  Get.to(VideoPlayerApp());
+                });
               });
-              videoModelList = await VideoService().getVideo(context);
-              print('dsdsd $_currentIndex');
-              nextAds();
-              _controller!.dispose();
             }
           }
         });
@@ -193,7 +219,7 @@ class _VideoPlayerAppState extends State<VideoPlayerApp>
   @override
   void dispose() {
     _controller!.dispose();
-    _timer.cancel();
+    //_timer.cancel();
     super.dispose();
   }
 
@@ -201,26 +227,40 @@ class _VideoPlayerAppState extends State<VideoPlayerApp>
     final String data =
         currentAds!.callToAction.url; // Replace with your barcode data
 
-    showModalBottomSheet(
+    showDialog(
       context: context,
       builder: (BuildContext context) {
-        return Padding(
-          padding: const EdgeInsets.all(20.0),
-          child: Column(
-            // mainAxisSize: MainAxisSize.min,
-            children: <Widget>[
-              Text('Scan to complete this action',
-                  style: TextStyle(fontSize: 25)),
-              SizedBox(
-                height: 10,
-              ),
-              BarcodeWidget(
-                barcode: Barcode.qrCode(), // Use the barcode type you want
-                data: data,
-                height: MediaQuery.of(context).size.height * .45,
-                width: MediaQuery.of(context).size.width * .30,
-              ),
-            ],
+        return Dialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16),
+          ),
+          elevation: 0,
+          backgroundColor: Colors.white,
+          child: Padding(
+            padding: const EdgeInsets.all(20.0),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: <Widget>[
+                Text(
+                  currentAds!.callToAction.description
+                              .toLowerCase()
+                              .toString() !=
+                          'null'
+                      ? currentAds!.callToAction.description
+                      : '',
+                  style: TextStyle(fontSize: 25),
+                ),
+                SizedBox(
+                  height: 10,
+                ),
+                BarcodeWidget(
+                  barcode: Barcode.qrCode(), // Use the barcode type you want
+                  data: data,
+                  height: MediaQuery.of(context).size.height * .45,
+                  width: MediaQuery.of(context).size.width * .30,
+                ),
+              ],
+            ),
           ),
         );
       },
@@ -228,61 +268,29 @@ class _VideoPlayerAppState extends State<VideoPlayerApp>
   }
 
   nextAds() {
-    //if the ads  is a photo it waits for 10 secs broe
-    Future.delayed(Duration(seconds: isPhoto! ? 10 : 0), () {
+    if (currentAds!.callToAction.url.toString() != "null" ||
+        currentAds!.callToAction.url.toString().isNotEmpty) {
+      _showQrcode(context);
+    }
+
+    Future.delayed(
+        Duration(
+            seconds: currentAds!.callToAction.url.toString() != "null"
+                ? 10
+                : 0), () async {
       if (currentAds!.callToAction.url.toString() != "null" ||
           currentAds!.callToAction.url.toString().isNotEmpty) {
-        _showQrcode(context);
+        Navigator.pop(context);
       }
 
-      Future.delayed(
-          Duration(
-              seconds: currentAds!.callToAction.url.toString() != "null"
-                  ? 10
-                  : 0), () {
-        if (currentAds!.callToAction.url.toString() != "null" ||
-            currentAds!.callToAction.url.toString().isNotEmpty) {
-          Navigator.pop(context);
-        }
-
-        setState(() {
-          rating = true;
-        });
-
-        Future.delayed(const Duration(seconds: 5), () {
-          setState(() async {
-            rating = false;
-
-            _currentIndex++;
-
-            if (_currentIndex > videoModelList!.length - 1) {
-              setState(() {
-                _currentIndex = 0;
-              });
-                  videoModelList = await VideoService().getVideo(context);
-            }
-
-            currentAds = videoModelList![_currentIndex];
-          });
-
-          ifIsVideo();
-        });
-      });
-    });
-  }
-
-  void test() {
-    Navigator.pop(context);
-
-    setState(() {
-      rating = true;
-    });
-
-    Future.delayed(const Duration(seconds: 5), () {
       setState(() {
-        rating = false;
+        rating = true;
+      });
 
+      Future.delayed(const Duration(seconds: 5), () {
         setState(() {
+          rating = false;
+
           _currentIndex++;
 
           currentAds = videoModelList![_currentIndex];
@@ -290,8 +298,36 @@ class _VideoPlayerAppState extends State<VideoPlayerApp>
 
         ifIsVideo();
       });
+
+      var newList = await VideoService().getVideo(context);
+
+      setState(() {
+        videoModelList = newList;
+      });
     });
   }
+
+  // void test() {
+  //   Navigator.pop(context);
+
+  //   setState(() {
+  //     rating = true;
+  //   });
+
+  //   Future.delayed(const Duration(seconds: 5), () {
+  //     setState(() {
+  //       rating = false;
+
+  //       setState(() {
+  //         _currentIndex++;
+
+  //         currentAds = videoModelList![_currentIndex];
+  //       });
+
+  //       ifIsVideo();
+  //     });
+  //   });
+  // }
 
   previousAds() {
     _controller!.dispose();
@@ -473,7 +509,7 @@ class _VideoPlayerAppState extends State<VideoPlayerApp>
                                                     padding: const EdgeInsets
                                                             .symmetric(
                                                         horizontal: 20,
-                                                        vertical: 10),
+                                                        vertical: 1),
                                                     child: Container(
                                                       decoration: BoxDecoration(
                                                           color: const Color
@@ -486,7 +522,7 @@ class _VideoPlayerAppState extends State<VideoPlayerApp>
                                                       child: Padding(
                                                         padding:
                                                             const EdgeInsets
-                                                                .all(20.0),
+                                                                .all(10.0),
                                                         child: Row(
                                                           children: [
                                                             InkWell(
@@ -592,8 +628,31 @@ class _VideoPlayerAppState extends State<VideoPlayerApp>
 
                                   if (imageBytes != null) {
                                     Future.delayed(const Duration(seconds: 10),
-                                        () {
-                                      nextAds();
+                                        () async {
+                                      if (_currentIndex <
+                                          videoModelList!.length - 1) {
+                                        nextAds();
+                                      } else {
+                                        if (currentAds!.callToAction.url
+                                                    .toString() !=
+                                                "null" ||
+                                            currentAds!.callToAction.url
+                                                .toString()
+                                                .isNotEmpty) {
+                                          _showQrcode(context);
+                                        }
+
+                                        Future.delayed(Duration(seconds: 10),
+                                            () {
+                                          Navigator.pop(context);
+                                          Get.to(AboutMePage());
+
+                                          Future.delayed(Duration(seconds: 10),
+                                              () {
+                                            Get.to(VideoPlayerApp());
+                                          });
+                                        });
+                                      }
                                     });
                                     return Column(
                                       children: [
