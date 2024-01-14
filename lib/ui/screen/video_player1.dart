@@ -198,8 +198,18 @@ class _VideoPlayerAppState extends State<VideoPlayerApp>
                 _showQrcode(context);
               }
 
-              Future.delayed(Duration(seconds: 10), () {
-                Navigator.pop(context);
+              Future.delayed(
+                  Duration(
+                      seconds: currentAds!.callToAction.url.toString() !=
+                                  "null" ||
+                              currentAds!.callToAction.url.toString().isNotEmpty
+                          ? 10
+                          : 0), () {
+                if (currentAds!.callToAction.url.toString() != "null" ||
+                    currentAds!.callToAction.url.toString().isNotEmpty) {
+                  Navigator.pop(context);
+                }
+
                 setState(() {
                   rating = true;
                 });
@@ -651,9 +661,28 @@ class _VideoPlayerAppState extends State<VideoPlayerApp>
                                           _showQrcode(context);
                                         }
 
-                                        Future.delayed(Duration(seconds: 10),
-                                            () {
-                                          Navigator.pop(context);
+                                        Future.delayed(
+                                            Duration(
+                                                seconds: currentAds!
+                                                                .callToAction
+                                                                .url
+                                                                .toString() !=
+                                                            "null" ||
+                                                        currentAds!
+                                                            .callToAction.url
+                                                            .toString()
+                                                            .isNotEmpty
+                                                    ? 10
+                                                    : 0), () {
+                                          if (currentAds!.callToAction.url
+                                                      .toString() !=
+                                                  "null" ||
+                                              currentAds!.callToAction.url
+                                                  .toString()
+                                                  .isNotEmpty) {
+                                            Navigator.pop(context);
+                                          }
+
                                           setState(() {
                                             rating = true;
                                           });

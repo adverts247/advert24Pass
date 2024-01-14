@@ -5,7 +5,7 @@ import 'package:adverts247Pass/services/update_app.dart';
 import 'package:adverts247Pass/pre-streaming-screen/welcome_onbaording/welcome-onboarding_view.dart';
 import 'package:adverts247Pass/services/network.dart/network.dart';
 import 'package:adverts247Pass/services/websocket.dart';
-import 'package:adverts247Pass/services/wether_service/weather_service.dart';
+import 'package:adverts247Pass/services/weather_service/weather_service.dart';
 import 'package:adverts247Pass/state/user_state.dart';
 import 'package:adverts247Pass/ui/screen/waiting_Page.dart';
 
