@@ -218,6 +218,7 @@ class _VideoPlayerAppState extends State<VideoPlayerApp>
                   // setState(() {
                   //   rating = false;
                   // });
+                   _controller!.dispose();
                   Get.to(AboutMePage());
 
                   Future.delayed(Duration(seconds: 10), () {
