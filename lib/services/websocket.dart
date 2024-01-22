@@ -1,17 +1,20 @@
 import 'dart:async';
 import 'dart:convert';
 
+import 'package:adverts247Pass/main.dart';
 import 'package:adverts247Pass/pre-streaming-screen/welcome_onbaording/welcome-onboarding_view.dart';
 import 'package:adverts247Pass/state/location_weather_state.dart';
 import 'package:adverts247Pass/state/user_state.dart';
+import 'package:adverts247Pass/ui/screen/login.dart';
 import 'package:adverts247Pass/ui/screen/video_player1.dart';
 import 'package:adverts247Pass/ui/screen/waiting_Page.dart';
-
+import 'package:get/get.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
 import 'package:socket_io_client/socket_io_client.dart' as IO;
 import 'package:geolocator/geolocator.dart';
+import 'package:restart_app/restart_app.dart';
 
 class AppWebsocketService {
   Future<void> testWebsocket() async {
@@ -47,7 +50,7 @@ class AppWebsocketService {
 
   sendLocation() async {
     final channel = WebSocketChannel.connect(
-        Uri.parse('wss://streamer.adverts247.xyz').replace(queryParameters: {
+        Uri.parse('wss://streaming.adverts247.xyz').replace(queryParameters: {
       //'access_token': '',
     }));
     final position = await Geolocator.getCurrentPosition(
@@ -153,7 +156,8 @@ class AppWebsocketService {
     print('dfgfg $userData');
     var userId = userData['driver']['id'];
 
-    IO.Socket socket = IO.io('wss://streamer.adverts247.xyz', <String, dynamic>{
+    IO.Socket socket =
+        IO.io('wss://streaming.adverts247.xyz', <String, dynamic>{
       'transports': ['websocket'],
     });
 
@@ -167,16 +171,17 @@ class AppWebsocketService {
 
     socket.on('stop-stream', (data) {
       // Handle stop-stream event
-      // print('Received stop-stream event');
-      // Provider.of<UserState>(context, listen: false).canStream = false;
-      Navigator.push(context,
-          MaterialPageRoute(builder: (context) => const WaitingPage()));
+      print('Received stop-stream event');
+     Provider.of<UserState>(context, listen: false).canStream = false;
+     
+Restart.restartApp();
+     // Get.to(() => LoginPage());
     });
 
     socket.on('start-stream', (data) {
       // Handle start-stream event
       print('Received start-stream event');
-      Provider.of<UserState>(context, listen: false).canStream = true;
+     Provider.of<UserState>(context, listen: false).canStream = true;
 
       Navigator.push(
           context,
@@ -187,23 +192,23 @@ class AppWebsocketService {
       //     MaterialPageRoute(builder: (context) => const VideoPlayerApp()));
     });
 
-    socket.on('ad-broadcast', (data) {
-      print('ad-broadcast');
-      print(data);
-      var canUserStream =
-          Provider.of<UserState>(context, listen: false).canStream;
+    // socket.on('ad-broadcast', (data) {
+    //   print('ad-broadcast');
+    //   print(data);
+    //   var canUserStream =
+    //       Provider.of<UserState>(context, listen: false).canStream;
 
-      print(canUserStream);
-      var adsData = jsonDecode(data);
+    //   print(canUserStream);
+    //   var adsData = jsonDecode(data);
 
-      // if (canUserStream!) {
-      //   Navigator.push(
-      //       context,
-      //       MaterialPageRoute(
-      //           builder: (context) =>
-      //               BroadCastVideoPlayer(path: adsData['content']['path'])));
-      // } else {}
-    });
+    //   // if (canUserStream!) {
+    //   //   Navigator.push(
+    //   //       context,
+    //   //       MaterialPageRoute(
+    //   //           builder: (context) =>
+    //   //               BroadCastVideoPlayer(path: adsData['content']['path'])));
+    //   // } else {}
+    // });
   }
 
   Future<Position?> getCurrentLocation() async {
@@ -238,7 +243,7 @@ class AppWebsocketService {
   ///
   connectToSocket(context, dynamic lat, long) {
     var userData = Provider.of<UserState>(context, listen: false).userDetails;
-    final serverUrl = 'wss://streamer.adverts247.xyz';
+    final serverUrl = 'wss://streaming.adverts247.xyz';
     final driverId =
         userData['driver']['id']; // Replace with the desired driver's ID
     final latitude = lat; // Replace with the desired latitude

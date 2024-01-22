@@ -122,7 +122,7 @@
 //   //listen to exit app
 //   void connectToDriverChannel(int userId) {
 //     IO.Socket socket =
-//         IO.io('wss://streamer.adverts247.xyz', <String, dynamic>{
+//         IO.io('wss://streaming.adverts247.xyz', <String, dynamic>{
 //       'transports': ['websocket'],
 //     });
 

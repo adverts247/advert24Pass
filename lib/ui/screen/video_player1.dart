@@ -81,10 +81,7 @@ class _VideoPlayerAppState extends State<VideoPlayerApp>
     // });
 
     super.initState();
-    likeController = AnimationController(
-      vsync: this,
-      duration: const Duration(seconds: 2),
-    );
+  
   }
 
   // send location update
@@ -218,7 +215,7 @@ class _VideoPlayerAppState extends State<VideoPlayerApp>
                   // setState(() {
                   //   rating = false;
                   // });
-                   _controller!.dispose();
+                  _controller!.dispose();
                   Get.to(AboutMePage());
 
                   Future.delayed(Duration(seconds: 10), () {
@@ -239,7 +236,9 @@ class _VideoPlayerAppState extends State<VideoPlayerApp>
   @override
   void dispose() {
     _controller!.dispose();
-    //_timer.cancel();
+  
+
+    _timer.cancel();
     super.dispose();
   }
 
@@ -249,6 +248,7 @@ class _VideoPlayerAppState extends State<VideoPlayerApp>
 
     showDialog(
       context: context,
+      barrierDismissible: false,
       builder: (BuildContext context) {
         return Dialog(
           shape: RoundedRectangleBorder(
@@ -737,122 +737,123 @@ class _VideoPlayerAppState extends State<VideoPlayerApp>
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Row(
-              children: [
-                const SizedBox(
-                  width: 40,
-                ),
-                InkWell(
-                  splashColor: Colors.black,
-                  hoverColor: Colors.black,
-                  highlightColor: Colors.black,
-                  enableFeedback: false,
-                  onTap: () async {
-                    setState(() {
-                      _isLarge = !_isLarge;
-                      if (_isLarge) {
-                        likeController!.forward();
+            LikeDislikeRow(currentAds: currentAds),
+            // Row(
+            //   children: [
+            //     const SizedBox(
+            //       width: 40,
+            //     ),
+            //     InkWell(
+            //       splashColor: Colors.black,
+            //       hoverColor: Colors.black,
+            //       highlightColor: Colors.black,
+            //       enableFeedback: false,
+            //       onTap: () async {
+            //         setState(() {
+            //           _isLarge = !_isLarge;
+            //           if (_isLarge) {
+            //             likeController!.forward();
 
-                        Future.delayed(const Duration(milliseconds: 110), () {
-                          setState(() {
-                            _isLarge = !_isLarge;
-                          });
-                        });
-                      } else {
-                        likeController!.reverse();
-                      }
-                    });
+            //             Future.delayed(const Duration(milliseconds: 110), () {
+            //               setState(() {
+            //                 _isLarge = !_isLarge;
+            //               });
+            //             });
+            //           } else {
+            //             likeController!.reverse();
+            //           }
+            //         });
 
-                    var sessionId =
-                        Provider.of<UserState>(context, listen: false)
-                            .sessionId;
-                    var body = {'sessionId': sessionId};
-                    VideoService()
-                        .likeVideo(context, body, currentAds!.content.path);
-                  },
-                  child: SizedBox(
-                    height: height < 500 ? 30 : 40,
-                    width: 50,
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        AnimatedContainer(
-                          curve: Curves.easeInOut,
-                          duration: const Duration(milliseconds: 210),
-                          child: Icon(
-                            MdiIcons.thumbUpOutline,
-                            color: Colors.blue,
-                            size: _isLarge ? 35.0 : 25.0,
-                          ),
-                        ),
-                        // Container(
-                        //   child:_isLarge ? Container():
+            //         var sessionId =
+            //             Provider.of<UserState>(context, listen: false)
+            //                 .sessionId;
+            //         var body = {'sessionId': sessionId};
+            //         VideoService()
+            //             .likeVideo(context, body, currentAds!.content.path);
+            //       },
+            //       child: SizedBox(
+            //         height: height < 500 ? 30 : 40,
+            //         width: 50,
+            //         child: Column(
+            //           mainAxisAlignment: MainAxisAlignment.center,
+            //           children: [
+            //             AnimatedContainer(
+            //               curve: Curves.easeInOut,
+            //               duration: const Duration(milliseconds: 210),
+            //               child: Icon(
+            //                 MdiIcons.thumbUpOutline,
+            //                 color: Colors.blue,
+            //                 size: _isLarge ? 35.0 : 25.0,
+            //               ),
+            //             ),
+            //             // Container(
+            //             //   child:_isLarge ? Container():
 
-                        //    Text(
-                        //     'Like',
-                        //     style: TextStyles()
-                        //         .greyTextStyle400()
-                        //         .copyWith(fontSize: 16, color: Colors.blue),
-                        //   ),
-                        // )
-                      ],
-                    ),
-                  ),
-                ),
-                const SizedBox(
-                  width: 40,
-                ),
-                InkWell(
-                  splashColor: Colors.black,
-                  hoverColor: Colors.black,
-                  highlightColor: Colors.black,
-                  enableFeedback: false,
-                  onTap: () async {
-                    setState(() {
-                      _isdisLikeLarge = !_isdisLikeLarge;
-                      if (_isdisLikeLarge) {
-                        likeController!.forward();
+            //             //    Text(
+            //             //     'Like',
+            //             //     style: TextStyles()
+            //             //         .greyTextStyle400()
+            //             //         .copyWith(fontSize: 16, color: Colors.blue),
+            //             //   ),
+            //             // )
+            //           ],
+            //         ),
+            //       ),
+            //     ),
+            //     const SizedBox(
+            //       width: 40,
+            //     ),
+            //     InkWell(
+            //       splashColor: Colors.black,
+            //       hoverColor: Colors.black,
+            //       highlightColor: Colors.black,
+            //       enableFeedback: false,
+            //       onTap: () async {
+            //         setState(() {
+            //           _isdisLikeLarge = !_isdisLikeLarge;
+            //           if (_isdisLikeLarge) {
+            //             likeController!.forward();
 
-                        Future.delayed(const Duration(milliseconds: 110), () {
-                          setState(() {
-                            _isdisLikeLarge = !_isdisLikeLarge;
-                          });
-                        });
-                      } else {
-                        likeController!.reverse();
-                      }
-                    });
+            //             Future.delayed(const Duration(milliseconds: 110), () {
+            //               setState(() {
+            //                 _isdisLikeLarge = !_isdisLikeLarge;
+            //               });
+            //             });
+            //           } else {
+            //             likeController!.reverse();
+            //           }
+            //         });
 
-                    var sessionId =
-                        Provider.of<UserState>(context, listen: false)
-                            .sessionId;
-                    var body = {'sessionId': sessionId};
-                    VideoService()
-                        .disLikeVideo(context, body, currentAds!.content.path);
-                  },
-                  child: SizedBox(
-                    height: height < 500 ? 30 : 40,
-                    width: 50,
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Icon(
-                          MdiIcons.thumbDownOutline,
-                          color: Colors.red,
-                          size: _isdisLikeLarge ? 35.0 : 25.0,
-                        ),
-                        // Text(
-                        //   'DisLike',
-                        //   style: TextStyles()
-                        //       .greyTextStyle400()
-                        //       .copyWith(fontSize: 16, color: Colors.red),
-                        // )
-                      ],
-                    ),
-                  ),
-                )
-              ],
-            ),
+            //         var sessionId =
+            //             Provider.of<UserState>(context, listen: false)
+            //                 .sessionId;
+            //         var body = {'sessionId': sessionId};
+            //         VideoService()
+            //             .disLikeVideo(context, body, currentAds!.content.path);
+            //       },
+            //       child: SizedBox(
+            //         height: height < 500 ? 30 : 40,
+            //         width: 50,
+            //         child: Column(
+            //           mainAxisAlignment: MainAxisAlignment.center,
+            //           children: [
+            //             Icon(
+            //               MdiIcons.thumbDownOutline,
+            //               color: Colors.red,
+            //               size: _isdisLikeLarge ? 35.0 : 25.0,
+            //             ),
+            //             // Text(
+            //             //   'DisLike',
+            //             //   style: TextStyles()
+            //             //       .greyTextStyle400()
+            //             //       .copyWith(fontSize: 16, color: Colors.red),
+            //             // )
+            //           ],
+            //         ),
+            //       ),
+            //     )
+            //   ],
+            // ),
             // Image.asset(
             //   'assets/images/Group (6).png',
             //   height: 40,
@@ -1003,5 +1004,152 @@ class _VideoPlayerAppState extends State<VideoPlayerApp>
         ),
       ),
     );
+  }
+}
+
+class LikeDislikeRow extends StatefulWidget {
+  VideoModel? currentAds;
+  LikeDislikeRow({super.key, @required this.currentAds});
+
+  @override
+  _LikeDislikeRowState createState() => _LikeDislikeRowState();
+}
+
+class _LikeDislikeRowState extends State<LikeDislikeRow>
+    with SingleTickerProviderStateMixin {
+  bool _isLarge = false;
+  bool _isdisLikeLarge = false;
+  late AnimationController _likeController;
+
+  @override
+  void initState() {
+    super.initState();
+    _likeController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 110),
+    );
+  }
+
+  @override
+  void dispose() {
+    _likeController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    var height = MediaQuery.of(context).size.height;
+
+    return Row(
+      children: [
+        const SizedBox(
+          width: 40,
+        ),
+        _buildInkWell(
+          onTap: () async {
+            _handleLikeTap();
+            var sessionId =
+                Provider.of<UserState>(context, listen: false).sessionId;
+            var body = {'sessionId': sessionId};
+            VideoService().likeVideo(
+              context,
+              body,
+              widget.currentAds!.content.path,
+            );
+          },
+          icon: MdiIcons.thumbUpOutline,
+          color: Colors.blue,
+          size: _isLarge ? 35.0 : 25.0,
+        ),
+        const SizedBox(
+          width: 40,
+        ),
+        _buildInkWell(
+          onTap: () async {
+            _handleDislikeTap();
+            var sessionId =
+                Provider.of<UserState>(context, listen: false).sessionId;
+            var body = {'sessionId': sessionId};
+            VideoService().disLikeVideo(
+              context,
+              body,
+              widget.currentAds!.content.path,
+            );
+          },
+          icon: MdiIcons.thumbDownOutline,
+          color: Colors.red,
+          size: _isdisLikeLarge ? 35.0 : 25.0,
+        ),
+      ],
+    );
+  }
+
+  Widget _buildInkWell({
+    required VoidCallback onTap,
+    required IconData icon,
+    required Color color,
+    required double size,
+  }) {
+    var height = MediaQuery.of(context).size.height;
+
+    return InkWell(
+      splashColor: Colors.black,
+      hoverColor: Colors.black,
+      highlightColor: Colors.black,
+      enableFeedback: false,
+      onTap: onTap,
+      child: SizedBox(
+        height: height < 500 ? 30 : 40,
+        width: 50,
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            AnimatedContainer(
+              curve: Curves.easeInOut,
+              duration: const Duration(milliseconds: 210),
+              child: Icon(
+                icon,
+                color: color,
+                size: size,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  void _handleLikeTap() {
+    setState(() {
+      _isLarge = !_isLarge;
+      if (_isLarge) {
+        _likeController.forward();
+
+        Future.delayed(const Duration(milliseconds: 110), () {
+          setState(() {
+            _isLarge = !_isLarge;
+          });
+        });
+      } else {
+        _likeController.reverse();
+      }
+    });
+  }
+
+  void _handleDislikeTap() {
+    setState(() {
+      _isdisLikeLarge = !_isdisLikeLarge;
+      if (_isdisLikeLarge) {
+        _likeController.forward();
+
+        Future.delayed(const Duration(milliseconds: 110), () {
+          setState(() {
+            _isdisLikeLarge = !_isdisLikeLarge;
+          });
+        });
+      } else {
+        _likeController.reverse();
+      }
+    });
   }
 }

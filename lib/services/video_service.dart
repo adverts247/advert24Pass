@@ -49,6 +49,10 @@ class VideoService {
       AppWebsocketService().connectToSocket(
           context, currentLocation!.latitude, currentLocation.longitude);
 
+
+
+          AppWebsocketService().broadcast(context);
+
       //   AppWebsocketService().connectToSocket(
       // context, currentLocation!.latitude, currentLocation.longitude);
 
@@ -324,10 +328,10 @@ class VideoService {
         final List<int> byteList = await response.stream.toBytes();
         print('HTTP Error: ${response.statusCode}');
 
-        
+        final sessionId = response.headers['sessionid'].toString();
+        print(sessionId);
+        Provider.of<UserState>(context, listen: false).sessionId = sessionId;
 
-
-        
         return Uint8List.fromList(byteList);
       } else {
         print(
@@ -357,14 +361,14 @@ class VideoService {
         final userState = Provider.of<UserState>(context, listen: false);
         final userData = userState.userDetails;
         final id = userData['driver']['id'].toString();
-        const url = 'https://streamer.adverts247.xyz';
+        const url = 'https://streaming.adverts247.xyz';
         final headers = {
           'Range': '0',
           'driver-id': id,
           'Accept': 'multipart/form-data',
         };
 
-          print(headers);
+        print(headers);
 
         Position? currentLocation =
             await AppWebsocketService().getCurrentLocation();
@@ -387,6 +391,7 @@ class VideoService {
           final videoUrl = '$url/${responseBody['url']}';
 
           var storeVideoPath = await tools.getFromStore(videoUrl);
+           Provider.of<UserState>(context, listen: false).sessionId = sessionId;
 
           // check if video is on local storage
           if (storeVideoPath == null) {
@@ -443,7 +448,7 @@ class VideoService {
   //   final userState = Provider.of<UserState>(context, listen: false);
   //   final userData = userState.userDetails;
   //   final id = userData['id'].toString();
-  //   final url = 'https://streamer.adverts247.xyz';
+  //   final url = 'https://streaming.adverts247.xyz';
   //   final headers = {
   //     'Range': '0',
   //     'driver-id': id,
@@ -478,7 +483,7 @@ class VideoService {
 
   //for broadcast ads
   Future<dynamic> fetchBroadcastVideo(String path, context) async {
-    // var path = 'https://streamer.adverts247.xyz/ads/${id}';
+    // var path = 'https://streaming.adverts247.xyz/ads/${id}';
     var userData = Provider.of<UserState>(context, listen: false).userDetails;
     var headers = {
       'Range': '0',
@@ -512,8 +517,8 @@ class VideoService {
         print(' sessionId : ${response.headers['sessionid'].toString()}');
 
         var filePath = await downloadVideo(
-            "https://streamer.adverts247.xyz/${responseBody['url']}");
-        print("https://streamer.adverts247.xyz/${responseBody['url']}");
+            "https://streaming.adverts247.xyz/${responseBody['url']}");
+        print("https://streaming.adverts247.xyz/${responseBody['url']}");
 
         return filePath;
       } else {
@@ -622,7 +627,7 @@ class VideoService {
     context,
     dynamic body,
   ) async {
-    final url = Uri.parse('https://streamer.adverts247.xyz/rate-ad'); //
+    final url = Uri.parse('https://streaming.adverts247.xyz/rate-ad'); //
     print(url);
     print(body);
 
