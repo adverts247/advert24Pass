@@ -22,22 +22,40 @@ class _LoginPageState extends State<LoginPage> {
   TextEditingController? loginEmail;
   TextEditingController? password;
   StreamSubscription<ConnectivityResult>? subscription;
+  late Timer _timer;
   @override
   void initState() {
+    runFunctionEvery3Seconds();
+
     loginEmail = TextEditingController();
     password = TextEditingController();
+
     subscription = Connectivity()
         .onConnectivityChanged
         .listen((ConnectivityResult result) {
       if (ConnectivityResult == ConnectivityResult.none) {
       } else {
-      autoLogin();
+        autoLogin();
       }
 
       // Got a new connectivity status!
     });
 
     super.initState();
+  }
+
+  @override
+  void dispose() {
+    // Dispose of the timer when the widget is disposed
+    _timer.cancel();
+    super.dispose();
+  }
+
+  void runFunctionEvery3Seconds() {
+    //  _timer = Timer.periodic(Duration(seconds: 3), (Timer t) {
+    fetchData();
+    // print('yes');
+    // });
   }
 
   Future<void> autoLogin() async {
@@ -49,6 +67,24 @@ class _LoginPageState extends State<LoginPage> {
 
       VideoService().login(context, body);
     } else {}
+  }
+
+  Future<void> fetchData() async {
+    try {
+      Position? currentLocation =
+          await AppWebsocketService().getCurrentLocation();
+
+      if (currentLocation != null) {
+        print(currentLocation);
+        AppWebsocketService().connectToSocket(
+          context,
+          currentLocation.latitude,
+          currentLocation.longitude,
+        );
+      }
+    } catch (e) {
+      print("Error fetching data: $e");
+    }
   }
 
   @override
@@ -170,7 +206,7 @@ class _LoginPageState extends State<LoginPage> {
                                     // 'password': '12345678'
                                   };
                                   print(body);
-                                 
+
                                   VideoService().login(context, body);
                                   // AppWebsocketService socket =
                                   //     AppWebsocketService();

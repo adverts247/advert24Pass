@@ -172,16 +172,16 @@ class AppWebsocketService {
     socket.on('stop-stream', (data) {
       // Handle stop-stream event
       print('Received stop-stream event');
-     Provider.of<UserState>(context, listen: false).canStream = false;
-     
-Restart.restartApp();
-     // Get.to(() => LoginPage());
+      Provider.of<UserState>(context, listen: false).canStream = false;
+
+      Restart.restartApp();
+      // Get.to(() => LoginPage());
     });
 
     socket.on('start-stream', (data) {
       // Handle start-stream event
       print('Received start-stream event');
-     Provider.of<UserState>(context, listen: false).canStream = true;
+      Provider.of<UserState>(context, listen: false).canStream = true;
 
       Navigator.push(
           context,
@@ -270,6 +270,42 @@ Restart.restartApp();
       });
       print('yes');
     });
+
+    // socket.on('driver pong', (data) {
+    //   // Handle the received location data (latitude and longitude)
+    //   final location = data['data'];
+    //   print(
+    //       'Received driver location: Latitude: ${location['lat']}, Longitude: ${location['long']}');
+    // });
+
+    socket.connect();
+  }
+
+  sendLocationSocket(context, dynamic lat, long) {
+    var userData = Provider.of<UserState>(context, listen: false).userDetails;
+    final serverUrl = 'wss://streaming.adverts247.xyz';
+    final driverId =
+        userData['driver']['id']; // Replace with the desired driver's ID
+    final latitude = lat; // Replace with the desired latitude
+    final longitude = long; // Replace with the desired longitude
+
+    IO.Socket socket;
+    socket = IO.io(serverUrl, <String, dynamic>{
+      'transports': ['websocket'],
+    });
+
+    final content = {
+      'driverId': driverId,
+      'lat': latitude,
+      'long': longitude,
+    };
+    print(content);
+
+    socket.emit('driver ping', {
+      // 'roomName': roomName,
+      jsonEncode(content),
+    });
+    print('yes');
 
     // socket.on('driver pong', (data) {
     //   // Handle the received location data (latitude and longitude)

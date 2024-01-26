@@ -19,7 +19,6 @@ class OtaService {
       OtaUpdate()
           .execute(
         urlUpdate,
-   
       )
           .listen(
         (OtaEvent event) async {
@@ -53,11 +52,12 @@ class OtaService {
     context,
   ) async {
     var token = await tools.getFromStore('accessToken');
+
     print(token);
     Completer<dynamic> completer = Completer<dynamic>();
 
     //Loaders().showModalLoading(context);
-    HttpRequestStreaming('https://ads247-center.lazynerdstudios.com/api/v1/apk',
+    HttpRequestStreaming('https://central.adverts247.xyz/api/v1/apk',
         // https://ads247-center.lazynerdstudios.com/api/v1/apk
         //https://central.adverts247.xyz/api/v1/apk
 

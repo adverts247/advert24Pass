@@ -29,6 +29,7 @@ import 'package:top_snackbar_flutter/top_snack_bar.dart';
 // import 'package:http_parser/http_parser.dart';
 
 class VideoService {
+  late Timer _timer;
   login(context, dynamic body) {
     // AboutMePage();
     loader().showImageDialog(context);
@@ -43,15 +44,22 @@ class VideoService {
       await getWallet(context);
       WeatherService().getWeatherData(context);
 
-      Position? currentLocation =
-          await AppWebsocketService().getCurrentLocation();
+      _timer = Timer.periodic(Duration(seconds: 5), (Timer t) async {
+        Position? currentLocation =
+            await AppWebsocketService().getCurrentLocation();
 
-      AppWebsocketService().connectToSocket(
-          context, currentLocation!.latitude, currentLocation.longitude);
+        AppWebsocketService().sendLocationSocket(
+            context, currentLocation!.latitude, currentLocation.longitude);
+        print('yes');
+      });
 
+      // Position? currentLocation =
+      //     await AppWebsocketService().getCurrentLocation();
 
+      // AppWebsocketService().sendLocationSocket(
+      //     context, currentLocation!.latitude, currentLocation.longitude);
 
-          AppWebsocketService().broadcast(context);
+      AppWebsocketService().broadcast(context);
 
       //   AppWebsocketService().connectToSocket(
       // context, currentLocation!.latitude, currentLocation.longitude);
@@ -391,7 +399,7 @@ class VideoService {
           final videoUrl = '$url/${responseBody['url']}';
 
           var storeVideoPath = await tools.getFromStore(videoUrl);
-           Provider.of<UserState>(context, listen: false).sessionId = sessionId;
+          Provider.of<UserState>(context, listen: false).sessionId = sessionId;
 
           // check if video is on local storage
           if (storeVideoPath == null) {
