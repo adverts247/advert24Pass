@@ -57,7 +57,7 @@ class OtaService {
     Completer<dynamic> completer = Completer<dynamic>();
 
     //Loaders().showModalLoading(context);
-    HttpRequestStreaming('https://central.adverts247.xyz/api/v1/apk',
+    HttpRequestStreaming('https://ads247-center.lazynerdstudios.com/api/v1/apk',
         // https://ads247-center.lazynerdstudios.com/api/v1/apk
         //https://central.adverts247.xyz/api/v1/apk
 

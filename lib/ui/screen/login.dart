@@ -10,6 +10,8 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:adverts247Pass/tools.dart' as tools;
 import 'package:geolocator/geolocator.dart';
+import 'package:top_snackbar_flutter/custom_snack_bar.dart';
+import 'package:top_snackbar_flutter/top_snack_bar.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -179,22 +181,24 @@ class _LoginPageState extends State<LoginPage> {
                               //       ),
                               // ),
                               const SizedBox(
-                                height: 50,
+                                height: 25,
                               ),
                               OutlineInput(
                                 labelText: 'Email',
                                 controller: loginEmail,
                               ),
                               const SizedBox(
-                                height: 23,
+                                height: 15,
                               ),
                               OutlineInput(
                                 labelText: 'Password',
                                 controller: password,
                               ),
+                           
                               const SizedBox(
-                                height: 23,
+                                height: 13,
                               ),
+
                               MyButton(
                                 text: 'Login',
                                 onPressed: () async {
@@ -215,7 +219,32 @@ class _LoginPageState extends State<LoginPage> {
                                   //     await socket.getCurrentLocation();
                                   //print(position);
                                 },
-                              )
+                              ),
+                                 const SizedBox(
+                                height: 13,
+                              ),
+
+                              MyButton(
+                                text: 'Clear Previous Data',
+                                onPressed: () async {
+                                  await tools.clearStore();
+                              
+                                  showTopSnackBar(
+                                      Overlay.of(context!),
+                                      CustomSnackBar.success(
+                                          backgroundColor:
+                                              Colors.green.withOpacity(0.7),
+                                          borderRadius:
+                                              BorderRadius.circular(5),
+                                          boxShadow: const [],
+                                          icon: const Icon(
+                                              Icons.sentiment_dissatisfied,
+                                              color:
+                                                  Color.fromARGB(164, 0, 0, 0),
+                                              size: 120),
+                                          message: 'Cleared'));
+                                },
+                              ),
                             ],
                           ),
                         ),

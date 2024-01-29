@@ -31,6 +31,7 @@ class _ProfileImageState extends State<ProfileImage> {
   @override
   Widget build(BuildContext context) {
     var userDetail = Provider.of<UserState>(context, listen: false).userDetails;
+    var screenHeight = MediaQuery.of(context).size.height;
     return Scaffold(
       backgroundColor: Colors.black,
       body: Stack(
@@ -81,6 +82,8 @@ class _ProfileImageState extends State<ProfileImage> {
                   child: Image.network(
                     'https://central.adverts247.xyz/${userDetail!['image']}',
                     fit: BoxFit.cover,
+                    height: screenHeight < 450 ? 130 : 200,
+                    width: screenHeight < 450 ? 130 : 200,
                   ),
                 )
               ],
