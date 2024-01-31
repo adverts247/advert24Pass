@@ -81,7 +81,6 @@ class _VideoPlayerAppState extends State<VideoPlayerApp>
     // });
 
     super.initState();
-  
   }
 
   // send location update
@@ -190,16 +189,13 @@ class _VideoPlayerAppState extends State<VideoPlayerApp>
 
               _controller!.dispose();
             } else {
-              if (currentAds!.callToAction.url.toString() != "null" ||
-                  currentAds!.callToAction.url.toString().isNotEmpty) {
+              if (currentAds!.callToAction.url.toString() != "null") {
                 _showQrcode(context);
               }
 
               Future.delayed(
                   Duration(
-                      seconds: currentAds!.callToAction.url.toString() !=
-                                  "null" ||
-                              currentAds!.callToAction.url.toString().isNotEmpty
+                      seconds: currentAds!.callToAction.url.toString() != "null"
                           ? 10
                           : 0), () {
                 if (currentAds!.callToAction.url.toString() != "null" ||
@@ -236,7 +232,6 @@ class _VideoPlayerAppState extends State<VideoPlayerApp>
   @override
   void dispose() {
     _controller!.dispose();
-  
 
     _timer.cancel();
     super.dispose();
@@ -288,8 +283,7 @@ class _VideoPlayerAppState extends State<VideoPlayerApp>
   }
 
   nextAds() {
-    if (currentAds!.callToAction.url.toString() != "null" ||
-        currentAds!.callToAction.url.toString().isNotEmpty) {
+    if (currentAds!.callToAction.url.toString() != "null") {
       _showQrcode(context);
     }
 
@@ -298,8 +292,7 @@ class _VideoPlayerAppState extends State<VideoPlayerApp>
             seconds: currentAds!.callToAction.url.toString() != "null"
                 ? 10
                 : 0), () async {
-      if (currentAds!.callToAction.url.toString() != "null" ||
-          currentAds!.callToAction.url.toString().isNotEmpty) {
+      if (currentAds!.callToAction.url.toString() != "null") {
         Navigator.pop(context);
       }
 
@@ -654,25 +647,17 @@ class _VideoPlayerAppState extends State<VideoPlayerApp>
                                         nextAds();
                                       } else {
                                         if (currentAds!.callToAction.url
-                                                    .toString() !=
-                                                "null" ||
-                                            currentAds!.callToAction.url
-                                                .toString()
-                                                .isNotEmpty) {
+                                                .toString() !=
+                                            "null") {
                                           _showQrcode(context);
                                         }
 
                                         Future.delayed(
                                             Duration(
                                                 seconds: currentAds!
-                                                                .callToAction
-                                                                .url
-                                                                .toString() !=
-                                                            "null" ||
-                                                        currentAds!
                                                             .callToAction.url
-                                                            .toString()
-                                                            .isNotEmpty
+                                                            .toString() !=
+                                                        "null"
                                                     ? 10
                                                     : 0), () {
                                           if (currentAds!.callToAction.url
