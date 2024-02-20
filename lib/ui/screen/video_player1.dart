@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:adverts247Pass/model/video_model.dart';
+import 'package:adverts247Pass/ui/screen/afterlast_ads.dart';
 import 'package:get/get.dart';
 import 'package:adverts247Pass/services/video_service.dart';
 import 'package:adverts247Pass/state/user_state.dart';
@@ -174,54 +175,57 @@ class _VideoPlayerAppState extends State<VideoPlayerApp>
       } else {
         _controller = VideoPlayerController.file(File(video))
           ..initialize().then((_) {
-            _controller!.play();
-            setState(() {});
-          });
+            _controller!.addListener(() async {
+              print(_controller!.value.errorDescription);
+              print(_controller!.value.position);
+              print(' buffering ${_controller!.value.hasError}');
 
-        _controller!.addListener(() async {
-          print(_controller!.value.errorDescription);
-          print(_controller!.value.position);
-
-          print(' buffering ${_controller!.value.hasError}');
-          if (_controller!.value.isCompleted || _controller!.value.hasError) {
-            if (_currentIndex < videoModelList!.length - 1) {
-              nextAds();
-
-              _controller!.dispose();
-            } else {
-              if (currentAds!.callToAction.url.toString() != "null") {
-                _showQrcode(context);
-              }
-
-              Future.delayed(
-                  Duration(
-                      seconds: currentAds!.callToAction.url.toString() != "null"
-                          ? 10
-                          : 0), () {
-                if (currentAds!.callToAction.url.toString() != "null" ||
-                    currentAds!.callToAction.url.toString().isNotEmpty) {
-                  Navigator.pop(context);
-                }
-
-                setState(() {
-                  rating = true;
-                });
-
-                Future.delayed(Duration(seconds: 5), () {
-                  // setState(() {
-                  //   rating = false;
-                  // });
+              if (_controller!.value.isCompleted ||
+                  _controller!.value.hasError) {
+                if (_currentIndex < videoModelList!.length - 1) {
+                  nextAds();
                   _controller!.dispose();
-                  Get.to(AboutMePage());
-
-                  Future.delayed(Duration(seconds: 10), () {
-                    Get.to(VideoPlayerApp());
+                } else {
+                  setState(() {
+                    _currentIndex = -1;
                   });
-                });
-              });
-            }
-          }
-        });
+                  nextAds();
+                  _controller!.dispose();
+
+                  // if (currentAds!.callToAction.url.toString() != "null") {
+                  //   _showQrcode(context);
+                  // }
+
+                  // Future.delayed(
+                  //     Duration(
+                  //       seconds:
+                  //           currentAds!.callToAction.url.toString() != "null"
+                  //               ? 10
+                  //               : 0,
+                  //     ), () async {
+                  //   if (currentAds!.callToAction.url.toString() != "null" ||
+                  //       currentAds!.callToAction.url.toString().isNotEmpty) {
+                  //     Navigator.pop(context);
+                  //   }
+
+                  //   setState(() {
+                  //     rating = true;
+                  //   });
+
+                  //   await Future.delayed(Duration(seconds: 5));
+                  //   // Navigate to the new route after a delay
+                  //   setState(() {
+                  //     rating = false;
+                  //   });
+                  // });
+                }
+              }
+            });
+
+            _controller!.play().then((value) => setState(() {
+                  isLoading = false;
+                }));
+          });
       }
     }
     setState(() {
@@ -646,46 +650,10 @@ class _VideoPlayerAppState extends State<VideoPlayerApp>
                                           videoModelList!.length - 1) {
                                         nextAds();
                                       } else {
-                                        if (currentAds!.callToAction.url
-                                                .toString() !=
-                                            "null") {
-                                          _showQrcode(context);
-                                        }
-
-                                        Future.delayed(
-                                            Duration(
-                                                seconds: currentAds!
-                                                            .callToAction.url
-                                                            .toString() !=
-                                                        "null"
-                                                    ? 10
-                                                    : 0), () {
-                                          if (currentAds!.callToAction.url
-                                                      .toString() !=
-                                                  "null" ||
-                                              currentAds!.callToAction.url
-                                                  .toString()
-                                                  .isNotEmpty) {
-                                            Navigator.pop(context);
-                                          }
-
-                                          setState(() {
-                                            rating = true;
-                                          });
-
-                                          Future.delayed(Duration(seconds: 5),
-                                              () {
-                                            // setState(() {
-                                            //   rating = false;
-                                            // });
-                                            Get.to(AboutMePage());
-
-                                            Future.delayed(
-                                                Duration(seconds: 10), () {
-                                              Get.to(VideoPlayerApp());
-                                            });
-                                          });
+                                        setState(() {
+                                          _currentIndex = -1;
                                         });
+                                        nextAds();
                                       }
                                     });
                                     return Column(

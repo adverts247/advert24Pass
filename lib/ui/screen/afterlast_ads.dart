@@ -11,30 +11,25 @@ import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:get/get.dart';
 
-class ProfileWeatherView extends StatefulWidget {
-  const ProfileWeatherView({super.key});
+class AfterLastAds extends StatefulWidget {
+  const AfterLastAds({super.key});
 
   @override
-  State<ProfileWeatherView> createState() => _ProfileWeatherViewState();
+  State<AfterLastAds> createState() => _AfterLastAdsState();
 }
 
-class _ProfileWeatherViewState extends State<ProfileWeatherView> {
+class _AfterLastAdsState extends State<AfterLastAds> {
   bool? isLoading = true;
 
   Map<String, dynamic>? walletDetail;
 
   var weatherApiResult;
   Timer? _timer;
-  var showWeather = false;
+  var showWeather = true;
   @override
   void initState() {
     getWalletBalance();
     super.initState();
-    _timer = Timer.periodic(const Duration(seconds: 5), (timer) {
-      setState(() {
-        showWeather = !showWeather;
-      });
-    });
 
     Future.delayed(const Duration(seconds: 10), () {
       Get.to(
@@ -79,9 +74,7 @@ class _ProfileWeatherViewState extends State<ProfileWeatherView> {
 
     return SafeArea(
       child: Scaffold(
-          body: isLoading! ||
-                  walletDetail.toString().toLowerCase() == "null" ||
-                  weatherApiResult.toString().toLowerCase() == "null"
+          body: isLoading!
               ? Container(
                   color: Colors.black,
                   child: const Center(
@@ -309,10 +302,8 @@ class _ProfileWeatherViewState extends State<ProfileWeatherView> {
                                         ),
                                         aboutMeCard(
                                             'Favourite Food',
-                                            walletDetail == null
-                                                ? 'loading'
-                                                : walletDetail!['driver']
-                                                    ['favourite_food']),
+                                            walletDetail!['driver']
+                                                ['favourite_food']),
                                         const SizedBox(
                                           height: 10,
                                         ),
