@@ -79,9 +79,7 @@ class _ProfileWeatherViewState extends State<ProfileWeatherView> {
 
     return SafeArea(
       child: Scaffold(
-          body: isLoading! ||
-                  walletDetail.toString().toLowerCase() == "null" ||
-                  weatherApiResult.toString().toLowerCase() == "null"
+          body: isLoading!
               ? Container(
                   color: Colors.black,
                   child: const Center(

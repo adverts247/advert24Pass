@@ -2,7 +2,7 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:adverts247Pass/model/video_model.dart';
-import 'package:adverts247Pass/ui/screen/afterlast_ads.dart';
+import 'package:adverts247Pass/ui/screen/after_ads_diaplay.dart';
 import 'package:get/get.dart';
 import 'package:adverts247Pass/services/video_service.dart';
 import 'package:adverts247Pass/state/user_state.dart';
@@ -377,7 +377,7 @@ class _VideoPlayerAppState extends State<VideoPlayerApp>
               rating!
                   ? const RatingPage()
                   : isLoading!
-                      ? const AboutMePage()
+                      ? const AfterAdsProfileView()
                       : !isPhoto!
                           ? video.toString().endsWith('mkv')
                               ? const Column(
@@ -631,13 +631,13 @@ class _VideoPlayerAppState extends State<VideoPlayerApp>
                                         bottomBottomWidget()
                                       ],
                                     )
-                                  : const AboutMePage()
+                                  : const AfterAdsProfileView()
                           : FutureBuilder<Uint8List>(
                               future: futureValue,
                               builder: (context, snapshot) {
                                 if (snapshot.connectionState ==
                                     ConnectionState.waiting) {
-                                  return const AboutMePage();
+                                  return const AfterAdsProfileView();
                                 } else if (snapshot.hasError) {
                                   return Text('Error: ${snapshot.error}');
                                 } else {
