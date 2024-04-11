@@ -183,13 +183,10 @@ class _VideoPlayerAppState extends State<VideoPlayerApp>
               if (_controller!.value.isCompleted ||
                   _controller!.value.hasError) {
                 if (_currentIndex < videoModelList!.length - 1) {
-                  nextAds();
+                  nextAds(false);
                   _controller!.dispose();
                 } else {
-                  setState(() {
-                    _currentIndex = -1;
-                  });
-                  nextAds();
+                  nextAds(true);
                   _controller!.dispose();
 
                   // if (currentAds!.callToAction.url.toString() != "null") {
@@ -286,7 +283,7 @@ class _VideoPlayerAppState extends State<VideoPlayerApp>
     );
   }
 
-  nextAds() {
+  nextAds(bool isLastAds) {
     if (currentAds!.callToAction.url.toString() != "null") {
       _showQrcode(context);
     }
@@ -308,7 +305,7 @@ class _VideoPlayerAppState extends State<VideoPlayerApp>
         setState(() {
           rating = false;
 
-          _currentIndex++;
+          isLastAds ? _currentIndex = 0 : _currentIndex++;
 
           currentAds = videoModelList![_currentIndex];
         });
@@ -648,12 +645,9 @@ class _VideoPlayerAppState extends State<VideoPlayerApp>
                                         () async {
                                       if (_currentIndex <
                                           videoModelList!.length - 1) {
-                                        nextAds();
+                                        nextAds(false);
                                       } else {
-                                        setState(() {
-                                          _currentIndex = -1;
-                                        });
-                                        nextAds();
+                                        nextAds(true);
                                       }
                                     });
                                     return Column(
@@ -834,7 +828,7 @@ class _VideoPlayerAppState extends State<VideoPlayerApp>
                       onPressed: () {
                         _controller!.dispose();
 
-                        nextAds();
+                        nextAds(false);
                       },
                     ))
               ],

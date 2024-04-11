@@ -147,7 +147,7 @@ class AppWebsocketService {
 
   ///
   ///
-  ///webso cket to controller the app
+  ///websocket to controller the app
   ///
   void broadcast(
     context,
@@ -155,6 +155,12 @@ class AppWebsocketService {
     var userData = Provider.of<UserState>(context, listen: false).userDetails;
     print('dfgfg $userData');
     var userId = userData['driver']['id'];
+
+    final fleetNumber = userData['fleet_id'];
+    var content = {
+      'id': userId,
+      'fleetId': fleetNumber,
+    };
 
     IO.Socket socket =
         IO.io('wss://streaming.adverts247.xyz', <String, dynamic>{
@@ -164,9 +170,16 @@ class AppWebsocketService {
     socket.on('connect', (_) {
       print('Connecteded');
       Provider.of<UserState>(context, listen: false).isFirstTime = false;
+      print(content);
 
-      // Navigator.of(context, rootNavigator: true).pop();
-      socket.emit('watch driver', userId);
+      socket.emit(
+        'watch driver',
+        jsonEncode(content),
+      );
+      socket.emit(
+        'watch driver',
+        jsonEncode(content),
+      );
     });
 
     socket.on('stop-stream', (data) {
@@ -244,8 +257,11 @@ class AppWebsocketService {
   connectToSocket(context, dynamic lat, long) {
     var userData = Provider.of<UserState>(context, listen: false).userDetails;
     final serverUrl = 'wss://streaming.adverts247.xyz';
-    final driverId =
-        userData['driver']['id']; // Replace with the desired driver's ID
+    final driverId = userData['driver']['id'];
+    final fleetId =
+        userData['fleet_id']; // Replace with the desired driver's ID
+
+    final fleetNumber = userData['fleet_id'];
     final latitude = lat; // Replace with the desired latitude
     final longitude = long; // Replace with the desired longitude
 
@@ -261,6 +277,7 @@ class AppWebsocketService {
         'driverId': driverId,
         'lat': latitude,
         'long': longitude,
+        'fleetId': fleetId,
       };
       print(content);
 
@@ -268,6 +285,7 @@ class AppWebsocketService {
         // 'roomName': roomName,
         jsonEncode(content),
       });
+
       print('yes');
     });
 
@@ -286,6 +304,7 @@ class AppWebsocketService {
     final serverUrl = 'wss://streaming.adverts247.xyz';
     final driverId =
         userData['driver']['id']; // Replace with the desired driver's ID
+    final fleetId = userData['fleet_id'];
     final latitude = lat; // Replace with the desired latitude
     final longitude = long; // Replace with the desired longitude
 
@@ -298,6 +317,7 @@ class AppWebsocketService {
       'driverId': driverId,
       'lat': latitude,
       'long': longitude,
+      'fleetId': fleetId,
     };
     print(content);
 
