@@ -56,7 +56,7 @@ class VideoService {
     }, onFailure: (_, result) {
       Navigator.pop(context);
 
-      debugPrint(result);
+      debugPrint("Login Error:: $result");
       return;
     }).send();
   }
@@ -238,7 +238,7 @@ class VideoService {
       shouldPopOnError: false,
       onSuccess: (_, result) async {
         // ignore: avoid_print
-        print(result);
+        print("Queue result" + result);
         List<VideoModel> notificationList = result
             .map<VideoModel>((element) => VideoModel.fromJson(element))
             .toList();
@@ -270,7 +270,7 @@ class VideoService {
       shouldPopOnError: false,
       onSuccess: (_, result) async {
         // ignore: avoid_print
-        print(result);
+        print("Queue result ${result.toString()}");
         List<VideoModel> notificationList = result
             .map<VideoModel>((element) => VideoModel.fromJson(element))
             .toList();
@@ -338,7 +338,7 @@ class VideoService {
         final userState = Provider.of<UserState>(context, listen: false);
         final userData = userState.userDetails;
         final id = userData['id'].toString();
-        final url = 'https://ads247-streaming.lazynerdstudios.com';
+        final url = 'https://streaming.adverts247.xyz';
         final headers = {
           'Range': '0',
           'driver-id': id,
@@ -417,7 +417,7 @@ class VideoService {
   //   final userState = Provider.of<UserState>(context, listen: false);
   //   final userData = userState.userDetails;
   //   final id = userData['id'].toString();
-  //   final url = 'https://ads247-streaming.lazynerdstudios.com';
+  //   final url = 'https://streaming.adverts247.xyz';
   //   final headers = {
   //     'Range': '0',
   //     'driver-id': id,
@@ -452,7 +452,7 @@ class VideoService {
 
   //for broadcast ads
   Future<dynamic> fetchBroadcastVideo(String path, context) async {
-    // var path = 'https://ads247-streaming.lazynerdstudios.com/ads/${id}';
+    // var path = 'https://streaming.adverts247.xyz/ads/${id}';
     var userData = Provider.of<UserState>(context, listen: false).userDetails;
     var headers = {
       'Range': '0',
@@ -482,9 +482,9 @@ class VideoService {
         print(' sessionId : ${response.headers['sessionid'].toString()}');
 
         var filePath = await downloadVideo(
-            "https://ads247-streaming.lazynerdstudios.com/${responseBody['url']}");
+            "https://streaming.adverts247.xyz/${responseBody['url']}");
         print(
-            "https://ads247-streaming.lazynerdstudios.com/${responseBody['url']}");
+            "https://streaming.adverts247.xyz/${responseBody['url']}");
 
         return filePath;
       } else {
@@ -594,7 +594,7 @@ class VideoService {
     dynamic body,
   ) async {
     final url =
-        Uri.parse('https://ads247-streaming.lazynerdstudios.com/rate-ad'); //
+        Uri.parse('https://streaming.adverts247.xyz/rate-ad'); //
     print(url);
     print(body);
 

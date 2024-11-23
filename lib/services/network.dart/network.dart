@@ -19,8 +19,9 @@ import 'package:adverts247Pass/tools.dart' as tools;
 
 // ignore: ant_identifier_names
 const String BACKEND_URL =
-    'https://ads247-center.lazynerdstudios.com/api/v1/driver/';
-//ads247-center.lazynerdstudios.com
+    // 'https://central.adverts247.xyz/api/v1/driver/';
+    'https://central.adverts247.xyz/api/v1/driver/';
+//central.adverts247.xyz
 
 //178.128.163.25
 

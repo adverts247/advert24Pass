@@ -49,7 +49,7 @@ class AppWebsocketService {
 
   sendLocation() async {
     final channel = WebSocketChannel.connect(
-        Uri.parse('wss://ads247-streaming.lazynerdstudios.com')
+        Uri.parse('wss://streaming.adverts247.xyz')
             .replace(queryParameters: {
       //'access_token': '',
     }));
@@ -194,7 +194,7 @@ class AppWebsocketService {
     var userId = userData['id'];
 
     IO.Socket socket =
-        IO.io('wss://ads247-streaming.lazynerdstudios.com', <String, dynamic>{
+        IO.io('wss://streaming.adverts247.xyz', <String, dynamic>{
       'transports': ['websocket'],
     });
 
@@ -203,7 +203,7 @@ class AppWebsocketService {
       Provider.of<UserState>(context, listen: false).isFirstTime = false;
 
       // Navigator.of(context, rootNavigator: true).pop();
-      socket.emit('watch driver', userId);
+      socket.emit('watch driver', userData);
     });
 
     socket.on('stop-stream', (data) {

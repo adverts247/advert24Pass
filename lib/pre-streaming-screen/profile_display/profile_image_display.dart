@@ -19,12 +19,11 @@ class _ProfileImageState extends State<ProfileImage> {
     super.initState();
 
     Future.delayed(Duration(seconds: 8), () {
-      Get.to(ProfileWeatherView(),
-
+      Get.to(
+        ProfileWeatherView(),
         transition: Transition.fadeIn,
         curve: Curves.easeInOut,
         duration: Duration(seconds: 1),
-      
       );
     });
   }
@@ -80,7 +79,7 @@ class _ProfileImageState extends State<ProfileImage> {
                 ClipRRect(
                   borderRadius: BorderRadius.circular(2000),
                   child: Image.network(
-                    'https://ads247-center.lazynerdstudios.com/${userDetail!['image']}',
+                    'https://central.adverts247.xyz/${userDetail!['image']}',
                     fit: BoxFit.cover,
                   ),
                 )

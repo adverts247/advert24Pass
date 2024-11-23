@@ -422,7 +422,7 @@ class _VideoPlayerAppState extends State<VideoPlayerApp>
 
                                                   Padding(
                                                     padding: const EdgeInsets
-                                                            .symmetric(
+                                                        .symmetric(
                                                         horizontal: 20,
                                                         vertical: 10),
                                                     child: Container(
@@ -487,7 +487,7 @@ class _VideoPlayerAppState extends State<VideoPlayerApp>
                                                                     child:
                                                                         Padding(
                                                                       padding: const EdgeInsets
-                                                                              .symmetric(
+                                                                          .symmetric(
                                                                           horizontal:
                                                                               10),
                                                                       child: VideoProgressIndicator(
@@ -830,7 +830,7 @@ class _VideoPlayerAppState extends State<VideoPlayerApp>
                       child: Image.network(
                         walletDetail == null
                             ? ' '
-                            : 'https://ads247-center.lazynerdstudios.com/${walletDetail!['image']}',
+                            : 'https://central.adverts247.xyz/${walletDetail!['image']}',
                         height: 50,
                         width: 50,
                         fit: BoxFit.cover,

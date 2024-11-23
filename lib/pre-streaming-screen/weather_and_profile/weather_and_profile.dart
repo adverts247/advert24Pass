@@ -38,12 +38,11 @@ class _ProfileWeatherViewState extends State<ProfileWeatherView> {
     });
 
     Future.delayed(Duration(seconds: 8), () {
-      Get.to(WaitingPage(),
+      Get.to(
+        WaitingPage(),
         transition: Transition.fadeIn,
         curve: Curves.easeIn,
-        duration: Duration(seconds: 1), 
-      
-      
+        duration: Duration(seconds: 1),
       );
     });
   }
@@ -121,7 +120,7 @@ class _ProfileWeatherViewState extends State<ProfileWeatherView> {
                                                         BorderRadius.circular(
                                                             2000),
                                                     child: Image.network(
-                                                      'https://ads247-center.lazynerdstudios.com/${walletDetail!['image']}',
+                                                      'https://central.adverts247.xyz/${walletDetail!['image']}',
                                                       fit: BoxFit.cover,
                                                       height: screenHeight < 400
                                                           ? 20
@@ -246,7 +245,7 @@ class _ProfileWeatherViewState extends State<ProfileWeatherView> {
                                           child: Image.network(
                                             walletDetail == null
                                                 ? ' '
-                                                : 'https://ads247-center.lazynerdstudios.com/${walletDetail!['image']}',
+                                                : 'https://central.adverts247.xyz/${walletDetail!['image']}',
                                             height:
                                                 screenHeight < 450 ? 130 : 200,
                                             width:
@@ -389,7 +388,10 @@ class _ProfileWeatherViewState extends State<ProfileWeatherView> {
       children: [
         Row(
           children: [
-            SvgPicture.asset('assets/images/Group 48095515.svg', height: screenHeight < 450 ? 35 :50,),
+            SvgPicture.asset(
+              'assets/images/Group 48095515.svg',
+              height: screenHeight < 450 ? 35 : 50,
+            ),
             SizedBox(
               width: 30,
             ),

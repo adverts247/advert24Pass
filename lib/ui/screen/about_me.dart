@@ -118,7 +118,7 @@ class _AboutMePageState extends State<AboutMePage> {
                                     child: Image.network(
                                       walletDetail == null
                                           ? ' '
-                                          : 'https://ads247-center.lazynerdstudios.com/${walletDetail!['image']}',
+                                          : 'https://central.adverts247.xyz/${walletDetail!['image']}',
                                       height: screenHeight < 450 ? 130 : 200,
                                       width: screenHeight < 450 ? 130 : 200,
                                       fit: BoxFit.cover,
