@@ -17,7 +17,7 @@ class MyButton extends StatelessWidget {
     return InkWell(
       onTap: onPressed,
       child: Container(
-        height: height < 500 ? 35: 56,
+        height: height < 500 ? 35 : 56,
         decoration: const BoxDecoration(
           color: Colors.red,
         ),
@@ -25,7 +25,7 @@ class MyButton extends StatelessWidget {
         child: Center(
             child: Text(
           text,
-          style: TextStyles().DefaultText(16, FontWeight.w700, Colors.white),
+          style: TextStyles().defaultText(16, FontWeight.w700, Colors.white),
         )),
       ),
     );
@@ -72,7 +72,7 @@ class IconTextButton extends StatelessWidget {
                   Text(
                     text,
                     style: TextStyles()
-                        .DefaultText(14, FontWeight.w600, Colors.white),
+                        .defaultText(14, FontWeight.w600, Colors.white),
                   ),
                 ],
               ),
@@ -94,11 +94,11 @@ class SecondaryButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-     var height = MediaQuery.of(context).size.height;
+    var height = MediaQuery.of(context).size.height;
     return InkWell(
       onTap: onPressed,
       child: Container(
-        height: height < 500 ? 35: 56,
+        height: height < 500 ? 35 : 56,
         decoration: const BoxDecoration(
           color: Color(0xffF6F6F6),
         ),
@@ -106,7 +106,7 @@ class SecondaryButton extends StatelessWidget {
         child: Center(
             child: Text(
           text,
-          style: TextStyles().DefaultText(16, FontWeight.w700, Colors.red),
+          style: TextStyles().defaultText(16, FontWeight.w700, Colors.red),
         )),
       ),
     );
@@ -129,14 +129,14 @@ class BorderButton extends StatelessWidget {
       child: Container(
         height: 48,
         decoration: BoxDecoration(
-            border: Border.all(color: themes().blackColor),
+            border: Border.all(color: Themes().blackColor),
             borderRadius: BorderRadius.circular(12)),
         width: MediaQuery.of(context).size.width,
         child: Center(
             child: Text(
           text,
           style: TextStyles()
-              .DefaultText(16, FontWeight.w700, themes().blackColor),
+              .defaultText(16, FontWeight.w700, Themes().blackColor),
         )),
       ),
     );
@@ -172,7 +172,7 @@ class NoColorButton extends StatelessWidget {
         child: Center(
             child: Text(
           text,
-          style: TextStyles().DefaultText(14, FontWeight.w400, textColor!),
+          style: TextStyles().defaultText(14, FontWeight.w400, textColor!),
         )),
       ),
     );

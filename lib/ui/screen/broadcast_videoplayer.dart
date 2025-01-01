@@ -654,7 +654,7 @@
 //               ],
 //             ),
 //             // Image.asset(
-//             //   'assets/images/Group (6).png',
+//             //   ImageAssets.appLogo,
 //             //   height: 40,
 //             //   width: 200,
 //             // ),
@@ -703,7 +703,7 @@
 //               mainAxisAlignment: MainAxisAlignment.spaceBetween,
 //               children: [
 //                 Image.asset(
-//                   'assets/images/Group (6).png',
+//                   ImageAssets.appLogo,
 //                   height: 40,
 //                   width: 200,
 //                 ),

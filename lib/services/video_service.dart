@@ -1,11 +1,14 @@
 import 'dart:async';
 
 import 'package:adverts247Pass/model/video_model.dart';
+import 'package:adverts247Pass/pre-streaming-screen/profile_display/profile_image_display.dart';
+import 'package:adverts247Pass/pre-streaming-screen/weather_and_profile/weather_and_profile.dart';
 import 'package:adverts247Pass/pre-streaming-screen/welcome_onbaording/welcome-onboarding_view.dart';
 import 'package:adverts247Pass/services/network.dart/network.dart';
 import 'package:adverts247Pass/services/network.dart/streaming-network.dart';
 import 'package:adverts247Pass/services/wether_service/weather_service.dart';
 import 'package:adverts247Pass/state/user_state.dart';
+import 'package:adverts247Pass/ui/screen/thank_you_page.dart';
 import 'package:adverts247Pass/ui/screen/waiting_Page.dart';
 
 import 'package:adverts247Pass/services/websocket.dart';
@@ -46,13 +49,14 @@ class VideoService {
 
       //
       Get.to(
-        PreStreamingWelcomePage(),
+        // PreStreamingWelcomePage(),
+        ProfileImage(),
         transition: Transition.fadeIn,
         curve: Curves.easeInOut,
         duration: Duration(seconds: 1),
       );
 
-      debugPrint(result);
+      debugPrint(result.toString());
     }, onFailure: (_, result) {
       Navigator.pop(context);
 
@@ -483,8 +487,7 @@ class VideoService {
 
         var filePath = await downloadVideo(
             "https://streaming.adverts247.xyz/${responseBody['url']}");
-        print(
-            "https://streaming.adverts247.xyz/${responseBody['url']}");
+        print("https://streaming.adverts247.xyz/${responseBody['url']}");
 
         return filePath;
       } else {
@@ -593,8 +596,7 @@ class VideoService {
     context,
     dynamic body,
   ) async {
-    final url =
-        Uri.parse('https://streaming.adverts247.xyz/rate-ad'); //
+    final url = Uri.parse('https://streaming.adverts247.xyz/rate-ad'); //
     print(url);
     print(body);
 
@@ -617,6 +619,11 @@ class VideoService {
             boxShadow: [],
             message: 'Thank you for rating this ad',
           ));
+      // Navigator.of(context).pop();
+      Navigator.pushAndRemoveUntil(
+          context,
+          MaterialPageRoute(builder: (context) => ProfileWeatherView()),
+          (route) => true);
     } else {
       // Error handling
       print('Failed to make POST request: ${response.statusCode}');

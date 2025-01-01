@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:adverts247Pass/services/image_assets.dart';
 import 'package:adverts247Pass/services/video_service.dart';
 import 'package:adverts247Pass/themes.dart';
 
@@ -96,7 +97,7 @@ class _LoginPageState extends State<LoginPage> {
                             crossAxisAlignment: CrossAxisAlignment.center,
                             children: [
                               Image.asset(
-                                'assets/images/Group (6).png',
+                                ImageAssets.appLogo,
                                 height: 80,
                                 width: 350,
                               ),

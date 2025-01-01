@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:io';
 import 'dart:math';
+import 'package:adverts247Pass/services/image_assets.dart';
 import 'package:adverts247Pass/tools.dart' as tools;
 
 import 'package:adverts247Pass/after_ads_display/radio_button_question.dart';
@@ -151,6 +152,7 @@ class _VideoPlayerAppState extends State<VideoPlayerApp>
 
       video = await VideoService()
           .fetchVideo(currentAds!.content.path.toString(), context);
+      print("Current ad: ${video}");
       // video = 'assets/images/pexels-media-dung-9716407 (1080p).mp4';
       var size = Provider.of<UserState>(context, listen: false).size;
 
@@ -695,7 +697,7 @@ class _VideoPlayerAppState extends State<VideoPlayerApp>
               ],
             ),
             // Image.asset(
-            //   'assets/images/Group (6).png',
+            //   ImageAssets.appLogo,
             //   height: 40,
             //   width: 200,
             // ),
@@ -747,7 +749,7 @@ class _VideoPlayerAppState extends State<VideoPlayerApp>
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Image.asset(
-                  'assets/images/Group (6).png',
+                  ImageAssets.appLogo,
                   height: 40,
                   width: 200,
                 ),
