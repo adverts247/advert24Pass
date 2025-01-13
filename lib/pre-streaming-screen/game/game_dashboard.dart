@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:adverts247Pass/pre-streaming-screen/game/classic_trivia_game.dart';
 import 'package:adverts247Pass/pre-streaming-screen/game/picture_trivia_game.dart';
 import 'package:adverts247Pass/services/helpers.dart';
 import 'package:adverts247Pass/services/image_assets.dart';
@@ -15,6 +16,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/material.dart ';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:provider/provider.dart';
@@ -129,14 +131,12 @@ class _GameDashboardState extends State<GameDashboard> {
                                 ),
                                 IconButton(
                                   onPressed: () {},
-                                  icon: Text(
-                                    'Map',
-                                    style: TextStyles()
-                                        .whiteTextStyle()
-                                        .copyWith(
-                                            fontSize: 14,
-                                            fontWeight: FontWeight.w600),
-                                  ),
+                                  icon: Text('Map',
+                                      style: GoogleFonts.manrope(
+                                        color: Themes().whiteColor,
+                                        fontWeight: FontWeight.w700,
+                                        fontSize: 6.sp,
+                                      )),
                                 ),
                                 SizedBox(
                                   width: 20,
@@ -145,14 +145,12 @@ class _GameDashboardState extends State<GameDashboard> {
                                   onPressed: () {
                                     Navigator.of(context).pop();
                                   },
-                                  icon: Text(
-                                    'Weather',
-                                    style: TextStyles()
-                                        .whiteTextStyle()
-                                        .copyWith(
-                                            fontSize: 14,
-                                            fontWeight: FontWeight.w600),
-                                  ),
+                                  icon: Text('Weather',
+                                      style: GoogleFonts.manrope(
+                                        color: Themes().whiteColor,
+                                        fontWeight: FontWeight.w700,
+                                        fontSize: 6.sp,
+                                      )),
                                 ),
                                 SizedBox(
                                   width: 20,
@@ -161,14 +159,12 @@ class _GameDashboardState extends State<GameDashboard> {
                                   onPressed: () {
                                     Navigator.of(context).pop();
                                   },
-                                  icon: Text(
-                                    'Driver',
-                                    style: TextStyles()
-                                        .whiteTextStyle()
-                                        .copyWith(
-                                            fontSize: 14,
-                                            fontWeight: FontWeight.w600),
-                                  ),
+                                  icon: Text('Driver',
+                                      style: GoogleFonts.manrope(
+                                        color: Themes().whiteColor,
+                                        fontWeight: FontWeight.w700,
+                                        fontSize: 6.sp,
+                                      )),
                                 ),
                               ],
                             ),
@@ -468,19 +464,28 @@ class EntertainmentView extends StatelessWidget {
                           ),
                         ),
                         Expanded(
-                          child: AnimatedWidgetWrapper(
-                            animationType: AnimationType.slideFromLeft,
-                            delay: 800,
-                            child: Container(
-                              margin: EdgeInsets.only(
-                                right: 5,
-                              ),
-                              height: 360,
-                              width: 400,
-                              // color: Colors.blueAccent,
-                              child: Image.asset(
-                                ImageAssets.classicTrivia,
-                                fit: BoxFit.fill,
+                          child: GestureDetector(
+                            onTap: () {
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute<void>(
+                                      builder: (BuildContext context) =>
+                                          ClassicTrivia()));
+                            },
+                            child: AnimatedWidgetWrapper(
+                              animationType: AnimationType.slideFromLeft,
+                              delay: 800,
+                              child: Container(
+                                margin: EdgeInsets.only(
+                                  right: 5,
+                                ),
+                                height: 360,
+                                width: 400,
+                                // color: Colors.blueAccent,
+                                child: Image.asset(
+                                  ImageAssets.classicTrivia,
+                                  fit: BoxFit.fill,
+                                ),
                               ),
                             ),
                           ),

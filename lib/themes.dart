@@ -34,12 +34,13 @@ class TextStyles {
   //Blue Text
 
   TextStyle whiteTextStyle({
-    FontWeight? fontWeight
+    FontWeight? fontWeight,
+    double? fontSize
 
   }) => GoogleFonts.manrope(
         color: Themes().whiteColor,
         fontWeight: fontWeight ?? FontWeight.w300,
-        fontSize: 17,
+        fontSize: fontSize ?? 17,
       );
 
   TextStyle greyTextStyle() => GoogleFonts.manrope(

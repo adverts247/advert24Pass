@@ -1,6 +1,9 @@
+import 'dart:async';
+
 import 'package:adverts247Pass/services/image_assets.dart';
 import 'package:adverts247Pass/themes.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
 class WebviewPage extends StatefulWidget {
@@ -12,13 +15,34 @@ class WebviewPage extends StatefulWidget {
 
 class _WebviewPageState extends State<WebviewPage> {
   late WebViewController controller;
-  bool isLoading = true;  // Track loading state
-  int loadingProgress = 0;  // Track loading progress
+  bool isLoading = true; // Track loading state
+  int loadingProgress = 0; // Track loading progress
+  late Timer _questionTimer;
+  int _totalTimeLeft = 60;
 
   @override
   void initState() {
     super.initState();
     initializeWebView();
+    startTimers();
+  }
+
+  // Add this method to format time
+  String formatCountTime(int seconds) {
+    return '${(seconds % 60).toString().padLeft(2, '0')}';
+  }
+
+  void startTimers() {
+    // Timer for individual questions (5 seconds each)
+    _questionTimer = Timer.periodic(const Duration(seconds: 1), (timer) {
+      setState(() {
+        if (_totalTimeLeft > 0) {
+          _totalTimeLeft--;
+        } else {
+          Navigator.of(context).pop();
+        }
+      });
+    });
   }
 
   void initializeWebView() {
@@ -71,73 +95,114 @@ class _WebviewPageState extends State<WebviewPage> {
   }
 
   @override
+  void dispose() {
+    _questionTimer.cancel();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return  Stack(
-      children: [
-        // WebView always present in the stack
-        WebViewWidget(controller: controller),
-        
-        // Loading overlay shown while isLoading is true
-        if (isLoading)
-          Container(
-            color: Colors.black87, // Semi-transparent background
-            child: Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  // App logo
-                  Image.asset(
-                    ImageAssets.appLogo,
-                    height: 100,
-                    width: 100,
-                  ),
-                  const SizedBox(height: 20),
-                  
-                  // Loading text with dots
-                  RichText(
-                    text: TextSpan(
-                      children: [
-                        TextSpan(
-                          text: 'Connecting ',
-                          style: TextStyles().whiteTextStyle().copyWith(
-                            fontSize: 20,
-                          ),
-                        ),
-                        const TextSpan(
-                          text: '....',
-                          style: TextStyle(
-                            color: Colors.red,
-                            fontSize: 20,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  const SizedBox(height: 20),
-                  
-                  // Progress indicator
-                  SizedBox(
-                    width: 200,
-                    child: LinearProgressIndicator(
-                      value: loadingProgress / 100,
-                      backgroundColor: Colors.grey[700],
-                      valueColor: const AlwaysStoppedAnimation<Color>(Colors.red),
-                    ),
-                  ),
-                  const SizedBox(height: 10),
-                  
-                  // Progress percentage
-                  Text(
-                    '$loadingProgress%',
-                    style: TextStyles().whiteTextStyle().copyWith(
-                      fontSize: 16,
-                    ),
-                  ),
-                ],
+    return Scaffold(
+      appBar: AppBar(
+        backgroundColor: Themes().pink,
+        leading: IconButton(
+          icon: Icon(
+            Icons.arrow_back,
+            size: 40,
+          ),
+          onPressed: () => Navigator.of(context).pop(),
+        ),
+        title: Image.asset(
+          ImageAssets.appLogo,
+          height: 40,
+          width: 200,
+        ),
+      ),
+      body: Stack(
+        children: [
+          // WebView always present in the stack
+          WebViewWidget(controller: controller),
+
+          Positioned(
+            right: 20,
+            top: 20,
+            child: Container(
+              padding: EdgeInsets.all(18.0),
+              decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  border: Border.all(color: Colors.white, width: 5)),
+              child: Text(
+                formatCountTime(_totalTimeLeft),
+                style: TextStyles().whiteTextStyle(
+                    fontSize: 12.sp, fontWeight: FontWeight.w900),
+                textAlign: TextAlign.center,
               ),
             ),
           ),
-      ],
+
+          // Loading overlay shown while isLoading is true
+          if (isLoading)
+            Container(
+              color: Colors.black87, // Semi-transparent background
+              child: Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    // App logo
+                    Image.asset(
+                      ImageAssets.appLogo,
+                      height: 100,
+                      width: 100,
+                    ),
+                    const SizedBox(height: 20),
+
+                    // Loading text with dots
+                    RichText(
+                      text: TextSpan(
+                        children: [
+                          TextSpan(
+                            text: 'Connecting ',
+                            style: TextStyles().whiteTextStyle().copyWith(
+                                  fontSize: 20,
+                                ),
+                          ),
+                          const TextSpan(
+                            text: '....',
+                            style: TextStyle(
+                              color: Colors.red,
+                              fontSize: 20,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(height: 20),
+
+                    // Progress indicator
+                    SizedBox(
+                      width: 200,
+                      child: LinearProgressIndicator(
+                        value: loadingProgress / 100,
+                        backgroundColor: Colors.grey[700],
+                        valueColor:
+                            const AlwaysStoppedAnimation<Color>(Colors.red),
+                      ),
+                    ),
+                    const SizedBox(height: 10),
+
+                    // Progress percentage
+                    Text(
+                      '$loadingProgress%',
+                      style: TextStyles().whiteTextStyle().copyWith(
+                            fontSize: 16,
+                          ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+        ],
+      ),
     );
   }
 }

@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 
+import 'package:adverts247Pass/pre-streaming-screen/game/entertainment_page.dart';
 import 'package:adverts247Pass/state/location_weather_state.dart';
 import 'package:adverts247Pass/state/user_state.dart';
 import 'package:adverts247Pass/ui/screen/video_player1.dart';
@@ -14,6 +15,7 @@ import 'package:web_socket_channel/web_socket_channel.dart';
 import 'package:socket_io_client/socket_io_client.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:socket_io_client/socket_io_client.dart' as io;
+import 'package:get/get.dart';
 
 class AppWebsocketService {
   void testWebsocket() async {
@@ -49,8 +51,7 @@ class AppWebsocketService {
 
   sendLocation() async {
     final channel = WebSocketChannel.connect(
-        Uri.parse('wss://streaming.adverts247.xyz')
-            .replace(queryParameters: {
+        Uri.parse('wss://streaming.adverts247.xyz').replace(queryParameters: {
       //'access_token': '',
     }));
     final position = await Geolocator.getCurrentPosition(
@@ -210,8 +211,8 @@ class AppWebsocketService {
       // Handle stop-stream event
       // print('Received stop-stream event');
       // Provider.of<UserState>(context, listen: false).canStream = false;
-      Navigator.push(
-          context, MaterialPageRoute(builder: (context) => WaitingPage()));
+      Navigator.push(context,
+          MaterialPageRoute(builder: (context) => WaitingPage()));
     });
 
     socket.on('start-stream', (data) {
@@ -219,8 +220,14 @@ class AppWebsocketService {
       print('Received start-stream event');
       Provider.of<UserState>(context, listen: false).canStream = true;
 
-      Navigator.push(
-          context, MaterialPageRoute(builder: (context) => VideoPlayerApp()));
+      // Navigator.push(
+      //     context, MaterialPageRoute(builder: (context) => VideoPlayerApp()));
+      Get.offAll(
+        VideoPlayerApp(),
+        transition: Transition.fadeIn,
+        curve: Curves.easeInOut,
+        duration: Duration(seconds: 1),
+      );
     });
 
     socket.on('ad-broadcast', (data) {

@@ -2,6 +2,8 @@ import 'dart:async';
 
 import 'package:adverts247Pass/pre-streaming-screen/weather_and_profile/weather_and_profile.dart';
 import 'package:adverts247Pass/services/image_assets.dart';
+import 'package:adverts247Pass/services/wether_service/weather_service.dart';
+import 'package:adverts247Pass/state/location_weather_state.dart';
 import 'package:adverts247Pass/state/user_state.dart';
 import 'package:adverts247Pass/themes.dart';
 import 'package:adverts247Pass/widget/clipper_page.dart/clipper_widget.dart';
@@ -27,6 +29,8 @@ class _ProfileImageState extends State<ProfileImage>
   late Animation<double> _fadeAnimation;
   late Animation<double> _borderColorAnimation;
   Timer? _timer;
+
+  var weatherApiResult;
 
   @override
   void initState() {
@@ -76,9 +80,18 @@ class _ProfileImageState extends State<ProfileImage>
         _borderController.repeat(); // This will make it cycle continuously
       });
     });
+    // weatherApiResult =
+    //      Provider.of<WeatherLocationState>(context, listen: false)
+    //         .weatherApiResult;
+    // print("weather:: $weatherApiResult");
+    // Fetch weather data when the page loads
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      WeatherService().getWeatherData(context);
+    });
+    // return;
 
     Future.delayed(Duration(seconds: 6), () {
-      Get.to(
+      Get.offAll(
         ProfileWeatherView(),
         transition: Transition.fadeIn,
         curve: Curves.easeInOut,
@@ -91,6 +104,7 @@ class _ProfileImageState extends State<ProfileImage>
   void dispose() {
     _controller.dispose();
     _borderController.dispose();
+    _timer!.cancel();
     super.dispose();
   }
 
@@ -100,96 +114,112 @@ class _ProfileImageState extends State<ProfileImage>
     return Scaffold(
       backgroundColor: Colors.black,
       body: SafeArea(
-        child: AnimatedBuilder(
-            animation: _controller,
-            builder: (context, child) {
-              return
-                  // Container(
-                  //   height: MediaQuery.of(context).size.height,
-                  //   width: MediaQuery.of(context).size.width,
-                  //   child: Column(
-                  //     mainAxisAlignment: MainAxisAlignment.end,
-                  //     crossAxisAlignment: CrossAxisAlignment.start,
-                  //     children: [
-                  //       Padding(
-                  //         padding: const EdgeInsets.all(30.0),
-                  //         child: Image.asset(
-                  //           ImageAssets.appLogo,
-                  //           height: MediaQuery.of(context).size.height < 450
-                  //               ? 80
-                  //               : 200,
-                  //           width: MediaQuery.of(context).size.height < 450
-                  //               ? 80
-                  //               : 200,
-                  //         ),
-                  //       ),
-                  //     ],
-                  //   ),
-                  // ),
-                  Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  FadeTransition(
-                    opacity: _fadeAnimation,
-                    child: Container(
-                      // height: MediaQuery.of(context).size.height,
-                      // width: MediaQuery.of(context).size.width,
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          Center(
-                            child: Text(
-                              'You are riding with',
-                              style: TextStyles().whiteTextStyle().copyWith(
-                                    fontSize: 30,
-                                  ),
+        child: Consumer<WeatherLocationState>(
+            builder: (context, weatherState, child) {
+          if (weatherState.isLoading) {
+            return const Center(child: CircularProgressIndicator());
+          }
+
+          if (weatherState.error != null) {
+            return Center(child: Text(weatherState.error!));
+          }
+
+          final weatherData = weatherState.weatherApiResult;
+          if (weatherData == null) {
+            return const Center(child: Text('No weather data available'));
+          }
+
+          return AnimatedBuilder(
+              animation: _controller,
+              builder: (context, child) {
+                return
+                    // Container(
+                    //   height: MediaQuery.of(context).size.height,
+                    //   width: MediaQuery.of(context).size.width,
+                    //   child: Column(
+                    //     mainAxisAlignment: MainAxisAlignment.end,
+                    //     crossAxisAlignment: CrossAxisAlignment.start,
+                    //     children: [
+                    //       Padding(
+                    //         padding: const EdgeInsets.all(30.0),
+                    //         child: Image.asset(
+                    //           ImageAssets.appLogo,
+                    //           height: MediaQuery.of(context).size.height < 450
+                    //               ? 80
+                    //               : 200,
+                    //           width: MediaQuery.of(context).size.height < 450
+                    //               ? 80
+                    //               : 200,
+                    //         ),
+                    //       ),
+                    //     ],
+                    //   ),
+                    // ),
+                    Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    FadeTransition(
+                      opacity: _fadeAnimation,
+                      child: Container(
+                        // height: MediaQuery.of(context).size.height,
+                        // width: MediaQuery.of(context).size.width,
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            Center(
+                              child: Text(
+                                'You are riding with',
+                                style: TextStyles().whiteTextStyle().copyWith(
+                                      fontSize: 30,
+                                    ),
+                              ),
                             ),
-                          ),
-                          SizedBox(
-                            height: 20,
-                          ),
-                          Text(
-                            userDetail['firstname'],
-                            style: TextStyles().whiteTextStyle().copyWith(
-                                fontSize: 50, fontWeight: FontWeight.w700),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                  SizedBox(
-                    height: 20.sp,
-                  ),
-                  Transform.translate(
-                    offset: Offset(_bounceAnimation.value, 0),
-                    child: Container(
-                      height: 150.sp,
-                      width: 150.sp,
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        color: Colors.amberAccent,
-                        border: Border.all(
-                          color: Color.lerp(
-                            Themes().blue,
-                            Themes().pink,
-                            _borderColorAnimation.value,
-                          )!,
-                          width: 6,
-                        ),
-                      ),
-                      child: ClipRRect(
-                        borderRadius: BorderRadius.circular(20000),
-                        child: Image.network(
-                          'https://central.adverts247.xyz/${userDetail!['image']}',
-                          fit: BoxFit.cover,
+                            SizedBox(
+                              height: 20,
+                            ),
+                            Text(
+                              userDetail['firstname'],
+                              style: TextStyles().whiteTextStyle().copyWith(
+                                  fontSize: 50, fontWeight: FontWeight.w700),
+                            ),
+                          ],
                         ),
                       ),
                     ),
-                  )
-                ],
-              );
-            }),
+                    SizedBox(
+                      height: 20.sp,
+                    ),
+                    Transform.translate(
+                      offset: Offset(_bounceAnimation.value, 0),
+                      child: Container(
+                        height: 150.sp,
+                        width: 150.sp,
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          color: Colors.white,
+                          border: Border.all(
+                            color: Color.lerp(
+                              Themes().blue,
+                              Themes().pink,
+                              _borderColorAnimation.value,
+                            )!,
+                            width: 6,
+                          ),
+                        ),
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(20000),
+                          child: Image.network(
+                            'https://central.adverts247.xyz/${userDetail!['image']}',
+                            fit: BoxFit.cover,
+                          ),
+                        ),
+                      ),
+                    )
+                  ],
+                );
+              });
+        }),
       ),
     );
   }

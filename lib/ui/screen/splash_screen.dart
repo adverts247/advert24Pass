@@ -43,11 +43,17 @@ class _SplashScreenState extends State<SplashScreen> {
     // moveToNextPage();
   }
 
+  @override
+  void dispose() {
+    _controller!.dispose();
+    super.dispose();
+  }
+
   Future<void> moveToNextPage() async {
     var data = await tools.getFromStore('accessToken');
     if (data == null) {
       Future.delayed(Duration(seconds: 2), () {
-        Navigator.push(
+        Navigator.pushReplacement(
             context, MaterialPageRoute(builder: (context) => LoginPage()));
       });
     } else {

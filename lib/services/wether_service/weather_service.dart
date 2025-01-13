@@ -1,33 +1,41 @@
 import 'dart:convert';
 
-import 'package:adverts247Pass/state/location_weather_state.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:http/http.dart' as http;
+import '../../state/location_weather_state.dart';
 
 class WeatherService {
-  Future getWeatherData(context) async {
-    var lon = Provider.of<WeatherLocationState>(context, listen: false).long;
-    var lat = Provider.of<WeatherLocationState>(context, listen: false).lat;
+  Future<void> getWeatherData(BuildContext context) async {
+    // Get the state
+    final weatherState = Provider.of<WeatherLocationState>(context, listen: false);
+    
+    try {
+      // Set loading state
+      weatherState.isLoading = true;
+      weatherState.clearError();
+      weatherState.notifyListeners();
 
-    var response = await http.get(Uri.parse(
-        'https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=db56a9ab41e8ab1ab95dcffa4f67f119'));
-    //'https://api.openweathermap.org/data/3.0/onecall?lat=${lat}&lon=${lon}&exclude={part}&appid=db56a9ab41e8ab1ab95dcffa4f67f119'));
+      var response = await http.get(Uri.parse(
+          'https://api.openweathermap.org/data/2.5/weather?lat=${weatherState.lat}&lon=${weatherState.long}&appid=db56a9ab41e8ab1ab95dcffa4f67f119'));
 
-    if (response.statusCode == 200) {
-      var data = jsonDecode(response.body);
-      print(data);
-      Provider.of<WeatherLocationState>(context, listen: false)
-          .weatherApiResult = data;
-      // setState(() {
-      //   temperature = (data['main']['temp'] - 273.15).toString() + '°C';
-      //   humidity = data['main']['humidity'].toString() + '%';
-      //   chanceOfRain = (data['clouds']['all'] / 100).toString();
-      //   wind = data['wind']['speed'].toString() + 'm/s';
-      // });
-    } else {
-      print(response.reasonPhrase);
-      print('Failed to load data');
+      if (response.statusCode == 200) {
+        var data = jsonDecode(response.body);
+        if (kDebugMode) {
+          print("Weather data:: $data");
+        }
+        weatherState.setWeatherData(data as Map<String, dynamic>);
+      } else {
+        weatherState.error = 'Failed to load weather data: ${response.reasonPhrase}';
+        print(weatherState.error);
+      }
+    } catch (e) {
+      weatherState.error = 'Error fetching weather data: $e';
+      print(weatherState.error);
+    } finally {
+      weatherState.isLoading = false;
+      weatherState.notifyListeners();
     }
   }
 }

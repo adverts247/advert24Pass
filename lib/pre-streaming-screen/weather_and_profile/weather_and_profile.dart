@@ -4,6 +4,8 @@ import 'package:adverts247Pass/pre-streaming-screen/game/entertainment_page.dart
 import 'package:adverts247Pass/services/helpers.dart';
 import 'package:adverts247Pass/services/image_assets.dart';
 import 'package:adverts247Pass/services/video_service.dart';
+import 'package:adverts247Pass/services/websocket.dart';
+import 'package:adverts247Pass/services/wether_service/weather_service.dart';
 import 'package:adverts247Pass/state/location_weather_state.dart';
 import 'package:adverts247Pass/state/user_state.dart';
 import 'package:adverts247Pass/themes.dart';
@@ -13,16 +15,19 @@ import 'package:adverts247Pass/ui/screen/waiting_Page.dart';
 import 'package:adverts247Pass/widget/animated_widget_wrapper.dart';
 import 'package:adverts247Pass/widget/image_carousel.dart';
 import 'package:adverts247Pass/widget/loader.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/material.dart ';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:get/get.dart';
 import 'package:screen_brightness/screen_brightness.dart';
 import 'package:video_player/video_player.dart';
+import 'package:provider/provider.dart';
 
 class ProfileWeatherView extends StatefulWidget {
   const ProfileWeatherView({super.key});
@@ -53,20 +58,6 @@ class _ProfileWeatherViewState extends State<ProfileWeatherView> {
 
   VideoPlayerController? _controller;
 
-  void initIntroVideo() {
-    _controller = VideoPlayerController.asset("assets/video/Intro_app.mp4")
-      ..initialize().then((_) async {
-        // Set video to loop
-        _controller!.setLooping(true);
-        _controller!.play();
-        setState(() {});
-        // Wait for video duration before moving to next page
-        await Future.delayed(Duration(
-            milliseconds:
-                (_controller!.value.duration.inMilliseconds).toInt()));
-      });
-  }
-
   Future<void> setBrightness() async {
     ScreenBrightness().setScreenBrightness(_brightness);
   }
@@ -75,9 +66,11 @@ class _ProfileWeatherViewState extends State<ProfileWeatherView> {
   // take out logging
   void initState() {
     getWalletBalance();
+    // WidgetsBinding.instance.addPostFrameCallback((_) {
+    WeatherService().getWeatherData(context);
+    // });
     setBrightness();
     super.initState();
-    initIntroVideo();
 
     _timer = Timer.periodic(const Duration(seconds: 10), (timer) {
       setState(() {
@@ -94,14 +87,15 @@ class _ProfileWeatherViewState extends State<ProfileWeatherView> {
 
     // return;
 
-    Future.delayed(const Duration(seconds: 20), () {
-      Get.to(
-        const EntertainmentPage(),
-        transition: Transition.fadeIn,
-        curve: Curves.easeIn,
-        duration: const Duration(seconds: 1),
-      );
-    });
+    // Future.delayed(const Duration(seconds: 20), () {
+    //   Get.to(
+    //     const EntertainmentPage(),
+    //     transition: Transition.fadeIn,
+    //     curve: Curves.easeIn,
+    //     duration: const Duration(seconds: 1),
+    //   );
+    // });
+    AppWebsocketService().broadcast(context);
   }
 
   void showWeatherView() {
@@ -123,6 +117,7 @@ class _ProfileWeatherViewState extends State<ProfileWeatherView> {
     // });
   }
 
+  @override
   void dispose() {
     _timer?.cancel();
     _entTimer?.cancel();
@@ -138,13 +133,15 @@ class _ProfileWeatherViewState extends State<ProfileWeatherView> {
     });
     walletDetail =
         await Provider.of<UserState>(context, listen: false).userDetails;
-    print(walletDetail);
+    if (kDebugMode) {
+      print("Wallet details:: ${walletDetail}");
+    }
 
-    // get weather from state
-    weatherApiResult =
-        await Provider.of<WeatherLocationState>(context, listen: false)
-            .weatherApiResult;
-    print(weatherApiResult);
+    // // get weather from state
+    // weatherApiResult =
+    //     await Provider.of<WeatherLocationState>(context, listen: false)
+    //         .weatherApiResult;
+    // print("weather:: $weatherApiResult");
 
     setState(() {
       isLoading = false;
@@ -157,516 +154,517 @@ class _ProfileWeatherViewState extends State<ProfileWeatherView> {
 
     return SafeArea(
       child: Scaffold(
-        body: AnimatedContainer(
-          duration: Duration(milliseconds: 700),
-          child: isLoading!
-              ? Container(
-                  color: Colors.black,
-                  child: const Center(
-                    child: CircularProgressIndicator(),
-                  ),
-                )
-              : Stack(
-                  children: [
-                    // if ready show entertainment view
+        body: Consumer<WeatherLocationState>(
+            builder: (context, weatherState, child) {
+          if (weatherState.isLoading) {
+            return LoadingWidget();
+            // return const Center(child: CircularProgressIndicator());
+          }
 
-                    // showEntertainmentView
-                    //     ? EntertainmentView(controller: _controller)
-                    //     :
-                    showWeather
-                        ? Row(
-                            children: [
-                              Expanded(
-                                flex: 3,
-                                child: Container(
-                                  width: MediaQuery.of(context).size.width * .6,
-                                  height: MediaQuery.of(context).size.height,
-                                  decoration:
-                                      const BoxDecoration(color: Colors.black),
-                                  child: Padding(
-                                    padding: EdgeInsets.symmetric(
-                                            vertical:
-                                                screenHeight < 450 ? 0 : 50)
-                                        .copyWith(left: 28),
-                                    child: Column(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
-                                      children: isLoading!
-                                          ? []
-                                          : [
-                                              Row(
+          if (weatherState.error != null) {
+            return Center(child: Text(weatherState.error!));
+          }
+
+          weatherApiResult = weatherState.weatherApiResult;
+          if (weatherApiResult == null) {
+            return const Center(child: Text('No weather data available'));
+          }
+          return AnimatedContainer(
+            duration: Duration(milliseconds: 700),
+            child:
+                // isLoading!
+                //     ? Container(
+                //         color: Colors.black,
+                //         child: const Center(
+                //           child: CircularProgressIndicator(),
+                //         ),
+                //       )
+                // :
+                Stack(
+              children: [
+                // if ready show entertainment view
+
+                // showEntertainmentView
+                //     ? EntertainmentView(controller: _controller)
+                //     :
+                showWeather
+                    ? Row(
+                        children: [
+                          Expanded(
+                            flex: 3,
+                            child: Container(
+                              width: MediaQuery.of(context).size.width * .6,
+                              height: MediaQuery.of(context).size.height,
+                              decoration:
+                                  const BoxDecoration(color: Colors.black),
+                              child: Padding(
+                                padding: EdgeInsets.symmetric(
+                                        vertical: screenHeight < 450 ? 0 : 50)
+                                    .copyWith(left: 28),
+                                child: Column(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: isLoading!
+                                      ? []
+                                      : [
+                                          Row(
+                                            children: [
+                                              Container(
+                                                decoration: BoxDecoration(
+                                                  shape: BoxShape.circle,
+                                                  color: Colors.white,
+                                                  border: Border.all(
+                                                    color: isFirstColor
+                                                        ? Themes().blue
+                                                        : Themes().pink,
+                                                    width: 4,
+                                                  ),
+                                                ),
+                                                child: ClipRRect(
+                                                  borderRadius:
+                                                      BorderRadius.circular(
+                                                          7000),
+                                                  child: Image.network(
+                                                    walletDetail == null
+                                                        ? ' '
+                                                        : 'https://central.adverts247.xyz/${walletDetail!['image']}',
+                                                    height: screenHeight < 450
+                                                        ? 110
+                                                        : 180,
+                                                    width: screenHeight < 450
+                                                        ? 110
+                                                        : 180,
+                                                    fit: BoxFit.cover,
+                                                  ),
+                                                ),
+                                              ),
+                                              // Image.asset(
+                                              //   ImageAssets.appLogo,
+                                              //   height: screenHeight < 450 ? 80 : 200,
+                                              //   width: screenHeight < 450 ? 80 : 200,
+                                              // ),
+                                              SizedBox(
+                                                width: 10.sp,
+                                              ),
+                                              Column(
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.start,
                                                 children: [
-                                                  Container(
-                                                    decoration: BoxDecoration(
-                                                      shape: BoxShape.circle,
-                                                      color: Colors.white,
-                                                      border: Border.all(
-                                                        color: isFirstColor
-                                                            ? Themes().blue
-                                                            : Themes().pink,
-                                                        width: 4,
-                                                      ),
-                                                    ),
-                                                    child: ClipRRect(
-                                                      borderRadius:
-                                                          BorderRadius.circular(
-                                                              7000),
-                                                      child: Image.network(
-                                                        walletDetail == null
-                                                            ? ' '
-                                                            : 'https://central.adverts247.xyz/${walletDetail!['image']}',
-                                                        height:
-                                                            screenHeight < 450
-                                                                ? 110
-                                                                : 180,
-                                                        width:
-                                                            screenHeight < 450
-                                                                ? 110
-                                                                : 180,
-                                                        fit: BoxFit.cover,
-                                                      ),
-                                                    ),
+                                                  Text(
+                                                    //'ugyg',
+                                                    'You are riding with',
+                                                    style: TextStyles()
+                                                        .whiteTextStyle()
+                                                        .copyWith(
+                                                            fontSize:
+                                                                screenHeight <
+                                                                        450
+                                                                    ? 20
+                                                                    : 24),
                                                   ),
-                                                  // Image.asset(
-                                                  //   ImageAssets.appLogo,
-                                                  //   height: screenHeight < 450 ? 80 : 200,
-                                                  //   width: screenHeight < 450 ? 80 : 200,
-                                                  // ),
-                                                  SizedBox(
-                                                    width: 10.sp,
-                                                  ),
-                                                  Column(
-                                                    crossAxisAlignment:
-                                                        CrossAxisAlignment
-                                                            .start,
-                                                    children: [
-                                                      Text(
-                                                        //'ugyg',
-                                                        'You are riding with',
-                                                        style: TextStyles()
-                                                            .whiteTextStyle()
-                                                            .copyWith(
-                                                                fontSize:
-                                                                    screenHeight <
-                                                                            450
-                                                                        ? 20
-                                                                        : 24),
-                                                      ),
-                                                      Text(
-                                                        //'ugyg',
-                                                        '${walletDetail == null ? 'Advert24' : walletDetail!['firstname']}',
-                                                        style: TextStyles()
-                                                            .whiteTextStyle()
-                                                            .copyWith(
-                                                                fontSize:
-                                                                    screenHeight <
-                                                                            450
-                                                                        ? 22
-                                                                        : 24,
-                                                                fontWeight:
-                                                                    FontWeight
-                                                                        .w800),
-                                                      ),
-                                                    ],
+                                                  Text(
+                                                    //'ugyg',
+                                                    '${walletDetail == null ? 'Advert24' : walletDetail!['firstname']}',
+                                                    style: TextStyles()
+                                                        .whiteTextStyle()
+                                                        .copyWith(
+                                                            fontSize:
+                                                                screenHeight <
+                                                                        450
+                                                                    ? 22
+                                                                    : 24,
+                                                            fontWeight:
+                                                                FontWeight
+                                                                    .w800),
                                                   ),
                                                 ],
                                               ),
-                                              Column(
-                                                  crossAxisAlignment:
-                                                      CrossAxisAlignment
-                                                          .stretch,
-                                                  children: [
-                                                    AboutCard(
-                                                      screenHeight:
-                                                          screenHeight,
-                                                      title: "Favorite Food",
-                                                      answer: "Jollof Rice",
-                                                      imagUrl: ImageAssets
-                                                          .aboutFrame,
-                                                    ),
-                                                    AboutCard(
-                                                      screenHeight:
-                                                          screenHeight,
-                                                      title: "Favorite Hobby",
-                                                      answer: "Sport",
-                                                      imagUrl: ImageAssets
-                                                          .aboutFrame2,
-                                                    ),
-                                                    AboutCard(
-                                                      screenHeight:
-                                                          screenHeight,
-                                                      title: "Ask Me",
-                                                      answer: "Politics",
-                                                      imagUrl: ImageAssets
-                                                          .aboutFrame3,
-                                                    ),
-                                                    AboutCard(
-                                                      screenHeight:
-                                                          screenHeight,
-                                                      title: "Vacation Spot",
-                                                      answer: "Paris",
-                                                      imagUrl: ImageAssets
-                                                          .aboutFrame4,
-                                                    ),
-                                                  ]),
-                                              SizedBox(
-                                                height: 25,
-                                              ),
                                             ],
-                                    ),
+                                          ),
+                                          Column(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.stretch,
+                                              children: [
+                                                AboutCard(
+                                                  screenHeight: screenHeight,
+                                                  title: "Favorite Food",
+                                                  answer: "Jollof Rice",
+                                                  imagUrl:
+                                                      ImageAssets.aboutFrame,
+                                                ),
+                                                AboutCard(
+                                                  screenHeight: screenHeight,
+                                                  title: "Favorite Hobby",
+                                                  answer: "Sport",
+                                                  imagUrl:
+                                                      ImageAssets.aboutFrame2,
+                                                ),
+                                                AboutCard(
+                                                  screenHeight: screenHeight,
+                                                  title: "Ask Me",
+                                                  answer: "Politics",
+                                                  imagUrl:
+                                                      ImageAssets.aboutFrame3,
+                                                ),
+                                                AboutCard(
+                                                  screenHeight: screenHeight,
+                                                  title: "Vacation Spot",
+                                                  answer: "Paris",
+                                                  imagUrl:
+                                                      ImageAssets.aboutFrame4,
+                                                ),
+                                              ]),
+                                          SizedBox(
+                                            height: 25,
+                                          ),
+                                        ],
+                                ),
+                              ),
+                            ),
+                          ),
+                          Expanded(
+                            flex: 2,
+                            child: Container(
+                              width: MediaQuery.of(context).size.width * .4,
+                              height: MediaQuery.of(context).size.height,
+                              padding: EdgeInsets.only(bottom: 45),
+                              decoration:
+                                  const BoxDecoration(color: Color(0xffE0135E)),
+                              child: AnimatedSwitcher(
+                                  duration: const Duration(seconds: 4),
+                                  transitionBuilder: (Widget child,
+                                      Animation<double> animation) {
+                                    return FadeTransition(
+                                      opacity: animation,
+                                      child: child,
+                                    );
+                                  },
+                                  child:
+                                      // showWeather
+                                      //     ?
+                                      weatherWidget()
+                                  // : Padding(
+                                  //     padding: EdgeInsets.symmetric(
+                                  //         vertical: screenHeight < 450
+                                  //             ? 0
+                                  //             : MediaQuery.of(context)
+                                  //                     .size
+                                  //                     .height /
+                                  //                 8,
+                                  //         horizontal:
+                                  //             MediaQuery.of(context).size.height /
+                                  //                 35),
+                                  //     child: Column(
+                                  //       mainAxisAlignment:
+                                  //           MainAxisAlignment.start,
+                                  //       crossAxisAlignment:
+                                  //           CrossAxisAlignment.start,
+                                  //       children: [
+                                  //         Text(
+                                  //           'About Me',
+                                  //           style: TextStyles()
+                                  //               .whiteTextStyle()
+                                  //               .copyWith(fontSize: 24),
+                                  //         ),
+                                  //         const SizedBox(
+                                  //           height: 40,
+                                  //         ),
+                                  //         aboutMeCard(
+                                  //             'Favourite Food',
+                                  //             walletDetail!['driver']
+                                  //                 ['favourite_food']),
+                                  //         const SizedBox(
+                                  //           height: 10,
+                                  //         ),
+                                  //         aboutMeCard(
+                                  //             'Favourite Hobby',
+                                  //             walletDetail!['driver']
+                                  //                 ['favourite_hobby']),
+                                  //         const SizedBox(
+                                  //           height: 10,
+                                  //         ),
+                                  //         aboutMeCard(' Ask Me',
+                                  //             walletDetail!['driver']['ask_me']),
+                                  //         const SizedBox(
+                                  //           height: 10,
+                                  //         ),
+                                  //         aboutMeCard(
+                                  //             'Vacation Spot',
+                                  //             walletDetail!['driver']
+                                  //                 ['vacation_spot']),
+                                  //         // aboutMeCard()
+                                  //       ],
+                                  //     ),
+                                  //   )
                                   ),
-                                ),
-                              ),
-                              Expanded(
-                                flex: 2,
-                                child: Container(
-                                  width: MediaQuery.of(context).size.width * .4,
-                                  height: MediaQuery.of(context).size.height,
-                                  padding: EdgeInsets.only(bottom: 45),
-                                  decoration: const BoxDecoration(
-                                      color: Color(0xffE0135E)),
-                                  child: AnimatedSwitcher(
-                                      duration: const Duration(seconds: 4),
-                                      transitionBuilder: (Widget child,
-                                          Animation<double> animation) {
-                                        return FadeTransition(
-                                          opacity: animation,
-                                          child: child,
-                                        );
-                                      },
-                                      child:
-                                          // showWeather
-                                          //     ?
-                                          weatherWidget()
-                                      // : Padding(
-                                      //     padding: EdgeInsets.symmetric(
-                                      //         vertical: screenHeight < 450
-                                      //             ? 0
-                                      //             : MediaQuery.of(context)
-                                      //                     .size
-                                      //                     .height /
-                                      //                 8,
-                                      //         horizontal:
-                                      //             MediaQuery.of(context).size.height /
-                                      //                 35),
-                                      //     child: Column(
-                                      //       mainAxisAlignment:
-                                      //           MainAxisAlignment.start,
-                                      //       crossAxisAlignment:
-                                      //           CrossAxisAlignment.start,
-                                      //       children: [
-                                      //         Text(
-                                      //           'About Me',
-                                      //           style: TextStyles()
-                                      //               .whiteTextStyle()
-                                      //               .copyWith(fontSize: 24),
-                                      //         ),
-                                      //         const SizedBox(
-                                      //           height: 40,
-                                      //         ),
-                                      //         aboutMeCard(
-                                      //             'Favourite Food',
-                                      //             walletDetail!['driver']
-                                      //                 ['favourite_food']),
-                                      //         const SizedBox(
-                                      //           height: 10,
-                                      //         ),
-                                      //         aboutMeCard(
-                                      //             'Favourite Hobby',
-                                      //             walletDetail!['driver']
-                                      //                 ['favourite_hobby']),
-                                      //         const SizedBox(
-                                      //           height: 10,
-                                      //         ),
-                                      //         aboutMeCard(' Ask Me',
-                                      //             walletDetail!['driver']['ask_me']),
-                                      //         const SizedBox(
-                                      //           height: 10,
-                                      //         ),
-                                      //         aboutMeCard(
-                                      //             'Vacation Spot',
-                                      //             walletDetail!['driver']
-                                      //                 ['vacation_spot']),
-                                      //         // aboutMeCard()
-                                      //       ],
-                                      //     ),
-                                      //   )
-                                      ),
-                                ),
-                              ),
-                            ],
-                          )
-                        :
-                        // Driver profile  view
-                        DriverProfileView(
-                            screenHeight: screenHeight,
-                            walletDetail: walletDetail),
-
-                    // volume slider  widget
-                    showVolumeSlider!
-                        ? Positioned(
-                            bottom: 80,
-                            left: 20,
-                            right: 20,
-                            child: Column(
-                              children: [
-                                Text(
-                                  " Volume ${_volume! * 100}",
-                                  style: TextStyles()
-                                      .blackTextStyle700()
-                                      .copyWith(
-                                          fontSize: 24, color: Colors.red),
-                                ),
-                                Slider(
-                                  value: _volume!,
-                                  activeColor: Colors.red,
-                                  inactiveColor: Colors.black,
-                                  onChanged: (newVolume) {
-                                    setState(() {
-                                      _volume = newVolume;
-                                      _controller!.setVolume(_volume!);
-                                    });
-                                  },
-                                  min: 0.0,
-                                  max: 1.0,
-                                  divisions: 10,
-                                  label: " Volumne ${_volume! * 100}",
-                                ),
-                              ],
                             ),
-                          )
-                        : Container(),
+                          ),
+                        ],
+                      )
+                    :
+                    // Driver profile  view
+                    DriverProfileView(
+                        screenHeight: screenHeight, walletDetail: walletDetail),
 
-                    //Brightness Slider
-
-                    showBrightnessSlider!
-                        ? Positioned(
-                            bottom: 80,
-                            left: 20,
-                            right: 20,
-                            child: Column(
-                              children: [
-                                Text(
-                                  "Brightness ${_brightness * 100}",
-                                  style: TextStyles()
-                                      .blackTextStyle700()
-                                      .copyWith(
-                                          fontSize: 24, color: Colors.red),
-                                ),
-                                Slider(
-                                  value: _brightness,
-                                  label: "Brightness ${_brightness * 100}",
-                                  onChanged: (value) {
-                                    setState(() {
-                                      _brightness = value;
-                                      setBrightness();
-                                    });
-                                  },
-                                  divisions: 10,
-                                  activeColor: Colors.red,
-                                  inactiveColor: Colors.black,
-                                ),
-                              ],
+                // volume slider  widget
+                showVolumeSlider!
+                    ? Positioned(
+                        bottom: 80,
+                        left: 20,
+                        right: 20,
+                        child: Column(
+                          children: [
+                            Text(
+                              " Volume ${_volume! * 100}",
+                              style: TextStyles()
+                                  .blackTextStyle700()
+                                  .copyWith(fontSize: 24, color: Colors.red),
                             ),
-                          )
-                        : Container(),
-
-                    // bottom nav-bar widget
-                    Positioned(
-                      bottom: 0,
-                      right: 0,
-                      left: 0,
-                      child: Container(
-                        decoration: BoxDecoration(
-                          color: Themes().pink,
-                          // border: Border.all(color: Colors.white),
-                          // borderRadius: BorderRadius.circular(20)
+                            Slider(
+                              value: _volume!,
+                              activeColor: Colors.red,
+                              inactiveColor: Colors.black,
+                              onChanged: (newVolume) {
+                                setState(() {
+                                  _volume = newVolume;
+                                  _controller!.setVolume(_volume!);
+                                });
+                              },
+                              min: 0.0,
+                              max: 1.0,
+                              divisions: 10,
+                              label: " Volumne ${_volume! * 100}",
+                            ),
+                          ],
                         ),
-                        //  height: 85,
-                        child: Padding(
-                          padding:
-                              const EdgeInsets.all(5.0).copyWith(right: 20),
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
+                      )
+                    : Container(),
+
+                //Brightness Slider
+
+                showBrightnessSlider!
+                    ? Positioned(
+                        bottom: 80,
+                        left: 20,
+                        right: 20,
+                        child: Column(
+                          children: [
+                            Text(
+                              "Brightness ${_brightness * 100}",
+                              style: TextStyles()
+                                  .blackTextStyle700()
+                                  .copyWith(fontSize: 24, color: Colors.red),
+                            ),
+                            Slider(
+                              value: _brightness,
+                              label: "Brightness ${_brightness * 100}",
+                              onChanged: (value) {
+                                setState(() {
+                                  _brightness = value;
+                                  setBrightness();
+                                });
+                              },
+                              divisions: 10,
+                              activeColor: Colors.red,
+                              inactiveColor: Colors.black,
+                            ),
+                          ],
+                        ),
+                      )
+                    : Container(),
+
+                // bottom nav-bar widget
+                Positioned(
+                  bottom: 0,
+                  right: 0,
+                  left: 0,
+                  child: Container(
+                    decoration: BoxDecoration(
+                      color: Themes().pink,
+                      // border: Border.all(color: Colors.white),
+                      // borderRadius: BorderRadius.circular(20)
+                    ),
+                    //  height: 85,
+                    child: Padding(
+                      padding: const EdgeInsets.all(5.0).copyWith(right: 20),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
                               Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
                                 children: [
-                                  Row(
-                                    children: [
-                                      Image.asset(
-                                        ImageAssets.appLogo,
-                                        height: 40,
-                                        width: 200,
-                                      ),
-                                      IconButton(
-                                        onPressed: () {
-                                          Navigator.push(context,
-                                              MaterialPageRoute(
-                                                  builder: (context) {
-                                            return EntertainmentPage();
-                                          }));
-                                        },
-                                        icon: Text(
-                                          'Map',
-                                          style: TextStyles()
-                                              .whiteTextStyle()
-                                              .copyWith(
-                                                  fontSize: 14,
-                                                  fontWeight: FontWeight.w600),
-                                        ),
-                                      ),
-                                      SizedBox(
-                                        width: 20,
-                                      ),
-                                      IconButton(
-                                        onPressed: () {
-                                          setState(() {
-                                            showWeather = true;
-                                            showEntertainmentView == false;
-                                          });
-                                        },
-                                        icon: Text(
-                                          'Weather',
-                                          style: TextStyles()
-                                              .whiteTextStyle()
-                                              .copyWith(
-                                                  fontSize: 14,
-                                                  fontWeight: FontWeight.w600),
-                                        ),
-                                      ),
-                                      SizedBox(
-                                        width: 20,
-                                      ),
-                                      IconButton(
-                                        onPressed: () {
-                                          setState(() {
-                                            showEntertainmentView == true;
-                                            showWeather = false;
-                                          });
-                                        },
-                                        icon: Text(
-                                          'Driver',
-                                          style: TextStyles()
-                                              .whiteTextStyle()
-                                              .copyWith(
-                                                  fontSize: 14,
-                                                  fontWeight: FontWeight.w600),
-                                        ),
-                                      ),
-                                    ],
+                                  Image.asset(
+                                    ImageAssets.appLogo,
+                                    height: 40,
+                                    width: 200,
                                   ),
-                                  Row(
-                                    crossAxisAlignment: CrossAxisAlignment.end,
-                                    children: [
-                                      IconButton(
-                                        onPressed: () {
-                                          // setState(() {
-                                          //   // showVolumeSlider = !showVolumeSlider!;
-                                          // });
+                                  IconButton(
+                                    onPressed: () {
+                                      Navigator.push(context,
+                                          MaterialPageRoute(builder: (context) {
+                                        return EntertainmentPage();
+                                      }));
+                                    },
+                                    icon: Text(
+                                      'Map',
+                                      style: GoogleFonts.manrope(
+                                        color: Themes().whiteColor,
+                                        fontWeight: FontWeight.w700,
+                                        fontSize: 6.sp,
+                                      ),
+                                    ),
+                                  ),
+                                  SizedBox(
+                                    width: 20,
+                                  ),
+                                  IconButton(
+                                    onPressed: () {
+                                      setState(() {
+                                        showWeather = true;
+                                        showEntertainmentView == false;
+                                      });
+                                    },
+                                    icon: Text(
+                                      'Weather',
+                                      style: GoogleFonts.manrope(
+                                        color: Themes().whiteColor,
+                                        fontWeight: FontWeight.w700,
+                                        fontSize: 6.sp,
+                                      ),
+                                    ),
+                                  ),
+                                  SizedBox(
+                                    width: 20,
+                                  ),
+                                  IconButton(
+                                    onPressed: () {
+                                      setState(() {
+                                        showEntertainmentView == true;
+                                        showWeather = false;
+                                      });
+                                    },
+                                    icon: Text(
+                                      'Driver',
+                                      style: GoogleFonts.manrope(
+                                        color: Themes().whiteColor,
+                                        fontWeight: FontWeight.w700,
+                                        fontSize: 6.sp,
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              Row(
+                                crossAxisAlignment: CrossAxisAlignment.end,
+                                children: [
+                                  IconButton(
+                                    onPressed: () {
+                                      // setState(() {
+                                      //   // showVolumeSlider = !showVolumeSlider!;
+                                      // });
 
-                                          setState(() {
-                                            showBrightnessSlider =
-                                                !showBrightnessSlider;
-                                            showVolumeSlider = false!;
-                                          });
-                                          // showBrightnessSlider = true;
-                                        },
-                                        icon: Image.asset(
-                                          ImageAssets.brightness1,
-                                          color: Colors.white,
+                                      setState(() {
+                                        showBrightnessSlider =
+                                            !showBrightnessSlider;
+                                        showVolumeSlider = false!;
+                                      });
+                                      // showBrightnessSlider = true;
+                                    },
+                                    icon: Image.asset(
+                                      ImageAssets.brightness1,
+                                      color: Colors.white,
+                                      height: 30,
+                                    ),
+                                  ),
+                                  // SizedBox(
+                                  //   width: 30,
+                                  // ),
+                                  // InkWell(
+                                  //   onTap: () {
+                                  //     // _toggleMute();
+                                  //     // print(_isMuted);
+                                  //   },
+                                  //   child: Column(
+                                  //     children: [
+                                  //       Icon(Icons.volume_off,
+                                  //           color: Colors.white),
+                                  //       Text(
+                                  //         //'ugyg',
+                                  //         'Mute',
+                                  //         style: TextStyles()
+                                  //             .whiteTextStyle()
+                                  //             .copyWith(fontSize: 13),
+                                  //       ),
+                                  //     ],
+                                  //   ),
+                                  // ),
+                                  SizedBox(
+                                    width: 5,
+                                  ),
+                                  IconButton(
+                                    onPressed: () {
+                                      setState(() {
+                                        showVolumeSlider = !showVolumeSlider!;
+                                        showBrightnessSlider = false;
+                                      });
+                                    },
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 0),
+                                    icon: Icon(
+                                      MdiIcons.volumeHigh,
+                                      color: Colors.white,
+                                    ),
+                                  ),
+                                  SizedBox(
+                                    width: 5,
+                                  ),
+
+                                  IconButton(
+                                      onPressed: () {},
+                                      icon: Image.asset(
                                           height: 30,
-                                        ),
-                                      ),
-                                      // SizedBox(
-                                      //   width: 30,
-                                      // ),
-                                      // InkWell(
-                                      //   onTap: () {
-                                      //     // _toggleMute();
-                                      //     // print(_isMuted);
-                                      //   },
-                                      //   child: Column(
-                                      //     children: [
-                                      //       Icon(Icons.volume_off,
-                                      //           color: Colors.white),
-                                      //       Text(
-                                      //         //'ugyg',
-                                      //         'Mute',
-                                      //         style: TextStyles()
-                                      //             .whiteTextStyle()
-                                      //             .copyWith(fontSize: 13),
-                                      //       ),
-                                      //     ],
-                                      //   ),
-                                      // ),
-                                      SizedBox(
-                                        width: 5,
-                                      ),
-                                      IconButton(
-                                        onPressed: () {
-                                          setState(() {
-                                            showVolumeSlider =
-                                                !showVolumeSlider!;
-                                            showBrightnessSlider = false;
-                                          });
-                                        },
-                                        padding: const EdgeInsets.symmetric(
-                                            horizontal: 0),
-                                        icon: Icon(
-                                          MdiIcons.volumeHigh,
                                           color: Colors.white,
-                                        ),
-                                      ),
-                                      SizedBox(
-                                        width: 5,
-                                      ),
-
-                                      IconButton(
-                                          onPressed: () {},
-                                          icon: Image.asset(
-                                              height: 30,
-                                              color: Colors.white,
-                                              ImageAssets.powerButton)),
-                                      SizedBox(
-                                        width: 15,
-                                      ),
-                                      Padding(
-                                        padding:
-                                            const EdgeInsets.only(bottom: 3),
-                                        child: Text(
-                                          formatTime(DateTime.now()),
-                                          style: TextStyles()
-                                              .whiteTextStyle()
-                                              .copyWith(
-                                                  fontSize: 14,
-                                                  fontWeight: FontWeight.w600),
-                                        ),
-                                      ),
-                                      // ClipRRect(
-                                      //   borderRadius: BorderRadius.circular(7000),
-                                      //   child: Image.network(
-                                      //     walletDetail == null
-                                      //         ? ' '
-                                      //         : 'https://central.adverts247.xyz/${walletDetail!['image']}',
-                                      //     height: 50,
-                                      //     width: 50,
-                                      //     fit: BoxFit.cover,
-                                      //   ),
-                                      // ),
-                                    ],
+                                          ImageAssets.powerButton)),
+                                  SizedBox(
+                                    width: 15,
                                   ),
+                                  Padding(
+                                    padding: const EdgeInsets.only(bottom: 3),
+                                    child: Text(
+                                      formatTime(DateTime.now()),
+                                      style: TextStyles()
+                                          .whiteTextStyle()
+                                          .copyWith(
+                                              fontSize: 14,
+                                              fontWeight: FontWeight.w600),
+                                    ),
+                                  ),
+                                  // ClipRRect(
+                                  //   borderRadius: BorderRadius.circular(7000),
+                                  //   child: Image.network(
+                                  //     walletDetail == null
+                                  //         ? ' '
+                                  //         : 'https://central.adverts247.xyz/${walletDetail!['image']}',
+                                  //     height: 50,
+                                  //     width: 50,
+                                  //     fit: BoxFit.cover,
+                                  //   ),
+                                  // ),
                                 ],
                               ),
                             ],
                           ),
-                        ),
+                        ],
                       ),
                     ),
-                  ],
+                  ),
                 ),
-        ),
+              ],
+            ),
+          );
+        }),
       ),
     );
   }

@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:io';
 import 'dart:math';
+import 'package:adverts247Pass/pre-streaming-screen/weather_and_profile/weather_and_profile.dart';
 import 'package:adverts247Pass/services/image_assets.dart';
 import 'package:adverts247Pass/tools.dart' as tools;
 
@@ -20,6 +21,7 @@ import 'package:adverts247Pass/widget/barcode.dart';
 import 'package:adverts247Pass/widget/button.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:video_player/video_player.dart';
@@ -64,6 +66,10 @@ class _VideoPlayerAppState extends State<VideoPlayerApp>
   var _isMuted = false;
   var displayWelcome = true;
   bool? showBrightnessSlider = false;
+
+  bool showEndWidget = false;
+  // bool canShowRating = false;
+  Timer? _endWidgetTimer;
 
   @override
   void initState() {
@@ -122,13 +128,7 @@ class _VideoPlayerAppState extends State<VideoPlayerApp>
     ifIsVideo();
   }
 
-  List<Widget> actionWidget = [
-    //QuestionPage(),
-    // BarcodeDisplayWidget(url : currentAds!.callToAction.url),
-    // AdsFormPage()
-  ];
-
-  //Check if the next ads is a video or photo
+//Check if the next ads is a video or photo
 
   Future<void> ifIsVideo() async {
     setState(() {
@@ -171,22 +171,44 @@ class _VideoPlayerAppState extends State<VideoPlayerApp>
           });
 
         _controller!.addListener(() async {
-          print(_controller!.value.errorDescription);
-          print(_controller!.value.position);
+          if (_controller != null && _controller!.value.isInitialized) {
+            final totalDuration = _controller!.value.duration;
+            final currentPosition = _controller!.value.position;
 
-          print(" buffering ${_controller!.value.hasError}");
-          if (_controller!.value.isCompleted || _controller!.value.hasError) {
-            if (_currentIndex < videoModelList!.length - 1) {
-              nextAds();
+            // Calculate remaining time inside the listener
+            final remainingSeconds =
+                (totalDuration - currentPosition).inSeconds;
 
-              _controller!.dispose();
-            } else {
+            print("Total duration: ${totalDuration}");
+            print("Current position: ${currentPosition}");
+            print("Remaining seconds: ${remainingSeconds}");
+
+            // If 10 seconds or less remaining in video, show widget
+            if (remainingSeconds <= 10 && !showEndWidget) {
               setState(() {
-                _currentIndex = -1;
+                showEndWidget = true;
               });
-              print('dsdsd ${_currentIndex}');
-              nextAds();
-              _controller!.dispose();
+            }
+
+            if (_controller!.value.isCompleted || _controller!.value.hasError) {
+              _endWidgetTimer?.cancel();
+              _endWidgetTimer = Timer(const Duration(seconds: 5), () {
+                setState(() {
+                  showEndWidget = false;
+                  rating = true;
+                });
+
+                if (_currentIndex < videoModelList!.length - 1) {
+                  nextAds();
+                  _controller!.dispose();
+                } else {
+                  setState(() {
+                    _currentIndex = -1;
+                  });
+                  nextAds();
+                  _controller!.dispose();
+                }
+              });
             }
           }
         });
@@ -207,6 +229,7 @@ class _VideoPlayerAppState extends State<VideoPlayerApp>
   nextAds() {
     Future.delayed(Duration(seconds: isPhoto! ? 10 : 0), () {
       //   Navigator.pop(context);
+      // _controller.addListener
 
       setState(() {
         rating = true;
@@ -294,7 +317,7 @@ class _VideoPlayerAppState extends State<VideoPlayerApp>
               rating!
                   ? RatingPage()
                   : isLoading!
-                      ? AboutMePage()
+                      ? ProfileWeatherView()
                       : !isPhoto!
                           ? video.toString().endsWith('mkv')
                               ? Column(
@@ -328,18 +351,44 @@ class _VideoPlayerAppState extends State<VideoPlayerApp>
                                         Expanded(
                                           child: Stack(
                                             children: [
-                                              InkWell(
-                                                  onTap: () {
-                                                    setState(() {
-                                                      showVolumeSlider = false;
-                                                      showBrightnessSlider =
-                                                          false;
-                                                    });
-                                                  },
-                                                  child: Flexible(
-                                                    child: VideoPlayer(
-                                                        _controller!),
-                                                  )),
+                                              Row(
+                                                children: [
+                                                  Expanded(
+                                                    child: InkWell(
+                                                        onTap: () {
+                                                          setState(() {
+                                                            showVolumeSlider =
+                                                                false;
+                                                            showBrightnessSlider =
+                                                                false;
+                                                          });
+                                                        },
+                                                        child: Flexible(
+                                                          child: VideoPlayer(
+                                                              _controller!),
+                                                        )),
+                                                  ),
+                                                  showEndWidget == true
+                                                      ? Expanded(
+                                                          child: Container(
+                                                            height: 150.sp,
+                                                            width: 200,
+                                                            decoration:
+                                                                BoxDecoration(
+                                                              image:
+                                                                  DecorationImage(
+                                                                      image:
+                                                                          AssetImage(
+                                                                        "assets/images/Qr_code1.png",
+                                                                      ),
+                                                                      fit: BoxFit
+                                                                          .fill),
+                                                            ),
+                                                          ),
+                                                        )
+                                                      : SizedBox(),
+                                                ],
+                                              ),
                                               Column(
                                                 mainAxisAlignment:
                                                     MainAxisAlignment.end,
@@ -530,13 +579,13 @@ class _VideoPlayerAppState extends State<VideoPlayerApp>
                                         bottomBottomWidget()
                                       ],
                                     )
-                                  : AboutMePage()
+                                  : ProfileWeatherView()
                           : FutureBuilder<Uint8List>(
                               future: futureValue,
                               builder: (context, snapshot) {
                                 if (snapshot.connectionState ==
                                     ConnectionState.waiting) {
-                                  return AboutMePage();
+                                  return ProfileWeatherView();
                                 } else if (snapshot.hasError) {
                                   return Text('Error: ${snapshot.error}');
                                 } else {

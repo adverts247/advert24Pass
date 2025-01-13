@@ -48,7 +48,7 @@ class VideoService {
       //    AppWebsocketService().broadcast(context);
 
       //
-      Get.to(
+      Get.offAll(
         // PreStreamingWelcomePage(),
         ProfileImage(),
         transition: Transition.fadeIn,

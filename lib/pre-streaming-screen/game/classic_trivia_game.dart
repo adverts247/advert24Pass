@@ -12,14 +12,14 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 
 // Main game screen
-class PictureTrivia extends StatefulWidget {
-  const PictureTrivia({Key? key}) : super(key: key);
+class ClassicTrivia extends StatefulWidget {
+  const ClassicTrivia({Key? key}) : super(key: key);
 
   @override
-  _PictureTriviaState createState() => _PictureTriviaState();
+  _ClassicTriviaState createState() => _ClassicTriviaState();
 }
 
-class _PictureTriviaState extends State<PictureTrivia> {
+class _ClassicTriviaState extends State<ClassicTrivia> {
   int currentQuestionIndex = 0;
   int score = 0;
   bool questionAnswered = false;
@@ -223,7 +223,7 @@ class _PictureTriviaState extends State<PictureTrivia> {
           decoration: BoxDecoration(
             image: DecorationImage(
                 image: AssetImage(
-                  ImageAssets.gameBackground,
+                  ImageAssets.classicTriviaBg,
                 ),
                 fit: BoxFit.fill),
           ),
@@ -235,14 +235,14 @@ class _PictureTriviaState extends State<PictureTrivia> {
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
                     Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      mainAxisAlignment: MainAxisAlignment.end,
                       children: [
-                        Text(
-                          'Picture Trivia',
-                          style: TextStyles().whiteTextStyle(
-                              fontSize: 12.sp, fontWeight: FontWeight.w900),
-                          textAlign: TextAlign.center,
-                        ),
+                        // Text(
+                        //   'Picture Trivia',
+                        //   style: TextStyles().whiteTextStyle(
+                        //       fontSize: 12.sp, fontWeight: FontWeight.w900),
+                        //   textAlign: TextAlign.center,
+                        // ),
                         Container(
                           padding: EdgeInsets.all(18.0),
                           decoration: BoxDecoration(
@@ -264,72 +264,40 @@ class _PictureTriviaState extends State<PictureTrivia> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.stretch,
                         children: [
-                          Container(
-                            height: 90.sp,
-                            width: 200.sp,
-                            margin: EdgeInsets.symmetric(horizontal: 35.sp),
-                            decoration: BoxDecoration(
-                              // color: Colors.white,
-                              borderRadius: BorderRadius.circular(30),
-                              border: Border.all(
-                                color: Colors.pink,
-                                width: 7,
-                              ),
-                              boxShadow: [
-                                BoxShadow(
-                                  color: Colors.pink.withOpacity(0.3),
-                                  spreadRadius: 3,
-                                  blurRadius: 10,
-                                  offset: const Offset(0, 0),
-                                ),
-                              ],
-                            ),
-                            child: ClipRRect(
-                              borderRadius: BorderRadius.circular(
-                                  27), // Slightly smaller than container border radius
-                              child: Image.asset(
-                                question.imageAsset,
-                                fit: BoxFit.cover,
-                              ),
-                            ),
-                          ),
-
-                          // Question counter
-                          // Text(
-                          //   'Question ${currentQuestionIndex + 1}/${triviaQuestions.length}',
-                          //   style:
-                          //       const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                          //   textAlign: TextAlign.center,
-                          // ),
-                          // const SizedBox(height: 20),
-
                           const SizedBox(height: 20),
 
-                     
                           Padding(
-                            padding: EdgeInsets.symmetric(horizontal: 45.w),
+                            padding: EdgeInsets.symmetric(horizontal: 30.w),
                             child: Stack(
                               children: [
-                                Image.asset(ImageAssets.questionBar),
+                                Image.asset(ImageAssets.classicQuestionBar),
                                 Positioned(
                                   left: 20,
                                   right: 20,
-                                  top: 15,
+                                  top: 35,
                                   bottom: 5,
-                                  child: Text(
-                                    question.question,
-                                    style: GoogleFonts.manrope(
-                                      color: Colors.white,
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 6.sp,
+                                  child: Padding(
+                                    padding:
+                                        EdgeInsets.symmetric(horizontal: 40.w),
+                                    child: Text(
+                                      question.question,
+                                      style: GoogleFonts.manrope(
+                                        color: Colors.white,
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 7.sp,
+                                      ),
+                                      textAlign: TextAlign.center,
+                                      maxLines: 2, // Limits text to 2 lines
+                                      overflow: TextOverflow
+                                          .ellipsis, // Shows ... if text overflows
+                                      softWrap: true, // Enables text wrapping
                                     ),
-                                    textAlign: TextAlign.center,
                                   ),
                                 )
                               ],
                             ),
                           ),
-                          const SizedBox(height: 20),
+                          SizedBox(height: 50.sp),
 
                           // Answer options
                           Padding(
@@ -538,48 +506,77 @@ class _PictureTriviaState extends State<PictureTrivia> {
               ),
               Positioned(
                 bottom: 0,
-                left: 0,
                 right: 0,
+                left: 0,
                 child: Container(
                   decoration: BoxDecoration(
-                    color: Themes().whiteColor,
-                    // border: Border.all(color: Colors.white),
+                    color: Themes().pink,
+                    border: Border(
+                      left: BorderSide(
+                        color: Colors.white,
+                        width: 7,
+                      ),
+                      right: BorderSide(
+                        color: Colors.white,
+                        width: 7,
+                      ),
+                      bottom: BorderSide(
+                        color: Colors.white,
+                        width: 5.5,
+                      ),
+                    ),
                     // borderRadius: BorderRadius.circular(20)
                   ),
                   //  height: 85,
                   child: Padding(
-                    padding: const EdgeInsets.all(5.0).copyWith(right: 20),
+                    padding:
+                        const EdgeInsets.all(5.0).copyWith(right: 20, left: 20),
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          // mainAxisSize: MainAxisSize.max,
                           children: [
-                            Expanded(
-                                child: Image.asset(ImageAssets.elementDown)),
+                            Row(
+                              children: [
+                                Image.asset(
+                                  ImageAssets.smartObject,
+                                  color: Themes().whiteColor,
+                                  height: 45,
+                                  // width: 200,
+                                ),
+                                SizedBox(
+                                  width: 20,
+                                ),
+                                IconButton(
+                                  onPressed: () {
+                                    Navigator.of(context).pop();
+                                  },
+                                  icon: Text('Classic Trivia',
+                                      style: GoogleFonts.manrope(
+                                        color: Themes().whiteColor,
+                                        fontWeight: FontWeight.w900,
+                                        fontSize: 10.sp,
+                                      )),
+                                ),
+                              ],
+                            ),
                             Row(
                               crossAxisAlignment: CrossAxisAlignment.end,
                               children: [
                                 IconButton(
                                   onPressed: () {
-                                    // setState(() {
-                                    //   // showVolumeSlider = !showVolumeSlider!;
-                                    // });
-
                                     setState(() {
-                                      showBrightnessSlider =
-                                          !showBrightnessSlider;
-                                      showVolumeSlider = false!;
+                                      // showVolumeSlider = !showVolumeSlider!;
                                     });
-                                    // showBrightnessSlider = true;
                                   },
                                   icon: Image.asset(
                                     ImageAssets.brightness1,
-                                    color: Themes().blue,
+                                    color: Colors.white,
                                     height: 30,
                                   ),
                                 ),
+
                                 SizedBox(
                                   width: 5,
                                 ),
@@ -593,21 +590,35 @@ class _PictureTriviaState extends State<PictureTrivia> {
                                       const EdgeInsets.symmetric(horizontal: 0),
                                   icon: Icon(
                                     MdiIcons.volumeHigh,
-                                    color: Themes().blue,
+                                    color: Colors.white,
                                   ),
                                 ),
+
                                 SizedBox(
-                                  width: 5,
+                                  width: 15,
                                 ),
                                 Padding(
                                   padding: const EdgeInsets.only(bottom: 3),
-                                  child: Text(formatTime(DateTime.now()),
-                                      style: GoogleFonts.manrope(
-                                        color: Themes().blue,
-                                        fontWeight: FontWeight.w700,
-                                        fontSize: 6.sp,
-                                      )),
+                                  child: Text(
+                                    formatTime(DateTime.now()),
+                                    style: TextStyles()
+                                        .whiteTextStyle()
+                                        .copyWith(
+                                            fontSize: 14,
+                                            fontWeight: FontWeight.w600),
+                                  ),
                                 ),
+                                // ClipRRect(
+                                //   borderRadius: BorderRadius.circular(7000),
+                                //   child: Image.network(
+                                //     walletDetail == null
+                                //         ? ' '
+                                //         : 'https://central.adverts247.xyz/${walletDetail!['image']}',
+                                //     height: 50,
+                                //     width: 50,
+                                //     fit: BoxFit.cover,
+                                //   ),
+                                // ),
                               ],
                             ),
                           ],

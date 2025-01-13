@@ -151,7 +151,7 @@ class _RatingPageState extends State<RatingPage> {
                                 height: 30,
                               ),
                               Container(
-                                width: 150,
+                                width: 200,
                                 child: GestureDetector(
                                   // text: 'Submit',
                                   onTap: () async {

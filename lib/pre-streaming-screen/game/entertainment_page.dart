@@ -190,7 +190,7 @@ class _EntertainmentPageState extends State<EntertainmentPage> {
     getWalletBalance();
     setBrightness();
     // playVideo();
-    _initializeVideos();
+    // _initializeVideos();
 
     super.initState();
     // playVideo();
@@ -333,223 +333,249 @@ class _EntertainmentPageState extends State<EntertainmentPage> {
                                   ],
                                 ),
                               ),
-                              _sportVidController?.value == null
-                                  ? CircularProgressIndicator(
-                                      color: Colors.red,
-                                    )
-                                  : Padding(
-                                      padding: const EdgeInsets.symmetric(
-                                        horizontal: 25,
-                                      ).copyWith(top: 15, bottom: 0),
-                                      child: Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.stretch,
+                              // _sportVidController?.value == null
+                              //     ? CircularProgressIndicator(
+                              //         color: Colors.red,
+                              //       )
+                              //     :
+                              Padding(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 25,
+                                ).copyWith(top: 15, bottom: 0),
+                                child: Column(
+                                  crossAxisAlignment:
+                                      CrossAxisAlignment.stretch,
+                                  children: [
+                                    Container(
+                                        // margin: EdgeInsets.only(top: 12),
+                                        height: MediaQuery.of(context)
+                                                .size
+                                                .height *
+                                            0.25,
+                                        width:
+                                            MediaQuery.of(context).size.width,
+                                        // color: Colors.redAccent,
+                                        // child: VideoPlayer(_controller!),
+                                        child: Image.asset("assets/images/ads_then_qr_code1.gif")),
+                                    SizedBox(
+                                      height: 20,
+                                    ),
+                                    SizedBox(
+                                      height:
+                                          MediaQuery.of(context).size.height *
+                                              0.4,
+                                      width: MediaQuery.of(context).size.width,
+                                      child: Row(
                                         children: [
-                                          Container(
-                                            // margin: EdgeInsets.only(top: 12),
-                                            height: MediaQuery.of(context)
-                                                    .size
-                                                    .height *
-                                                0.25,
-                                            width: MediaQuery.of(context)
-                                                .size
-                                                .width,
-                                            // color: Colors.redAccent,
-                                            child: VideoPlayer(_controller!),
-                                          ),
-                                          SizedBox(
-                                            height: 20,
-                                          ),
-                                          SizedBox(
-                                            height: MediaQuery.of(context)
-                                                    .size
-                                                    .height *
-                                                0.4,
-                                            width: MediaQuery.of(context)
-                                                .size
-                                                .width,
-                                            child: Row(
-                                              children: [
-                                                // for (var i = 0; i <= 3; i++)
-                                                Expanded(
-                                                  child: InkWell(
-                                                    onTap: () {
-                                                      Navigator.pushReplacement(
-                                                          context,
-                                                          MaterialPageRoute<
-                                                              void>(
-                                                            builder: (BuildContext
-                                                                    context) =>
-                                                                WebviewPage(),
-                                                          ));
-                                                    },
-                                                    child: Container(
-                                                      margin: EdgeInsets.only(
-                                                        right: 5,
-                                                      ),
+                                          // for (var i = 0; i <= 3; i++)
+                                          Expanded(
+                                            child: InkWell(
+                                              onTap: () {
+                                                Navigator.push(
+                                                    context,
+                                                    MaterialPageRoute<void>(
+                                                      builder: (BuildContext
+                                                              context) =>
+                                                          WebviewPage(),
+                                                    ));
+                                              },
+                                              child: Container(
+                                                margin: EdgeInsets.only(
+                                                  right: 5,
+                                                ),
+                                                height: 370,
+                                                width: 400,
+                                                // color: Colors.blueAccent,
+                                                child: Stack(
+                                                  children: [
+                                                    SizedBox(
+                                                      // margin: EdgeInsets.only(top: 12),
+                                                      // height:
+                                                      //     MediaQuery.of(context)
+                                                      //             .size
+                                                      //             .height *
+                                                      //         0.25,
                                                       height: 370,
-                                                      width: 400,
-                                                      color: Colors.blueAccent,
-                                                      child: Stack(
-                                                        children: [
-                                                          VideoPlayer(
-                                                              _sportVidController!),
-                                                          Positioned(
-                                                            right: 5,
-                                                            top: 3,
-                                                            child: Image.asset(
-                                                                height: 60,
-                                                                width: 80,
-                                                                ImageAssets
-                                                                    .sportAdText),
-                                                          ),
-                                                        ],
+                                                      width:
+                                                          MediaQuery.of(context)
+                                                              .size
+                                                              .width,
+                                                      // color: Colors.redAccent,
+                                                      // child: VideoPlayer(_controller!),
+                                                      child: Image.asset(
+                                                        ImageAssets
+                                                            .sportUpdateGif,
+                                                        fit: BoxFit.fill,
                                                       ),
                                                     ),
-                                                  ),
+                                                    Positioned(
+                                                      right: 5,
+                                                      top: 3,
+                                                      child: Image.asset(
+                                                          height: 60,
+                                                          width: 80,
+                                                          ImageAssets
+                                                              .sportAdText),
+                                                    ),
+                                                  ],
                                                 ),
-                                                Expanded(
-                                                  child: InkWell(
-                                                    onTap: () {
-                                                      Navigator.push(
-                                                          context,
-                                                          MaterialPageRoute<
-                                                              void>(
-                                                            builder: (BuildContext
-                                                                    context) =>
-                                                                const GameDashboard(),
-                                                          ));
-                                                    },
-                                                    child: Container(
-                                                        margin: EdgeInsets.only(
-                                                          right: 5,
-                                                        ),
-                                                        height: 370,
-                                                        width: 400,
-                                                        decoration:
-                                                            BoxDecoration(
-                                                          color:
-                                                              Colors.blueAccent,
-                                                          image:
-                                                              DecorationImage(
-                                                            image: AssetImage(
-                                                              ImageAssets
-                                                                  .classicTrivia,
-                                                            ),
-                                                            fit: BoxFit.fill,
-                                                          ),
-                                                        ),
-                                                        child: Stack(
-                                                          children: [
-                                                            // Image.asset(
-                                                            //   ImageAssets
-                                                            //       .classicTrivia,
-                                                            //   fit: BoxFit
-                                                            //       .fitWidth,
-                                                            // ),
-                                                            Container(
-                                                              color: Colors
-                                                                  .black
-                                                                  .withOpacity(
-                                                                      0.5),
-                                                            ),
-                                                            Positioned(
-                                                              right: 5,
-                                                              top: 16,
-                                                              child: Image.asset(
-                                                                  height: 40,
-                                                                  width: 80,
-                                                                  // ImageAssets
-                                                                  //     .playGamesText),
-                                                                  "assets/images/play_games_text1.png"),
-                                                              // child: Column(
-                                                              //   children: [
-                                                              //     Text(
-                                                              //       'Play',
-                                                              //       style: GoogleFonts
-                                                              //           .manrope(
-                                                              //         fontSize:
-                                                              //             15.sp,
-                                                              //         fontWeight:
-                                                              //             FontWeight
-                                                              //                 .w700,
-                                                              //         color: Colors
-                                                              //             .white,
-                                                              //       ),
-                                                              //     ),
-                                                              //     Text(
-                                                              //       'games',
-                                                              //       style: GoogleFonts
-                                                              //           .manrope(
-                                                              //         fontSize:
-                                                              //             8.sp,
-                                                              //         fontWeight:
-                                                              //             FontWeight
-                                                              //                 .w600,
-                                                              //         wordSpacing:
-                                                              //             0.6,
-                                                              //         color: Colors
-                                                              //             .white,
-                                                              //       ),
-                                                              //     ),
-                                                              //   ],
-                                                              // ),
-                                                            ),
-                                                          ],
-                                                        )),
-                                                  ),
-                                                ),
-                                                Expanded(
-                                                  child: Container(
-                                                      margin: EdgeInsets.only(
-                                                        right: 5,
-                                                      ),
-                                                      height: 370,
-                                                      width: 400,
-                                                      color: Colors.blueAccent,
-                                                      child: Stack(
-                                                        children: [
-                                                          VideoPlayer(
-                                                              _vidController!),
-                                                          Positioned(
-                                                            right: 5,
-                                                            top: 0,
-                                                            child: Image.asset(
-                                                                height: 60,
-                                                                width: 80,
-                                                                ImageAssets
-                                                                    .musicAdText),
-                                                          ),
-                                                        ],
-                                                      )),
-                                                ),
-                                                Expanded(
-                                                  child: Container(
-                                                      height: 370,
-                                                      width: 400,
-                                                      color: Colors.blueAccent,
-                                                      child: Stack(
-                                                        children: [
-                                                          VideoPlayer(
-                                                              _musicVidController!),
-                                                          Positioned(
-                                                            right: 5,
-                                                            top: 0,
-                                                            child: Image.asset(
-                                                                height: 60,
-                                                                width: 80,
-                                                                ImageAssets
-                                                                    .vidoeAdText),
-                                                          ),
-                                                        ],
-                                                      )),
-                                                ),
-                                              ],
+                                              ),
                                             ),
+                                          ),
+                                          Expanded(
+                                            child: InkWell(
+                                              onTap: () {
+                                                Navigator.push(
+                                                    context,
+                                                    MaterialPageRoute<void>(
+                                                      builder: (BuildContext
+                                                              context) =>
+                                                          const GameDashboard(),
+                                                    ));
+                                              },
+                                              child: Container(
+                                                  margin: EdgeInsets.only(
+                                                    right: 5,
+                                                  ),
+                                                  height: 370,
+                                                  width: 400,
+                                                  decoration: BoxDecoration(
+                                                    color: Colors.blueAccent,
+                                                    image: DecorationImage(
+                                                      image: AssetImage(
+                                                        ImageAssets
+                                                            .classicTrivia,
+                                                      ),
+                                                      fit: BoxFit.fill,
+                                                    ),
+                                                  ),
+                                                  child: Stack(
+                                                    children: [
+                                                      // Image.asset(
+                                                      //   ImageAssets
+                                                      //       .classicTrivia,
+                                                      //   fit: BoxFit
+                                                      //       .fitWidth,
+                                                      // ),
+                                                      Container(
+                                                        color: Colors.black
+                                                            .withOpacity(0.5),
+                                                      ),
+                                                      Positioned(
+                                                        right: 5,
+                                                        top: 16,
+                                                        child: Image.asset(
+                                                            height: 40,
+                                                            width: 80,
+                                                            // ImageAssets
+                                                            //     .playGamesText),
+                                                            "assets/images/play_games_text1.png"),
+                                                        // child: Column(
+                                                        //   children: [
+                                                        //     Text(
+                                                        //       'Play',
+                                                        //       style: GoogleFonts
+                                                        //           .manrope(
+                                                        //         fontSize:
+                                                        //             15.sp,
+                                                        //         fontWeight:
+                                                        //             FontWeight
+                                                        //                 .w700,
+                                                        //         color: Colors
+                                                        //             .white,
+                                                        //       ),
+                                                        //     ),
+                                                        //     Text(
+                                                        //       'games',
+                                                        //       style: GoogleFonts
+                                                        //           .manrope(
+                                                        //         fontSize:
+                                                        //             8.sp,
+                                                        //         fontWeight:
+                                                        //             FontWeight
+                                                        //                 .w600,
+                                                        //         wordSpacing:
+                                                        //             0.6,
+                                                        //         color: Colors
+                                                        //             .white,
+                                                        //       ),
+                                                        //     ),
+                                                        //   ],
+                                                        // ),
+                                                      ),
+                                                    ],
+                                                  )),
+                                            ),
+                                          ),
+                                          Expanded(
+                                            child: Container(
+                                                margin: EdgeInsets.only(
+                                                  right: 5,
+                                                ),
+                                                height: 370,
+                                                width: 400,
+                                                color: Colors.blueAccent,
+                                                child: Stack(
+                                                  children: [
+                                                    SizedBox(
+                                                      height: 370,
+                                                      width:
+                                                          MediaQuery.of(context)
+                                                              .size
+                                                              .width,
+                                                      child: Image.asset(
+                                                        "assets/images/Listen_Music_.gif",
+                                                        fit: BoxFit.fill,
+                                                      ),
+                                                    ),
+                                                    Positioned(
+                                                      right: 5,
+                                                      top: 0,
+                                                      child: Image.asset(
+                                                          height: 60,
+                                                          width: 80,
+                                                          ImageAssets
+                                                              .musicAdText),
+                                                    ),
+                                                  ],
+                                                )),
+                                          ),
+                                          Expanded(
+                                            child: Container(
+                                                height: 370,
+                                                width: 400,
+                                                color: Colors.blueAccent,
+                                                child: Stack(
+                                                  children: [
+                                                    SizedBox(
+                                                      height: 370,
+                                                      width:
+                                                          MediaQuery.of(context)
+                                                              .size
+                                                              .width,
+                                                      child: Image.asset(
+                                                        "assets/images/Watch_Videos_GIF.gif",
+                                                        fit: BoxFit.fill,
+                                                      ),
+                                                    ),
+                                                    Positioned(
+                                                      right: 5,
+                                                      top: 0,
+                                                      child: Image.asset(
+                                                          height: 60,
+                                                          width: 80,
+                                                          ImageAssets
+                                                              .vidoeAdText),
+                                                    ),
+                                                  ],
+                                                )),
                                           ),
                                         ],
                                       ),
-                                    )
+                                    ),
+                                  ],
+                                ),
+                              )
                             ],
                           ),
                         ),
@@ -664,11 +690,11 @@ class _EntertainmentPageState extends State<EntertainmentPage> {
                                         },
                                         icon: Text(
                                           'Map',
-                                          style: TextStyles()
-                                              .whiteTextStyle()
-                                              .copyWith(
-                                                  fontSize: 14,
-                                                  fontWeight: FontWeight.w600),
+                                          style: GoogleFonts.manrope(
+                                            color: Themes().whiteColor,
+                                            fontWeight: FontWeight.w700,
+                                            fontSize: 6.sp,
+                                          ),
                                         ),
                                       ),
                                       SizedBox(
@@ -680,11 +706,11 @@ class _EntertainmentPageState extends State<EntertainmentPage> {
                                         },
                                         icon: Text(
                                           'Weather',
-                                          style: TextStyles()
-                                              .whiteTextStyle()
-                                              .copyWith(
-                                                  fontSize: 14,
-                                                  fontWeight: FontWeight.w600),
+                                          style: GoogleFonts.manrope(
+                                            color: Themes().whiteColor,
+                                            fontWeight: FontWeight.w700,
+                                            fontSize: 6.sp,
+                                          ),
                                         ),
                                       ),
                                       SizedBox(
@@ -696,11 +722,11 @@ class _EntertainmentPageState extends State<EntertainmentPage> {
                                         },
                                         icon: Text(
                                           'Driver',
-                                          style: TextStyles()
-                                              .whiteTextStyle()
-                                              .copyWith(
-                                                  fontSize: 14,
-                                                  fontWeight: FontWeight.w600),
+                                          style: GoogleFonts.manrope(
+                                            color: Themes().whiteColor,
+                                            fontWeight: FontWeight.w700,
+                                            fontSize: 6.sp,
+                                          ),
                                         ),
                                       ),
                                     ],

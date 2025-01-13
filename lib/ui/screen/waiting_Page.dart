@@ -45,47 +45,58 @@ class WaitingPageState extends State<WaitingPage> {
     // print('dfgfg ${userData}');
     // connectToDriverChannel(userData['id']); // Replace with the actual user ID
     return Scaffold(
-      body: Container(
-        height: MediaQuery.of(context).size.height,
-        width: MediaQuery.of(context).size.width,
-        color: Colors.black,
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Container(
-              width: MediaQuery.of(context).size.width * .4,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.end,
-                children: [
-                  Image.asset(ImageAssets.appLogo),
-                  const SizedBox(height: 5),
-                  Text(
-                    '...reach your true target',
-                    textAlign: TextAlign.right,
-                    style: TextStyles().whiteTextStyle().copyWith(fontSize: 17),
-                  ),
-                ],
-              ),
+      body: LoadingWidget(),
+    );
+  }
+}
+
+class LoadingWidget extends StatelessWidget {
+  const LoadingWidget({
+    super.key,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      height: MediaQuery.of(context).size.height,
+      width: MediaQuery.of(context).size.width,
+      color: Colors.black,
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Container(
+            width: MediaQuery.of(context).size.width * .4,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.end,
+              children: [
+                Image.asset(ImageAssets.appLogo),
+                const SizedBox(height: 5),
+                Text(
+                  '...reach your true target',
+                  textAlign: TextAlign.right,
+                  style: TextStyles().whiteTextStyle().copyWith(fontSize: 17),
+                ),
+              ],
             ),
-            const SizedBox(
-              height: 20,
+          ),
+          const SizedBox(
+            height: 20,
+          ),
+          RichText(
+            text: TextSpan(
+              children: [
+                TextSpan(
+                  text: 'Connecting ',
+                  style: TextStyles().whiteTextStyle().copyWith(fontSize: 20),
+                ),
+                const TextSpan(
+                  text: '....',
+                  style: TextStyle(color: Colors.red, fontSize: 20),
+                ),
+              ],
             ),
-            RichText(
-              text: TextSpan(
-                children: [
-                  TextSpan(
-                    text: 'Connecting ',
-                    style: TextStyles().whiteTextStyle().copyWith(fontSize: 20),
-                  ),
-                  const TextSpan(
-                    text: '....',
-                    style: TextStyle(color: Colors.red, fontSize: 20),
-                  ),
-                ],
-              ),
-            ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
