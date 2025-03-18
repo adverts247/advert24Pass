@@ -36,6 +36,8 @@ class _ProfileImageState extends State<ProfileImage>
   void initState() {
     super.initState();
     // Main controller for entrance animations
+    WeatherLocationState weatherLocationState =
+        Provider.of<WeatherLocationState>(context, listen: false);
     _controller = AnimationController(
       duration: const Duration(seconds: 5),
       vsync: this,
@@ -86,13 +88,14 @@ class _ProfileImageState extends State<ProfileImage>
     // print("weather:: $weatherApiResult");
     // Fetch weather data when the page loads
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      WeatherService().getWeatherData(context);
+      // WeatherService().getWeatherData(context);
+      weatherLocationState.getWeather();
     });
     // return;
 
     Future.delayed(Duration(seconds: 6), () {
       Get.offAll(
-        ProfileWeatherView(),
+      ()=>  ProfileWeatherView(),
         transition: Transition.fadeIn,
         curve: Curves.easeInOut,
         duration: Duration(seconds: 1),

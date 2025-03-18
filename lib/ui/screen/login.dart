@@ -1,7 +1,10 @@
 import 'dart:async';
 
+import 'package:adverts247Pass/pre-streaming-screen/profile_display/profile_image_display.dart';
 import 'package:adverts247Pass/services/image_assets.dart';
 import 'package:adverts247Pass/services/video_service.dart';
+import 'package:adverts247Pass/state/location_weather_state.dart';
+import 'package:adverts247Pass/state/login_state.dart';
 import 'package:adverts247Pass/themes.dart';
 
 import 'package:adverts247Pass/services/websocket.dart';
@@ -9,6 +12,9 @@ import 'package:adverts247Pass/widget/button.dart';
 import 'package:adverts247Pass/widget/input_textform.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:provider/provider.dart';
+import 'package:stacked_services/stacked_services.dart';
+import 'package:get/get.dart' as getx;
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -29,7 +35,9 @@ class _LoginPageState extends State<LoginPage> {
 
   @override
   Widget build(BuildContext context) {
-    print(MediaQuery.of(context).size.height);
+    VideoState videoState = Provider.of<VideoState>(context);
+    WeatherLocationState weatherLocationState =
+        Provider.of<WeatherLocationState>(context);
     return Scaffold(
       body: SafeArea(
         child: Container(
@@ -137,7 +145,7 @@ class _LoginPageState extends State<LoginPage> {
                               ),
                               MyButton(
                                 text: 'Login',
-                                onPressed: () {
+                                onPressed: () async {
                                   var body = {
                                     'email': loginEmail?.text,
                                     'password': password?.text
@@ -146,7 +154,23 @@ class _LoginPageState extends State<LoginPage> {
                                     // 'password': '12345678'
                                   };
                                   print(body);
-                                  VideoService().login(context, body);
+                                  // VideoService().login(context, body);
+                                  final response = await videoState.login(
+                                      context: context, body: body);
+                                  if (response.error) {
+                                    // Navigator.pop(context);
+                                    return;
+                                  }
+                                  final weatherResponse =
+                                      await weatherLocationState.getWeather();
+                                  if (weatherResponse.error) return;
+                                  getx.Get.offAll(
+                                    // PreStreamingWelcomePage(),
+                                    ProfileImage(),
+                                    transition: getx.Transition.fadeIn,
+                                    curve: Curves.easeInOut,
+                                    duration: Duration(seconds: 1),
+                                  );
 
                                   //  AppWebsocketService().sendDriverPingAndListenForPong( 1, 3.222, 4.66666);
 

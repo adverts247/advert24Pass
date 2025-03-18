@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:developer';
 
 import 'package:adverts247Pass/pre-streaming-screen/game/entertainment_page.dart';
 import 'package:adverts247Pass/services/helpers.dart';
@@ -17,7 +18,6 @@ import 'package:adverts247Pass/widget/image_carousel.dart';
 import 'package:adverts247Pass/widget/loader.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/material.dart ';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -42,7 +42,7 @@ class _ProfileWeatherViewState extends State<ProfileWeatherView> {
 
   Map<String, dynamic>? walletDetail;
 
-  var weatherApiResult;
+  Map<String, dynamic>? weatherApiResult;
   Timer? _timer;
   Timer? _entTimer;
   Timer? _sportTimer;
@@ -65,9 +65,12 @@ class _ProfileWeatherViewState extends State<ProfileWeatherView> {
   @override
   // take out logging
   void initState() {
+    WeatherLocationState weatherLocationState =
+        Provider.of<WeatherLocationState>(context, listen: false);
     getWalletBalance();
     // WidgetsBinding.instance.addPostFrameCallback((_) {
-    WeatherService().getWeatherData(context);
+    // WeatherService().getWeatherData(context);
+    Future.delayed(Duration.zero, () => weatherLocationState.getWeather());
     // });
     setBrightness();
     super.initState();
@@ -166,6 +169,7 @@ class _ProfileWeatherViewState extends State<ProfileWeatherView> {
           }
 
           weatherApiResult = weatherState.weatherApiResult;
+          log("WeatherApi================$weatherApiResult");
           if (weatherApiResult == null) {
             return const Center(child: Text('No weather data available'));
           }
@@ -799,9 +803,11 @@ class _ProfileWeatherViewState extends State<ProfileWeatherView> {
                       width: 30,
                     ),
                     Text(
-                        (weatherApiResult['main']['temp'] - 273.15)
-                                .toStringAsFixed(2) +
-                            '°C',
+                        weatherApiResult == null
+                            ? "0°C"
+                            : (weatherApiResult!['main']['temp'] - 273.15)
+                                    .toStringAsFixed(2) +
+                                '°C',
                         style: TextStyles().whiteTextStyle().copyWith(
                             fontSize: 22, fontWeight: FontWeight.w800))
                   ],
@@ -811,19 +817,25 @@ class _ProfileWeatherViewState extends State<ProfileWeatherView> {
                 ),
                 Row(
                   children: [
-                    squareBox(
-                      'HIGH/LOW',
-                      (weatherApiResult['main']['temp_max'] - 273)
-                              .toStringAsFixed(1) +
-                          '/' +
-                          (weatherApiResult['main']['temp_min'] - 273.1)
-                              .toStringAsFixed(1),
-                    ),
+                    weatherApiResult == null
+                        ? SizedBox()
+                        : squareBox(
+                            'HIGH/LOW',
+                            (weatherApiResult!['main']['temp_max'] - 273)
+                                    .toStringAsFixed(1) +
+                                '/' +
+                                (weatherApiResult!['main']['temp_min'] - 273.1)
+                                    .toStringAsFixed(1),
+                          ),
                     const SizedBox(
                       width: 20,
                     ),
-                    squareBox('WIND',
-                        weatherApiResult['wind']['speed'].toString() + 'm/s')
+                    weatherApiResult == null
+                        ? SizedBox()
+                        : squareBox(
+                            'WIND',
+                            weatherApiResult!['wind']['speed'].toString() +
+                                'm/s')
                   ],
                 ),
                 const SizedBox(
@@ -835,8 +847,12 @@ class _ProfileWeatherViewState extends State<ProfileWeatherView> {
                     const SizedBox(
                       width: 20,
                     ),
-                    squareBox('HUMIDITY',
-                        weatherApiResult['main']['humidity'].toString() + '%')
+                    weatherApiResult == null
+                        ? SizedBox()
+                        : squareBox(
+                            'HUMIDITY',
+                            weatherApiResult!['main']['humidity'].toString() +
+                                '%')
                   ],
                 ),
               ],
@@ -1158,7 +1174,7 @@ class DriverProfileView extends StatelessWidget {
                         height: 0,
                       ),
                       Text(
-                        walletDetail!['firstname'],
+                        walletDetail?['firstname'] ?? "",
                         style: TextStyles().whiteTextStyle().copyWith(
                             fontSize: 15.sp, fontWeight: FontWeight.w800),
                       ),

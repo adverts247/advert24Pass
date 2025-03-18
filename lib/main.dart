@@ -1,6 +1,7 @@
 import 'package:adverts247Pass/pre-streaming-screen/profile_display/profile_image_display.dart';
 import 'package:adverts247Pass/services/image_assets.dart';
 import 'package:adverts247Pass/state/location_weather_state.dart';
+import 'package:adverts247Pass/state/login_state.dart';
 import 'package:adverts247Pass/state/user_state.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -66,6 +67,7 @@ class _MyAppState extends State<MyApp> {
       providers: [
         ChangeNotifierProvider(create: (context) => UserState()),
         ChangeNotifierProvider(create: (context) => WeatherLocationState()),
+        ChangeNotifierProvider(create: (context)=>VideoState())
       ],
       child: ScreenUtilInit(
           designSize: const Size(360, 690),

@@ -1,14 +1,21 @@
 //
 
+import 'dart:developer';
+
+import 'package:adverts247Pass/pre-streaming-screen/profile_display/profile_image_display.dart';
 import 'package:adverts247Pass/services/update_app.dart';
 import 'package:adverts247Pass/services/video_service.dart';
+import 'package:adverts247Pass/state/location_weather_state.dart';
+import 'package:adverts247Pass/state/login_state.dart';
 import 'package:adverts247Pass/themes.dart';
 import 'package:adverts247Pass/services/websocket.dart';
 import 'package:adverts247Pass/ui/screen/login.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:adverts247Pass/tools.dart' as tools;
+import 'package:provider/provider.dart';
 import 'package:video_player/video_player.dart';
+import 'package:get/get.dart' as getx;
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -21,23 +28,29 @@ class _SplashScreenState extends State<SplashScreen> {
   VideoPlayerController? _controller;
 
   void initIntroVideo() {
+    // try{
     _controller = VideoPlayerController.asset("assets/video/Intro_app.mp4")
       ..initialize().then((_) async {
-        _controller!.play();
         setState(() {});
+        _controller!.play();
+
         // Wait for video duration before moving to next page
         await Future.delayed(Duration(
             milliseconds:
                 (_controller!.value.duration.inMilliseconds).toInt()));
+        // Future.delayed(Duration.zero, () => moveToNextPage());
         moveToNextPage();
+      }).catchError((error) {
+        Future.delayed(Duration.zero, () => moveToNextPage());
       });
+    // }
   }
 
   @override
   void initState() {
     super.initState();
     initIntroVideo();
-    OtaService().checkifUpdateIsNeeded(context);
+    OtaService().checkForUpdates();
     // AppWebsocketService().determinePosition();
     // Future.delayed(Duration(seconds: 9));
     // moveToNextPage();
@@ -50,6 +63,9 @@ class _SplashScreenState extends State<SplashScreen> {
   }
 
   Future<void> moveToNextPage() async {
+    VideoState videoState = Provider.of<VideoState>(context, listen: false);
+    WeatherLocationState weatherLocationState =
+        Provider.of<WeatherLocationState>(context, listen: false);
     var data = await tools.getFromStore('accessToken');
     if (data == null) {
       Future.delayed(Duration(seconds: 2), () {
@@ -67,8 +83,23 @@ class _SplashScreenState extends State<SplashScreen> {
         // 'email': 'tested@test.com',
         // 'password': '12345678'
       };
+      final response = await videoState.login(context: context, body: body);
+      if (response.error) {
+        // log('error========================${response.message}');
+        // Navigator.pop(context);
+        return;
+      }
+      final weatherResponse = await weatherLocationState.getWeather();
+      if (weatherResponse.error) return;
+      getx.Get.offAll(
+        // PreStreamingWelcomePage(),
+       ()=> ProfileImage(),
+        transition: getx.Transition.fadeIn,
+        curve: Curves.easeInOut,
+        duration: Duration(seconds: 1),
+      );
 
-      VideoService().login(context, body);
+      // Future.delayed(Duration.zero,()=>VideoService().login(context, body));
     }
   }
 
