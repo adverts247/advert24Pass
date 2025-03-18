@@ -52,7 +52,7 @@ class VideoService {
         duration: Duration(seconds: 1),
       );
 
-      debugPrint(result);
+      // debugPrint(result);
     }, onFailure: (_, result) {
       Navigator.pop(context);
 

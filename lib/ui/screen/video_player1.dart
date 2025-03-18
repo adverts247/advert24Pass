@@ -22,7 +22,7 @@ import 'package:flutter/material.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:video_player/video_player.dart';
-//import 'package:flutter_vlc_player/flutter_vlc_player.dart';
+
 import 'package:socket_io_client/socket_io_client.dart' as IO;
 import 'package:screen_brightness/screen_brightness.dart';
 
