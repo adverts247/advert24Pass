@@ -95,7 +95,7 @@ class _ProfileImageState extends State<ProfileImage>
 
     Future.delayed(Duration(seconds: 6), () {
       Get.offAll(
-      ()=>  ProfileWeatherView(),
+        () => ProfileWeatherView(),
         transition: Transition.fadeIn,
         curve: Curves.easeInOut,
         duration: Duration(seconds: 1),

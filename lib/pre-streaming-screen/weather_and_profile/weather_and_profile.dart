@@ -512,7 +512,7 @@ class _ProfileWeatherViewState extends State<ProfileWeatherView> {
                                       }));
                                     },
                                     icon: Text(
-                                      'Map',
+                                      'Entertainment',
                                       style: GoogleFonts.manrope(
                                         color: Themes().whiteColor,
                                         fontWeight: FontWeight.w700,

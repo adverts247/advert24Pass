@@ -10,10 +10,13 @@ import 'package:adverts247Pass/state/login_state.dart';
 import 'package:adverts247Pass/themes.dart';
 import 'package:adverts247Pass/services/websocket.dart';
 import 'package:adverts247Pass/ui/screen/login.dart';
+import 'package:adverts247Pass/widget/button.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:adverts247Pass/tools.dart' as tools;
 import 'package:provider/provider.dart';
+import 'package:shorebird_code_push/shorebird_code_push.dart';
 import 'package:video_player/video_player.dart';
 import 'package:get/get.dart' as getx;
 
@@ -49,8 +52,9 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   void initState() {
     super.initState();
+     OtaService().checkForUpdates();
     initIntroVideo();
-    OtaService().checkForUpdates();
+   
     // AppWebsocketService().determinePosition();
     // Future.delayed(Duration(seconds: 9));
     // moveToNextPage();
@@ -93,7 +97,7 @@ class _SplashScreenState extends State<SplashScreen> {
       if (weatherResponse.error) return;
       getx.Get.offAll(
         // PreStreamingWelcomePage(),
-       ()=> ProfileImage(),
+        () => ProfileImage(),
         transition: getx.Transition.fadeIn,
         curve: Curves.easeInOut,
         duration: Duration(seconds: 1),

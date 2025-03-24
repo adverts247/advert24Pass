@@ -13,7 +13,6 @@ import 'package:adverts247Pass/widget/input_textform.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
-import 'package:stacked_services/stacked_services.dart';
 import 'package:get/get.dart' as getx;
 
 class LoginPage extends StatefulWidget {
@@ -39,6 +38,7 @@ class _LoginPageState extends State<LoginPage> {
     WeatherLocationState weatherLocationState =
         Provider.of<WeatherLocationState>(context);
     return Scaffold(
+
       body: SafeArea(
         child: Container(
           color: Colors.black,
@@ -57,6 +57,7 @@ class _LoginPageState extends State<LoginPage> {
                         ? MediaQuery.of(context).size.height * .72
                         : MediaQuery.of(context).size.height,
                     width: MediaQuery.of(context).size.width * .7,
+                    color: Colors.black,
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.start,
                       crossAxisAlignment: CrossAxisAlignment.end,

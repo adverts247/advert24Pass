@@ -3,26 +3,51 @@ import 'dart:async';
 
 import 'package:adverts247Pass/services/network.dart/network.dart';
 import 'package:adverts247Pass/services/network.dart/streaming-network.dart';
+import 'package:adverts247Pass/widget/button.dart';
 // import 'package:ota_update/ota_update.dart';
 import 'package:flutter/material.dart';
 import 'package:adverts247Pass/tools.dart' as tools;
+import 'package:get/get.dart';
 import 'package:shorebird_code_push/shorebird_code_push.dart';
 
 // RUN OTA UPDATE
 // START LISTENING FOR DOWNLOAD PROGRESS REPORTING EVENTS
 
-class OtaService {
-    final updater = ShorebirdUpdater();
-   Future<void> checkForUpdates() async {
+class OtaService extends ChangeNotifier {
+  final updater = ShorebirdUpdater();
+
+  Future<void> checkForUpdates() async {
     // Check whether a new update is available.
     final status = await updater.checkForUpdate();
 
     if (status == UpdateStatus.outdated) {
       try {
-        // Perform the update
-        await updater.update();
+        Get.dialog(
+          Dialog(
+            backgroundColor: Colors.white,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(
+                  'Update available for the track.',
+                ),
+                SizedBox(
+                  height: 12,
+                ),
+                MyButton(
+                  text: "Update",
+                  onPressed: () async {
+                    await updater.update();
+                  },
+                  height: 30,
+                )
+              ],
+            ),
+          ),
+        );
       } on UpdateException catch (error) {
-     
+        // Handle any errors that occur while updating.
       }
     }
   }
