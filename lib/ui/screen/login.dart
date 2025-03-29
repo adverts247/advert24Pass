@@ -38,7 +38,6 @@ class _LoginPageState extends State<LoginPage> {
     WeatherLocationState weatherLocationState =
         Provider.of<WeatherLocationState>(context);
     return Scaffold(
-
       body: SafeArea(
         child: Container(
           color: Colors.black,

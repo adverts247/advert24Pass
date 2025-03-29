@@ -3,6 +3,7 @@ import 'dart:developer';
 
 import 'package:adverts247Pass/model/api_response.dart';
 import 'package:adverts247Pass/model/video_model.dart';
+import 'package:adverts247Pass/pre-streaming-screen/game/entertainment_page.dart';
 import 'package:adverts247Pass/pre-streaming-screen/profile_display/profile_image_display.dart';
 import 'package:adverts247Pass/pre-streaming-screen/weather_and_profile/weather_and_profile.dart';
 import 'package:adverts247Pass/pre-streaming-screen/welcome_onbaording/welcome-onboarding_view.dart';
@@ -638,7 +639,7 @@ class VideoService {
       // Navigator.of(context).pop();
       Navigator.pushAndRemoveUntil(
           context,
-          MaterialPageRoute(builder: (context) => ProfileWeatherView()),
+          MaterialPageRoute(builder: (context) => EntertainmentPage()),
           (route) => true);
     } else {
       // Error handling

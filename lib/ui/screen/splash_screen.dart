@@ -72,7 +72,7 @@ class _SplashScreenState extends State<SplashScreen> {
         Provider.of<WeatherLocationState>(context, listen: false);
     var data = await tools.getFromStore('accessToken');
     if (data == null) {
-      Future.delayed(Duration(seconds: 2), () {
+      Future.delayed(Duration(seconds: 5), () {
         Navigator.pushReplacement(
             context, MaterialPageRoute(builder: (context) => LoginPage()));
       });

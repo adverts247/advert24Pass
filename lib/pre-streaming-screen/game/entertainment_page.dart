@@ -688,7 +688,7 @@ class _EntertainmentPageState extends State<EntertainmentPage> {
                                           // }));
                                         },
                                         icon: Text(
-                                          'Map',
+                                          'Entertainment',
                                           style: GoogleFonts.manrope(
                                             color: Themes().whiteColor,
                                             fontWeight: FontWeight.w700,

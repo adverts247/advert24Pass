@@ -1,3 +1,4 @@
+import 'package:adverts247Pass/pre-streaming-screen/game/entertainment_page.dart';
 import 'package:adverts247Pass/pre-streaming-screen/weather_and_profile/weather_and_profile.dart';
 import 'package:adverts247Pass/services/image_assets.dart';
 import 'package:flutter/material.dart';
@@ -17,7 +18,7 @@ class _ThankYouPageState extends State<ThankYouPage> {
     Future.delayed(Duration(milliseconds: 700)).then((value) =>
         Navigator.pushAndRemoveUntil(
             context,
-            MaterialPageRoute(builder: (context) => ProfileWeatherView()),
+            MaterialPageRoute(builder: (context) => EntertainmentPage()),
             (route) => true));
   }
 

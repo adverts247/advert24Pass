@@ -31,7 +31,7 @@ class WaitingPageState extends State<WaitingPage> {
 
     if (isFirstTime == null) {
       loader().circularModalLoading(context);
-      Future.delayed(const Duration(seconds: 6), () {
+      Future.delayed(const Duration(seconds: 10), () {
         Navigator.pop(context);
       });
     } else {

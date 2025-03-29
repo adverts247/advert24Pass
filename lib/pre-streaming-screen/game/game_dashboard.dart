@@ -37,6 +37,7 @@ class _GameDashboardState extends State<GameDashboard> {
 
   var weatherApiResult;
   Timer? _timer;
+  Timer? _routeTimer;
   Timer? _entTimer;
   Timer? _sportTimer;
   // Timer? _entTimer;
@@ -45,6 +46,8 @@ class _GameDashboardState extends State<GameDashboard> {
   bool isFirstColor = true;
 
   VideoPlayerController? _controller;
+
+  int _totalTimeLeft = 50;
 
   @override
   // take out logging
@@ -56,6 +59,20 @@ class _GameDashboardState extends State<GameDashboard> {
         // showWeather = !showWeather;
         // Simply toggle between true and false
         isFirstColor = !isFirstColor;
+      });
+    });
+
+    setState(() {
+      _routeTimer = Timer.periodic(const Duration(seconds: 1), (timer) {
+        if (_totalTimeLeft > 0) {
+          _totalTimeLeft--;
+        } else {
+          Navigator.push(
+              context,
+              MaterialPageRoute<void>(
+                builder: (BuildContext context) => const PictureTrivia(),
+              ));
+        }
       });
     });
 
@@ -75,6 +92,7 @@ class _GameDashboardState extends State<GameDashboard> {
     _timer?.cancel();
     _entTimer?.cancel();
     _sportTimer?.cancel();
+    _routeTimer?.cancel();
     super.dispose();
   }
 
@@ -99,7 +117,320 @@ class _GameDashboardState extends State<GameDashboard> {
               Stack(
             children: [
               // if ready show entertainment view
-              EntertainmentView(controller: _controller),
+              // EntertainmentView(controller: _controller),
+              Stack(
+                children: [
+                  Container(
+                    padding: EdgeInsets.only(bottom: 0),
+                    decoration: BoxDecoration(color: Colors.white),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Container(
+                          padding:
+                              EdgeInsets.only(top: 15, right: 20, left: 30),
+                          height: MediaQuery.of(context).size.height / 4,
+                          color: Themes().blue,
+                          child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  AnimatedWidgetWrapper(
+                                    animationType: AnimationType.slideFromRight,
+                                    delay: 500,
+                                    child: Text(
+                                      'Welcome,',
+                                      style: TextStyles()
+                                          .whiteTextStyle(
+                                              fontWeight: FontWeight.w800)
+                                          .copyWith(
+                                              fontSize: 14.sp,
+                                              fontWeight: FontWeight.w800),
+                                    ),
+                                  ),
+                                  Row(
+                                    children: [
+                                      AnimatedWidgetWrapper(
+                                        animationType:
+                                            AnimationType.slideFromRight,
+                                        delay: 700,
+                                        child: Text(
+                                          'Pick',
+                                          style: TextStyles()
+                                              .whiteTextStyle(
+                                                  fontWeight: FontWeight.w800)
+                                              .copyWith(
+                                                  fontSize: 14.sp,
+                                                  fontWeight: FontWeight.w800),
+                                        ),
+                                      ),
+                                      AnimatedWidgetWrapper(
+                                        animationType:
+                                            AnimationType.slideFromRight,
+                                        delay: 800,
+                                        child: Text(
+                                          ' A Game!',
+                                          style: TextStyles()
+                                              .whiteTextStyle(
+                                                  fontWeight: FontWeight.w800)
+                                              .copyWith(
+                                                  fontSize: 14.sp,
+                                                  fontWeight: FontWeight.w800),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ],
+                              ),
+                              Column(
+                                children: [
+                                  AnimatedWidgetWrapper(
+                                    animationType: AnimationType.fadeIn,
+                                    delay: 700,
+                                    child: Text(
+                                      'Over\n#1,000,000',
+                                      textAlign: TextAlign.right,
+                                      style: TextStyles()
+                                          .whiteTextStyle(
+                                              fontWeight: FontWeight.w800)
+                                          .copyWith(
+                                              height: 1,
+                                              fontSize: 16.sp,
+                                              fontWeight: FontWeight.w900),
+                                    ),
+                                  ),
+                                  AnimatedWidgetWrapper(
+                                    animationType: AnimationType.fadeIn,
+                                    delay: 700,
+                                    child: Text(
+                                      'in prizes won!',
+                                      textAlign: TextAlign.right,
+                                      style: TextStyles()
+                                          .whiteTextStyle(
+                                              fontWeight: FontWeight.w800)
+                                          .copyWith(
+                                              height: 1,
+                                              fontSize: 14.sp,
+                                              fontWeight: FontWeight.w800),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 35.0,
+                          ).copyWith(top: 15, bottom: 0),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.stretch,
+                            children: [
+                              // ),
+                              Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    GestureDetector(
+                                      onTap: () {
+                                        // Navigator.push(
+                                        //     context,
+                                        //     MaterialPageRoute<void>(
+                                        //       builder: (BuildContext context) =>
+                                        //           const PictureTrivia(),
+                                        //     ));
+                                      },
+                                      child: AnimatedWidgetWrapper(
+                                        animationType: AnimationType.fadeIn,
+                                        delay: 700,
+                                        child: Text(
+                                          'Free to play!',
+                                          textAlign: TextAlign.right,
+                                          style: TextStyle(
+                                              height: 1,
+                                              fontSize: 9.sp,
+                                              fontWeight: FontWeight.w700,
+                                              color: Themes()
+                                                  .pink
+                                                  .withOpacity(0.7)),
+                                        ),
+                                      ),
+                                    ),
+                                    AnimatedWidgetWrapper(
+                                      animationType: AnimationType.fadeIn,
+                                      delay: 900,
+                                      child: Text(
+                                        'Auto start in ${formatCountTime(_totalTimeLeft)}secs...',
+                                        textAlign: TextAlign.right,
+                                        style: TextStyle(
+                                            height: 1,
+                                            fontSize: 9.sp,
+                                            fontWeight: FontWeight.w700,
+                                            color:
+                                                Themes().pink.withOpacity(0.7)),
+                                      ),
+                                    ),
+                                  ]),
+                              SizedBox(
+                                height: 20,
+                              ),
+                              Row(
+                                children: [
+                                  // for (var i = 0; i <= 3; i++)
+                                  Expanded(
+                                    child: GestureDetector(
+                                      onTap: () {
+                                        Navigator.push(
+                                            context,
+                                            MaterialPageRoute<void>(
+                                              builder: (BuildContext context) =>
+                                                  const PictureTrivia(),
+                                            ));
+                                      },
+                                      child: AnimatedWidgetWrapper(
+                                        animationType:
+                                            AnimationType.slideFromLeft,
+                                        delay: 750,
+                                        child: Container(
+                                          margin: EdgeInsets.only(
+                                            right: 10,
+                                          ),
+                                          height: 360,
+                                          width: 400,
+                                          // color: Colors.blueAccent,
+                                          child: Image.asset(
+                                            ImageAssets.pictureTrivia,
+                                            // height: 360,
+                                            // width: 400,
+                                            fit: BoxFit.fill,
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                  Expanded(
+                                    child: GestureDetector(
+                                      onTap: () {
+                                        Navigator.push(
+                                            context,
+                                            MaterialPageRoute<void>(
+                                                builder:
+                                                    (BuildContext context) =>
+                                                        ClassicTrivia()));
+                                      },
+                                      child: AnimatedWidgetWrapper(
+                                        animationType:
+                                            AnimationType.slideFromLeft,
+                                        delay: 800,
+                                        child: Container(
+                                          margin: EdgeInsets.only(
+                                            right: 5,
+                                          ),
+                                          height: 360,
+                                          width: 400,
+                                          // color: Colors.blueAccent,
+                                          child: Image.asset(
+                                            ImageAssets.classicTrivia,
+                                            fit: BoxFit.fill,
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                  Expanded(
+                                    child: AnimatedWidgetWrapper(
+                                      animationType:
+                                          AnimationType.slideFromLeft,
+                                      delay: 850,
+                                      child: Container(
+                                        margin: EdgeInsets.only(
+                                          right: 5,
+                                        ),
+                                        height: 360,
+                                        width: 400,
+                                        // color: Colors.blueAccent,
+                                        child: Stack(
+                                          children: [
+                                            Image.asset(
+                                              ImageAssets.comingSoon,
+                                              fit: BoxFit.fill,
+                                            ),
+                                            Container(
+                                              color:
+                                                  Colors.black.withOpacity(0.7),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                  Expanded(
+                                    child: AnimatedWidgetWrapper(
+                                      animationType:
+                                          AnimationType.slideFromLeft,
+                                      delay: 900,
+                                      child: Container(
+                                        margin: EdgeInsets.only(
+                                          right: 5,
+                                        ),
+                                        height: 360,
+                                        width: 400,
+                                        // color: Colors.blueAccent,
+                                        child: Stack(
+                                          children: [
+                                            Image.asset(
+                                              ImageAssets.comingSoon,
+                                              fit: BoxFit.fill,
+                                            ),
+                                            Container(
+                                              color:
+                                                  Colors.black.withOpacity(0.7),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                  Expanded(
+                                    child: AnimatedWidgetWrapper(
+                                      animationType:
+                                          AnimationType.slideFromLeft,
+                                      delay: 950,
+                                      child: Container(
+                                        height: 360,
+                                        width: 400,
+                                        // color: Colors.blueAccent,
+                                        child: Stack(
+                                          children: [
+                                            Image.asset(
+                                              ImageAssets.comingSoon,
+                                              fit: BoxFit.fill,
+                                            ),
+                                            Container(
+                                              color:
+                                                  Colors.black.withOpacity(0.7),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
+                        ),
+                        SizedBox(
+                          height: 40,
+                        )
+                      ],
+                    ),
+                  ),
+                ],
+              ),
 
               // bottom nav-bar widget
               Positioned(
@@ -270,6 +601,10 @@ class _GameDashboardState extends State<GameDashboard> {
       ),
     );
   }
+
+  String formatCountTime(int seconds) {
+    return '${(seconds % 60).toString().padLeft(2, '0')}';
+  }
 }
 
 class EntertainmentView extends StatelessWidget {
@@ -282,6 +617,7 @@ class EntertainmentView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    int _totalTimeLeft = 50;
     return Stack(
       children: [
         Container(
@@ -416,7 +752,7 @@ class EntertainmentView extends StatelessWidget {
                             animationType: AnimationType.fadeIn,
                             delay: 900,
                             child: Text(
-                              'Auto start in 1 min...',
+                              'Auto start in ${formatCountTime(_totalTimeLeft)}...',
                               textAlign: TextAlign.right,
                               style: TextStyle(
                                   height: 1,
@@ -574,5 +910,9 @@ class EntertainmentView extends StatelessWidget {
         ),
       ],
     );
+  }
+
+  String formatCountTime(int seconds) {
+    return '${(seconds % 60).toString().padLeft(2, '0')}';
   }
 }

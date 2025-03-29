@@ -285,39 +285,41 @@ class _ProfileWeatherViewState extends State<ProfileWeatherView> {
                                               ),
                                             ],
                                           ),
-                                          Column(
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.stretch,
-                                              children: [
-                                                AboutCard(
-                                                  screenHeight: screenHeight,
-                                                  title: "Favorite Food",
-                                                  answer: "Jollof Rice",
-                                                  imagUrl:
-                                                      ImageAssets.aboutFrame,
-                                                ),
-                                                AboutCard(
-                                                  screenHeight: screenHeight,
-                                                  title: "Favorite Hobby",
-                                                  answer: "Sport",
-                                                  imagUrl:
-                                                      ImageAssets.aboutFrame2,
-                                                ),
-                                                AboutCard(
-                                                  screenHeight: screenHeight,
-                                                  title: "Ask Me",
-                                                  answer: "Politics",
-                                                  imagUrl:
-                                                      ImageAssets.aboutFrame3,
-                                                ),
-                                                AboutCard(
-                                                  screenHeight: screenHeight,
-                                                  title: "Vacation Spot",
-                                                  answer: "Paris",
-                                                  imagUrl:
-                                                      ImageAssets.aboutFrame4,
-                                                ),
-                                              ]),
+                                          SingleChildScrollView(
+                                            child: Column(
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.stretch,
+                                                children: [
+                                                  AboutCard(
+                                                    screenHeight: screenHeight,
+                                                    title: "Favorite Food",
+                                                    answer: "Jollof Rice",
+                                                    imagUrl:
+                                                        ImageAssets.aboutFrame,
+                                                  ),
+                                                  AboutCard(
+                                                    screenHeight: screenHeight,
+                                                    title: "Favorite Hobby",
+                                                    answer: "Sport",
+                                                    imagUrl:
+                                                        ImageAssets.aboutFrame2,
+                                                  ),
+                                                  AboutCard(
+                                                    screenHeight: screenHeight,
+                                                    title: "Ask Me",
+                                                    answer: "Politics",
+                                                    imagUrl:
+                                                        ImageAssets.aboutFrame3,
+                                                  ),
+                                                  AboutCard(
+                                                    screenHeight: screenHeight,
+                                                    title: "Vacation Spot",
+                                                    answer: "Paris",
+                                                    imagUrl:
+                                                        ImageAssets.aboutFrame4,
+                                                  ),
+                                                ]),
+                                          ),
                                           SizedBox(
                                             height: 25,
                                           ),
