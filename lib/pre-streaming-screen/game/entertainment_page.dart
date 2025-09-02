@@ -1,6 +1,9 @@
 import 'dart:async';
 
 import 'package:adverts247Pass/pre-streaming-screen/game/game_dashboard.dart';
+import 'package:adverts247Pass/pre-streaming-screen/weather_and_profile/weather_and_profile.dart';
+import 'package:adverts247Pass/services/websocket.dart';
+import 'package:adverts247Pass/state/entertainment_state.dart';
 import 'package:adverts247Pass/ui/screen/thank_you_page.dart';
 import 'package:adverts247Pass/webview/webview_wdget.dart';
 import 'package:adverts247Pass/services/helpers.dart';
@@ -13,11 +16,13 @@ import 'package:adverts247Pass/ui/screen/waiting_Page.dart';
 import 'package:adverts247Pass/widget/animated_widget_wrapper.dart';
 import 'package:adverts247Pass/widget/image_carousel.dart';
 import 'package:adverts247Pass/widget/loader.dart';
+import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:get/get_connect/http/src/utils/utils.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
@@ -27,7 +32,8 @@ import 'package:screen_brightness/screen_brightness.dart';
 import 'package:video_player/video_player.dart';
 
 class EntertainmentPage extends StatefulWidget {
-  const EntertainmentPage({super.key});
+  final bool addDelay;
+  const EntertainmentPage({super.key, this.addDelay = false});
 
   @override
   State<EntertainmentPage> createState() => _EntertainmentPageState();
@@ -183,39 +189,23 @@ class _EntertainmentPageState extends State<EntertainmentPage> {
     ScreenBrightness().setScreenBrightness(_brightness);
   }
 
+  playAudio() {
+    Provider.of<EntertainmentState>(context, listen: false).playAudio();
+  }
+
   @override
   // take out logging
   void initState() {
     getWalletBalance();
+
     setBrightness();
-    // playVideo();
-    // _initializeVideos();
+    if (widget.addDelay) {
+      Future.delayed(Duration(minutes: 1));
+    }
 
     super.initState();
-    // playVideo();
-
-    _timer = Timer.periodic(const Duration(seconds: 8), (timer) {
-      // playVideo();
-      // setState(() {
-      //   // showWeather = !showWeather;
-      //   // Simply toggle between true and false
-      //   isFirstColor = !isFirstColor;
-      // });
-    });
-
-    // showWeatherView();
-    // showEntView();
-
-    return;
-
-    Future.delayed(const Duration(seconds: 8), () {
-      Get.to(
-        WaitingPage(),
-        transition: Transition.fadeIn,
-        curve: Curves.easeIn,
-        duration: const Duration(seconds: 1),
-      );
-    });
+    playAudio();
+    AppWebsocketService().broadcast();
   }
 
   void showWeatherView() {
@@ -247,6 +237,7 @@ class _EntertainmentPageState extends State<EntertainmentPage> {
     _sportVidController?.dispose();
     _musicVidController?.dispose();
     _vidController?.dispose();
+    // audioPlayer.dispose();
     super.dispose();
   }
 
@@ -273,6 +264,8 @@ class _EntertainmentPageState extends State<EntertainmentPage> {
 
   @override
   Widget build(BuildContext context) {
+    EntertainmentState state = Provider.of<EntertainmentState>(context);
+
     var screenHeight = MediaQuery.of(context).size.height;
     for (var url in imageUrls) {
       precacheImage(
@@ -347,15 +340,15 @@ class _EntertainmentPageState extends State<EntertainmentPage> {
                                   children: [
                                     Container(
                                         // margin: EdgeInsets.only(top: 12),
-                                        height: MediaQuery.of(context)
-                                                .size
-                                                .height *
-                                            0.25,
+                                        height:
+                                            MediaQuery.of(context).size.height *
+                                                0.25,
                                         width:
                                             MediaQuery.of(context).size.width,
                                         // color: Colors.redAccent,
                                         // child: VideoPlayer(_controller!),
-                                        child: Image.asset("assets/images/ads_then_qr_code1.gif")),
+                                        child: Image.asset(
+                                            "assets/images/ads_then_qr_code1.gif")),
                                     SizedBox(
                                       height: 20,
                                     ),
@@ -370,13 +363,8 @@ class _EntertainmentPageState extends State<EntertainmentPage> {
                                           Expanded(
                                             child: InkWell(
                                               onTap: () {
-                                                Navigator.push(
-                                                    context,
-                                                    MaterialPageRoute<void>(
-                                                      builder: (BuildContext
-                                                              context) =>
-                                                          WebviewPage(),
-                                                    ));
+                                                state.pauseAudio();
+                                                Get.to(() => WebviewPage());
                                               },
                                               child: Container(
                                                 margin: EdgeInsets.only(
@@ -424,13 +412,9 @@ class _EntertainmentPageState extends State<EntertainmentPage> {
                                           Expanded(
                                             child: InkWell(
                                               onTap: () {
-                                                Navigator.push(
-                                                    context,
-                                                    MaterialPageRoute<void>(
-                                                      builder: (BuildContext
-                                                              context) =>
-                                                          const GameDashboard(),
-                                                    ));
+                                                state.pauseAudio();
+                                                Get.to(() =>
+                                                    const GameDashboard());
                                               },
                                               child: Container(
                                                   margin: EdgeInsets.only(
@@ -466,41 +450,7 @@ class _EntertainmentPageState extends State<EntertainmentPage> {
                                                         child: Image.asset(
                                                             height: 40,
                                                             width: 80,
-                                                            // ImageAssets
-                                                            //     .playGamesText),
                                                             "assets/images/play_games_text1.png"),
-                                                        // child: Column(
-                                                        //   children: [
-                                                        //     Text(
-                                                        //       'Play',
-                                                        //       style: GoogleFonts
-                                                        //           .manrope(
-                                                        //         fontSize:
-                                                        //             15.sp,
-                                                        //         fontWeight:
-                                                        //             FontWeight
-                                                        //                 .w700,
-                                                        //         color: Colors
-                                                        //             .white,
-                                                        //       ),
-                                                        //     ),
-                                                        //     Text(
-                                                        //       'games',
-                                                        //       style: GoogleFonts
-                                                        //           .manrope(
-                                                        //         fontSize:
-                                                        //             8.sp,
-                                                        //         fontWeight:
-                                                        //             FontWeight
-                                                        //                 .w600,
-                                                        //         wordSpacing:
-                                                        //             0.6,
-                                                        //         color: Colors
-                                                        //             .white,
-                                                        //       ),
-                                                        //     ),
-                                                        //   ],
-                                                        // ),
                                                       ),
                                                     ],
                                                   )),
@@ -701,7 +651,7 @@ class _EntertainmentPageState extends State<EntertainmentPage> {
                                       ),
                                       IconButton(
                                         onPressed: () {
-                                          Navigator.of(context).pop();
+                                          Get.off(ProfileWeatherView());
                                         },
                                         icon: Text(
                                           'Weather',
@@ -717,7 +667,9 @@ class _EntertainmentPageState extends State<EntertainmentPage> {
                                       ),
                                       IconButton(
                                         onPressed: () {
-                                          Navigator.of(context).pop();
+                                          Get.off(ProfileWeatherView(
+                                            showWeather: false,
+                                          ));
                                         },
                                         icon: Text(
                                           'Driver',

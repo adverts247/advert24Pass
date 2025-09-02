@@ -1,9 +1,11 @@
 import 'dart:async';
 
 import 'package:adverts247Pass/services/image_assets.dart';
+import 'package:adverts247Pass/state/entertainment_state.dart';
 import 'package:adverts247Pass/themes.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:provider/provider.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
 class WebviewPage extends StatefulWidget {
@@ -39,6 +41,7 @@ class _WebviewPageState extends State<WebviewPage> {
         if (_totalTimeLeft > 0) {
           _totalTimeLeft--;
         } else {
+           Provider.of<EntertainmentState>(context,listen: false).playAudio();
           Navigator.of(context).pop();
         }
       });

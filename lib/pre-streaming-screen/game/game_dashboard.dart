@@ -2,9 +2,11 @@ import 'dart:async';
 
 import 'package:adverts247Pass/pre-streaming-screen/game/classic_trivia_game.dart';
 import 'package:adverts247Pass/pre-streaming-screen/game/picture_trivia_game.dart';
+import 'package:adverts247Pass/pre-streaming-screen/weather_and_profile/weather_and_profile.dart';
 import 'package:adverts247Pass/services/helpers.dart';
 import 'package:adverts247Pass/services/image_assets.dart';
 import 'package:adverts247Pass/services/video_service.dart';
+import 'package:adverts247Pass/state/entertainment_state.dart';
 import 'package:adverts247Pass/state/location_weather_state.dart';
 import 'package:adverts247Pass/state/user_state.dart';
 import 'package:adverts247Pass/themes.dart';
@@ -47,7 +49,7 @@ class _GameDashboardState extends State<GameDashboard> {
 
   VideoPlayerController? _controller;
 
-  int _totalTimeLeft = 50;
+  int _totalTimeLeft = 60;
 
   @override
   // take out logging
@@ -61,30 +63,35 @@ class _GameDashboardState extends State<GameDashboard> {
         isFirstColor = !isFirstColor;
       });
     });
+    startTimers();
 
-    setState(() {
-      _routeTimer = Timer.periodic(const Duration(seconds: 1), (timer) {
-        if (_totalTimeLeft > 0) {
-          _totalTimeLeft--;
-        } else {
-          Navigator.push(
-              context,
-              MaterialPageRoute<void>(
-                builder: (BuildContext context) => const PictureTrivia(),
-              ));
-        }
-      });
-    });
+    // setState(() {
+    //   _routeTimer = Timer.periodic(const Duration(seconds: 1), (timer) {
+    //     if (_totalTimeLeft > 0) {
+    //       _totalTimeLeft--;
+    //     } else {
+    //       Navigator.push(
+    //           context,
+    //           MaterialPageRoute<void>(
+    //             builder: (BuildContext context) => const PictureTrivia(),
+    //           ));
+    //     }
+    //   });
+    // });
+  }
 
-    return;
-
-    Future.delayed(const Duration(seconds: 8), () {
-      Get.to(
-        WaitingPage(),
-        transition: Transition.fadeIn,
-        curve: Curves.easeIn,
-        duration: const Duration(seconds: 1),
-      );
+  void startTimers() {
+    // Timer for individual questions (5 seconds each)
+    _routeTimer = Timer.periodic(const Duration(seconds: 1), (timer) {
+      // setState(() {
+      if (_totalTimeLeft > 0) {
+        _totalTimeLeft--;
+        setState(() {});
+      } else {
+        Provider.of<EntertainmentState>(context,listen: false).playAudio();
+        Navigator.of(context).pop();
+      }
+      //});
     });
   }
 
@@ -102,7 +109,9 @@ class _GameDashboardState extends State<GameDashboard> {
 
     return SafeArea(
       child: Scaffold(
+        backgroundColor: Colors.black,
         body: AnimatedContainer(
+          color: Colors.black,
           duration: Duration(milliseconds: 700),
           child:
               //  isLoading!
@@ -122,7 +131,7 @@ class _GameDashboardState extends State<GameDashboard> {
                 children: [
                   Container(
                     padding: EdgeInsets.only(bottom: 0),
-                    decoration: BoxDecoration(color: Colors.white),
+                    decoration: BoxDecoration(color: Colors.black),
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
@@ -254,25 +263,39 @@ class _GameDashboardState extends State<GameDashboard> {
                                               fontSize: 9.sp,
                                               fontWeight: FontWeight.w700,
                                               color: Themes()
-                                                  .pink
+                                                  .whiteColor
                                                   .withOpacity(0.7)),
                                         ),
                                       ),
                                     ),
-                                    AnimatedWidgetWrapper(
-                                      animationType: AnimationType.fadeIn,
-                                      delay: 900,
+                                    Container(
+                                      padding: EdgeInsets.all(18.0),
+                                      decoration: BoxDecoration(
+                                          shape: BoxShape.circle,
+                                          border: Border.all(
+                                              color: Colors.white, width: 5)),
                                       child: Text(
-                                        'Auto start in ${formatCountTime(_totalTimeLeft)}secs...',
-                                        textAlign: TextAlign.right,
-                                        style: TextStyle(
-                                            height: 1,
-                                            fontSize: 9.sp,
-                                            fontWeight: FontWeight.w700,
-                                            color:
-                                                Themes().pink.withOpacity(0.7)),
+                                        formatCountTime(_totalTimeLeft),
+                                        style: TextStyles().whiteTextStyle(
+                                            fontSize: 12.sp,
+                                            fontWeight: FontWeight.w900),
+                                        textAlign: TextAlign.center,
                                       ),
                                     ),
+                                    // AnimatedWidgetWrapper(
+                                    //   animationType: AnimationType.fadeIn,
+                                    //   delay: 900,
+                                    //   child: Text(
+                                    //     'Auto start in ${formatCountTime(_totalTimeLeft)}secs...',
+                                    //     textAlign: TextAlign.right,
+                                    //     style: TextStyle(
+                                    //         height: 1,
+                                    //         fontSize: 9.sp,
+                                    //         fontWeight: FontWeight.w700,
+                                    //         color:
+                                    //             Themes().pink.withOpacity(0.7)),
+                                    //   ),
+                                    // ),
                                   ]),
                               SizedBox(
                                 height: 20,
@@ -461,7 +484,7 @@ class _GameDashboardState extends State<GameDashboard> {
                                 ),
                                 IconButton(
                                   onPressed: () {},
-                                  icon: Text('Map',
+                                  icon: Text('Entertainment',
                                       style: GoogleFonts.manrope(
                                         color: Themes().whiteColor,
                                         fontWeight: FontWeight.w700,
@@ -473,7 +496,7 @@ class _GameDashboardState extends State<GameDashboard> {
                                 ),
                                 IconButton(
                                   onPressed: () {
-                                    Navigator.of(context).pop();
+                                    Get.off(() => ProfileWeatherView());
                                   },
                                   icon: Text('Weather',
                                       style: GoogleFonts.manrope(
@@ -487,7 +510,9 @@ class _GameDashboardState extends State<GameDashboard> {
                                 ),
                                 IconButton(
                                   onPressed: () {
-                                    Navigator.of(context).pop();
+                                    Get.off(() => ProfileWeatherView(
+                                          showWeather: false,
+                                        ));
                                   },
                                   icon: Text('Driver',
                                       style: GoogleFonts.manrope(

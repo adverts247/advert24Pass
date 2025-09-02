@@ -30,8 +30,8 @@ import 'package:video_player/video_player.dart';
 import 'package:provider/provider.dart';
 
 class ProfileWeatherView extends StatefulWidget {
-  const ProfileWeatherView({super.key});
-
+  ProfileWeatherView({super.key, this.showWeather = true});
+  bool showWeather;
   @override
   State<ProfileWeatherView> createState() => _ProfileWeatherViewState();
 }
@@ -47,7 +47,7 @@ class _ProfileWeatherViewState extends State<ProfileWeatherView> {
   Timer? _entTimer;
   Timer? _sportTimer;
   // Timer? _entTimer;
-  var showWeather = true;
+
   var showEntertainmentView = false;
   bool isFirstColor = true;
   double? _volume = 0.3;
@@ -74,16 +74,17 @@ class _ProfileWeatherViewState extends State<ProfileWeatherView> {
     // });
     setBrightness();
     super.initState();
+    AppWebsocketService().broadcast();
 
-    _timer = Timer.periodic(const Duration(seconds: 10), (timer) {
-      setState(() {
-        // showWeather = !showWeather;
-        // Simply toggle between true and false
-        isFirstColor = !isFirstColor;
-        showWeather = !showWeather;
-        print("############ ${showWeather.toString()}");
-      });
-    });
+    // _timer = Timer.periodic(const Duration(seconds: 10), (timer) {
+    //   setState(() {
+    //     // showWeather = !showWeather;
+    //     // Simply toggle between true and false
+    //     isFirstColor = !isFirstColor;
+    //     showWeather = !showWeather;
+    //     print("############ ${showWeather.toString()}");
+    //   });
+    // });
 
     showWeatherView();
     // showEntView();
@@ -98,21 +99,26 @@ class _ProfileWeatherViewState extends State<ProfileWeatherView> {
     //     duration: const Duration(seconds: 1),
     //   );
     // });
-    AppWebsocketService().broadcast(context);
   }
 
   void showWeatherView() {
-    Future.delayed(Duration(seconds: 10));
-    setState(() {
-      showWeather = !showWeather;
+    Future.delayed(Duration(seconds: 10), () {
+      if (mounted) {
+        setState(() {
+          widget.showWeather = !widget.showWeather;
+        });
+      }
+      Future.delayed(Duration(seconds: 20), () => Get.off(()=>EntertainmentPage()));
     });
   }
 
   void showEntView() {
     _entTimer = Timer.periodic(const Duration(seconds: 8), (timer) {
-      setState(() {
-        showEntertainmentView = showEntertainmentView;
-      });
+      if (mounted) {
+        setState(() {
+          showEntertainmentView = showEntertainmentView;
+        });
+      }
     });
     // Future.delayed(Duration(seconds: 8));
     // setState(() {
@@ -130,10 +136,11 @@ class _ProfileWeatherViewState extends State<ProfileWeatherView> {
 
   getWalletBalance() async {
     //  VideoService().getWallet(context);
-
-    setState(() {
-      isLoading = true;
-    });
+    if (mounted) {
+      setState(() {
+        isLoading = true;
+      });
+    }
     walletDetail =
         await Provider.of<UserState>(context, listen: false).userDetails;
     if (kDebugMode) {
@@ -145,10 +152,11 @@ class _ProfileWeatherViewState extends State<ProfileWeatherView> {
     //     await Provider.of<WeatherLocationState>(context, listen: false)
     //         .weatherApiResult;
     // print("weather:: $weatherApiResult");
-
-    setState(() {
-      isLoading = false;
-    });
+    if (mounted) {
+      setState(() {
+        isLoading = false;
+      });
+    }
   }
 
   @override
@@ -191,7 +199,7 @@ class _ProfileWeatherViewState extends State<ProfileWeatherView> {
                 // showEntertainmentView
                 //     ? EntertainmentView(controller: _controller)
                 //     :
-                showWeather
+                widget.showWeather
                     ? Row(
                         children: [
                           Expanded(
@@ -348,61 +356,7 @@ class _ProfileWeatherViewState extends State<ProfileWeatherView> {
                                   child:
                                       // showWeather
                                       //     ?
-                                      weatherWidget()
-                                  // : Padding(
-                                  //     padding: EdgeInsets.symmetric(
-                                  //         vertical: screenHeight < 450
-                                  //             ? 0
-                                  //             : MediaQuery.of(context)
-                                  //                     .size
-                                  //                     .height /
-                                  //                 8,
-                                  //         horizontal:
-                                  //             MediaQuery.of(context).size.height /
-                                  //                 35),
-                                  //     child: Column(
-                                  //       mainAxisAlignment:
-                                  //           MainAxisAlignment.start,
-                                  //       crossAxisAlignment:
-                                  //           CrossAxisAlignment.start,
-                                  //       children: [
-                                  //         Text(
-                                  //           'About Me',
-                                  //           style: TextStyles()
-                                  //               .whiteTextStyle()
-                                  //               .copyWith(fontSize: 24),
-                                  //         ),
-                                  //         const SizedBox(
-                                  //           height: 40,
-                                  //         ),
-                                  //         aboutMeCard(
-                                  //             'Favourite Food',
-                                  //             walletDetail!['driver']
-                                  //                 ['favourite_food']),
-                                  //         const SizedBox(
-                                  //           height: 10,
-                                  //         ),
-                                  //         aboutMeCard(
-                                  //             'Favourite Hobby',
-                                  //             walletDetail!['driver']
-                                  //                 ['favourite_hobby']),
-                                  //         const SizedBox(
-                                  //           height: 10,
-                                  //         ),
-                                  //         aboutMeCard(' Ask Me',
-                                  //             walletDetail!['driver']['ask_me']),
-                                  //         const SizedBox(
-                                  //           height: 10,
-                                  //         ),
-                                  //         aboutMeCard(
-                                  //             'Vacation Spot',
-                                  //             walletDetail!['driver']
-                                  //                 ['vacation_spot']),
-                                  //         // aboutMeCard()
-                                  //       ],
-                                  //     ),
-                                  //   )
-                                  ),
+                                      weatherWidget()),
                             ),
                           ),
                         ],
@@ -508,10 +462,7 @@ class _ProfileWeatherViewState extends State<ProfileWeatherView> {
                                   ),
                                   IconButton(
                                     onPressed: () {
-                                      Navigator.push(context,
-                                          MaterialPageRoute(builder: (context) {
-                                        return EntertainmentPage();
-                                      }));
+                                      Get.off(EntertainmentPage());
                                     },
                                     icon: Text(
                                       'Entertainment',
@@ -528,7 +479,7 @@ class _ProfileWeatherViewState extends State<ProfileWeatherView> {
                                   IconButton(
                                     onPressed: () {
                                       setState(() {
-                                        showWeather = true;
+                                        widget.showWeather = true;
                                         showEntertainmentView == false;
                                       });
                                     },
@@ -548,7 +499,7 @@ class _ProfileWeatherViewState extends State<ProfileWeatherView> {
                                     onPressed: () {
                                       setState(() {
                                         showEntertainmentView == true;
-                                        showWeather = false;
+                                        widget.showWeather = false;
                                       });
                                     },
                                     icon: Text(

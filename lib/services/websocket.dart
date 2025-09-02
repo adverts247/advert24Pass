@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:developer';
 
 import 'package:adverts247Pass/pre-streaming-screen/game/entertainment_page.dart';
 import 'package:adverts247Pass/state/location_weather_state.dart';
@@ -8,6 +9,7 @@ import 'package:adverts247Pass/ui/screen/video_player1.dart';
 import 'package:adverts247Pass/ui/screen/waiting_Page.dart';
 
 import 'package:flutter/material.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
 import 'package:socket_io_client/socket_io_client.dart' as IO;
@@ -88,7 +90,7 @@ class AppWebsocketService {
   /// are denied the `Future` will return an error.
   Future<Position> determinePosition() async {
     bool serviceEnabled;
-    LocationPermission permission;
+    PermissionStatus permission;
 
     // Test if location services are enabled.
     serviceEnabled = await Geolocator.isLocationServiceEnabled();
@@ -99,23 +101,22 @@ class AppWebsocketService {
       return Future.error('Location services are disabled.');
     }
 
-    permission = await Geolocator.checkPermission();
-    if (permission == LocationPermission.denied) {
-      permission = await Geolocator.requestPermission();
-      if (permission == LocationPermission.denied) {
-        // Permissions are denied, next time you could try
-        // requesting permissions again (this is also where
-        // Android's shouldShowRequestPermissionRationale
-        // returned true. According to Android guidelines
-        // your App should show an explanatory UI now.
-        return Future.error('Location permissions are denied');
-      }
-    }
+    permission = await Permission.location.onDeniedCallback(() {
+      Permission.location.request();
+    }).onGrantedCallback(() {
+      // Your code
+    }).onPermanentlyDeniedCallback(() {
+      // Your code
+    }).onRestrictedCallback(() {
+      Permission.location.request();
+    }).onLimitedCallback(() {
+      // Your code
+    }).onProvisionalCallback(() {
+      // Your code
+    }).request();
 
-    if (permission == LocationPermission.deniedForever) {
-      // Permissions are denied forever, handle appropriately.
-      return Future.error(
-          'Location permissions are permanently denied, we cannot request permissions.');
+    if (permission.isDenied) {
+      Permission.location.request();
     }
 
     // When we reach here, permissions are granted and we can
@@ -124,21 +125,83 @@ class AppWebsocketService {
         desiredAccuracy: LocationAccuracy.high);
   }
 
-  void checkLocation(context) {
+  Future<void> requestLocationPermission() async {
+    var status = await Permission.location.request();
+
+    if (status.isGranted) {
+      print("Location permission granted");
+    } else if (status.isDenied) {
+      requestLocationPermission();
+    } else if (status.isPermanentlyDenied) {
+      print(
+          "Location permission permanently denied. Redirecting to settings...");
+      openAppSettings();
+    }
+  }
+
+  Future<void> checkLocationServices() async {
+    bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
+    if (!serviceEnabled) {
+      print("Location services are off. Ask user to enable them.");
+      Get.dialog(
+        AlertDialog(
+          title: Text("Enable GPS"),
+          content: Text(
+              "This app needs location services enabled to stream ads. Please turn on GPS."),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Get.back();
+              },
+              child: Text("Cancel"),
+            ),
+            TextButton(
+              onPressed: () async {
+                Get.back();
+                await Geolocator.openLocationSettings();
+              },
+              child: Text("Enable"),
+            ),
+          ],
+        ),
+      );
+    } else {
+      print("Location services are on.");
+    }
+  }
+
+  void checkLocation() async {
+    // PermissionStatus permissionStatus = await Permission.location
+    //     .onDeniedCallback(() {
+    //        Permission.location.request();
+    //     })
+    //     .onGrantedCallback(() {
+    //   // Your code
+    // }).onPermanentlyDeniedCallback(() {
+    //   // Your code
+    // }).onRestrictedCallback(() {
+    //   Permission.location.request();
+    // }).onLimitedCallback(() {
+    //   // Your code
+    // }).onProvisionalCallback(() {
+    //   // Your code
+    // }).request();
+    
     final LocationSettings locationSettings = LocationSettings(
       accuracy: LocationAccuracy.high,
       distanceFilter: 100,
     );
 
-    var userData = Provider.of<UserState>(context, listen: false).userDetails;
+    var userData =
+        Provider.of<UserState>(Get.context!, listen: false).userDetails;
     StreamSubscription<Position> positionStream =
         Geolocator.getPositionStream(locationSettings: locationSettings)
             .listen((Position? position) {
       //This function passes the latitude and logitude in the weatherPosition state
-      Provider.of<WeatherLocationState>(context, listen: false).long =
-          position!.longitude.toString();
-      Provider.of<WeatherLocationState>(context, listen: false).lat =
-          position.latitude.toString();
+      Provider.of<WeatherLocationState>(Get.context!, listen: false).long =
+          position?.longitude.toString();
+      Provider.of<WeatherLocationState>(Get.context!, listen: false).lat =
+          position?.latitude.toString();
 
       print(position == null
           ? 'Unknown'
@@ -166,7 +229,7 @@ class AppWebsocketService {
         'long': lonitude,
       };
 
-      socket!.emit('send_message', {
+      socket.emit('send_message', {
         'roomName': roomName,
         'message': 'fdf',
         'content': content,
@@ -187,10 +250,9 @@ class AppWebsocketService {
   ///
   ///webso cket to controller the app
   ///
-  void broadcast(
-    context,
-  ) {
-    var userData = Provider.of<UserState>(context, listen: false).userDetails;
+  void broadcast() {
+    var userData =
+        Provider.of<UserState>(Get.context!, listen: false).userDetails;
     print('dfgfg ${userData}');
     var userId = userData['id'];
 
@@ -201,7 +263,7 @@ class AppWebsocketService {
 
     socket.on('connect', (_) {
       print('Connecteded');
-      Provider.of<UserState>(context, listen: false).isFirstTime = false;
+      Provider.of<UserState>(Get.context!, listen: false).isFirstTime = false;
 
       // Navigator.of(context, rootNavigator: true).pop();
       socket.emit('watch driver', userData);
@@ -211,14 +273,15 @@ class AppWebsocketService {
       // Handle stop-stream event
       // print('Received stop-stream event');
       // Provider.of<UserState>(context, listen: false).canStream = false;
-      Navigator.push(context,
-          MaterialPageRoute(builder: (context) => WaitingPage()));
+      Get.back();
+      // Navigator.push(
+      //     context, MaterialPageRoute(builder: (context) => WaitingPage()));
     });
 
     socket.on('start-stream', (data) {
       // Handle start-stream event
-      print('Received start-stream event');
-      Provider.of<UserState>(context, listen: false).canStream = true;
+      // log("=========Streaming data $data");
+      Provider.of<UserState>(Get.context!, listen: false).canStream = true;
 
       // Navigator.push(
       //     context, MaterialPageRoute(builder: (context) => VideoPlayerApp()));
@@ -234,7 +297,7 @@ class AppWebsocketService {
       print('ad-broadcast');
       print(data);
       var canUserStream =
-          Provider.of<UserState>(context, listen: false).canStream;
+          Provider.of<UserState>(Get.context!, listen: false).canStream;
 
       print(canUserStream);
       var adsData = jsonDecode(data);

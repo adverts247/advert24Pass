@@ -1,22 +1,11 @@
-//
-
-import 'dart:developer';
-
 import 'package:adverts247Pass/pre-streaming-screen/profile_display/profile_image_display.dart';
 import 'package:adverts247Pass/services/update_app.dart';
-import 'package:adverts247Pass/services/video_service.dart';
 import 'package:adverts247Pass/state/location_weather_state.dart';
 import 'package:adverts247Pass/state/login_state.dart';
-import 'package:adverts247Pass/themes.dart';
-import 'package:adverts247Pass/services/websocket.dart';
 import 'package:adverts247Pass/ui/screen/login.dart';
-import 'package:adverts247Pass/widget/button.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:adverts247Pass/tools.dart' as tools;
 import 'package:provider/provider.dart';
-import 'package:shorebird_code_push/shorebird_code_push.dart';
 import 'package:video_player/video_player.dart';
 import 'package:get/get.dart' as getx;
 
@@ -28,33 +17,35 @@ class SplashScreen extends StatefulWidget {
 }
 
 class _SplashScreenState extends State<SplashScreen> {
-  VideoPlayerController? _controller;
+  final VideoPlayerController _controller =
+      VideoPlayerController.asset("assets/video/0402.mov");
 
   void initIntroVideo() {
     // try{
-    _controller = VideoPlayerController.asset("assets/video/Intro_app.mp4")
-      ..initialize().then((_) async {
-        setState(() {});
-        _controller!.play();
+    _controller.initialize().then((_) async {
+      setState(() {});
+      _controller.play();
 
-        // Wait for video duration before moving to next page
-        await Future.delayed(Duration(
-            milliseconds:
-                (_controller!.value.duration.inMilliseconds).toInt()));
-        // Future.delayed(Duration.zero, () => moveToNextPage());
-        moveToNextPage();
-      }).catchError((error) {
-        Future.delayed(Duration.zero, () => moveToNextPage());
-      });
-    // }
+      // Wait for video duration before moving to next page
+      await Future.delayed(Duration(
+          milliseconds: (_controller.value.duration.inMilliseconds).toInt()));
+      // Future.delayed(Duration.zero, () => moveToNextPage());
+      moveToNextPage();
+    }).catchError((error) {
+      Future.delayed(Duration.zero, () => moveToNextPage());
+    });
   }
+
+  OtaService otaService = OtaService();
 
   @override
   void initState() {
     super.initState();
-     OtaService().checkForUpdates();
+    Future.delayed(Duration.zero, () => otaService.updaterCheck());
+
+    //Future.delayed(Duration.zero, () => otaService.checkifUpdateIsNeeded());
     initIntroVideo();
-   
+
     // AppWebsocketService().determinePosition();
     // Future.delayed(Duration(seconds: 9));
     // moveToNextPage();
@@ -62,7 +53,7 @@ class _SplashScreenState extends State<SplashScreen> {
 
   @override
   void dispose() {
-    _controller!.dispose();
+    _controller.dispose();
     super.dispose();
   }
 
@@ -115,7 +106,7 @@ class _SplashScreenState extends State<SplashScreen> {
       body: SizedBox(
           height: screenSize.height,
           width: screenSize.width,
-          child: VideoPlayer(_controller!)
+          child: VideoPlayer(_controller)
           // child: Column(
           //   mainAxisAlignment: MainAxisAlignment.center,
           //   children: [

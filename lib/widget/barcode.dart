@@ -9,7 +9,8 @@ import 'package:flutter_svg/flutter_svg.dart';
 
 class BarcodeDisplayWidget extends StatefulWidget {
   String? url;
-  BarcodeDisplayWidget({super.key, this.url});
+  final String? text;
+  BarcodeDisplayWidget({super.key, this.url, this.text});
   @override
   State<BarcodeDisplayWidget> createState() => _BarcodeDisplayWidgetState();
 }
@@ -19,9 +20,11 @@ class _BarcodeDisplayWidgetState extends State<BarcodeDisplayWidget> {
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-          borderRadius: BorderRadius.only(
-              topLeft: Radius.circular(20), topRight: Radius.circular(20))),
+        borderRadius: BorderRadius.only(
+            topLeft: Radius.circular(20), topRight: Radius.circular(20)),
+      ),
       child: Scaffold(
+        backgroundColor: Colors.black,
         body: Center(
           child: Padding(
             padding: const EdgeInsets.all(30.0),
@@ -29,15 +32,16 @@ class _BarcodeDisplayWidgetState extends State<BarcodeDisplayWidget> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Text(
-                  'Scan to download',
-                  style: TextStyles().blackTextStyle400().copyWith(
-                        fontSize: 16,
-                      ),
+                  widget.text ?? 'Scan to download',
+                  style: TextStyles()
+                      .blackTextStyle400()
+                      .copyWith(fontSize: 16, color: Colors.white),
                 ),
                 SizedBox(
                   height: 30,
                 ),
                 BarcodeWidget(
+                  color: Colors.white,
                   barcode: Barcode.qrCode(
                     errorCorrectLevel: BarcodeQRCorrectionLevel.high,
                   ),

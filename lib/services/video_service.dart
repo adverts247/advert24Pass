@@ -50,7 +50,7 @@ class VideoService {
 
         tools.putInStore('email', body['email']);
         tools.putInStore('password', body['password']);
-       completer.complete(result); 
+        completer.complete(result);
         // await getWallet(context);
         // WeatherService().getWeatherData(context);
         //    AppWebsocketService().broadcast(context);
@@ -66,8 +66,7 @@ class VideoService {
 
         // debugPrint(result.toString());
       }, onFailure: (_, result) {
-         completer
-            .completeError(Exception(result["message"]));
+        completer.completeError(Exception(result["message"]));
         // Navigator.pop(context);
 
         // debugPrint("Login Error:: $result");
@@ -291,7 +290,7 @@ class VideoService {
       shouldPopOnError: false,
       onSuccess: (_, result) async {
         // ignore: avoid_print
-        print("Queue result ${result.toString()}");
+        log("result ========================$result");
         List<VideoModel> notificationList = result
             .map<VideoModel>((element) => VideoModel.fromJson(element))
             .toList();

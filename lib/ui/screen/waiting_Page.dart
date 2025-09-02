@@ -24,7 +24,7 @@ class WaitingPageState extends State<WaitingPage> {
   }
 
   Future<void> checkIfisFirstTime() async {
-    AppWebsocketService().broadcast(context);
+    AppWebsocketService().broadcast();
     var isFirstTime =
         await Provider.of<UserState>(context, listen: false).isFirstTime;
     print(isFirstTime);
