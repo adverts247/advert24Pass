@@ -1,13 +1,13 @@
-//
-
+import 'package:adverts247Pass/pre-streaming-screen/profile_display/profile_image_display.dart';
 import 'package:adverts247Pass/services/update_app.dart';
-import 'package:adverts247Pass/services/video_service.dart';
-import 'package:adverts247Pass/themes.dart';
-import 'package:adverts247Pass/services/websocket.dart';
+import 'package:adverts247Pass/state/location_weather_state.dart';
+import 'package:adverts247Pass/state/login_state.dart';
 import 'package:adverts247Pass/ui/screen/login.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:adverts247Pass/tools.dart' as tools;
+import 'package:provider/provider.dart';
+import 'package:video_player/video_player.dart';
+import 'package:get/get.dart' as getx;
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -17,19 +17,54 @@ class SplashScreen extends StatefulWidget {
 }
 
 class _SplashScreenState extends State<SplashScreen> {
+  final VideoPlayerController _controller =
+      VideoPlayerController.asset("assets/video/0402.mov");
+
+  void initIntroVideo() {
+    // try{
+    _controller.initialize().then((_) async {
+      setState(() {});
+      _controller.play();
+
+      // Wait for video duration before moving to next page
+      await Future.delayed(Duration(
+          milliseconds: (_controller.value.duration.inMilliseconds).toInt()));
+      // Future.delayed(Duration.zero, () => moveToNextPage());
+      moveToNextPage();
+    }).catchError((error) {
+      Future.delayed(Duration.zero, () => moveToNextPage());
+    });
+  }
+
+  OtaService otaService = OtaService();
+
   @override
   void initState() {
     super.initState();
-    OtaService().checkifUpdateIsNeeded(context);
+    Future.delayed(Duration.zero, () => otaService.updaterCheck());
+
+    //Future.delayed(Duration.zero, () => otaService.checkifUpdateIsNeeded());
+    initIntroVideo();
+
     // AppWebsocketService().determinePosition();
-    moveToNextPage();
+    // Future.delayed(Duration(seconds: 9));
+    // moveToNextPage();
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
   }
 
   Future<void> moveToNextPage() async {
+    VideoState videoState = Provider.of<VideoState>(context, listen: false);
+    WeatherLocationState weatherLocationState =
+        Provider.of<WeatherLocationState>(context, listen: false);
     var data = await tools.getFromStore('accessToken');
     if (data == null) {
-      Future.delayed(Duration(seconds: 2), () {
-        Navigator.push(
+      Future.delayed(Duration(seconds: 5), () {
+        Navigator.pushReplacement(
             context, MaterialPageRoute(builder: (context) => LoginPage()));
       });
     } else {
@@ -43,8 +78,23 @@ class _SplashScreenState extends State<SplashScreen> {
         // 'email': 'tested@test.com',
         // 'password': '12345678'
       };
+      final response = await videoState.login(context: context, body: body);
+      if (response.error) {
+        // log('error========================${response.message}');
+        // Navigator.pop(context);
+        return;
+      }
+      final weatherResponse = await weatherLocationState.getWeather();
+      if (weatherResponse.error) return;
+      getx.Get.offAll(
+        // PreStreamingWelcomePage(),
+        () => ProfileImage(),
+        transition: getx.Transition.fadeIn,
+        curve: Curves.easeInOut,
+        duration: Duration(seconds: 1),
+      );
 
-      VideoService().login(context, body);
+      // Future.delayed(Duration.zero,()=>VideoService().login(context, body));
     }
   }
 
@@ -56,34 +106,36 @@ class _SplashScreenState extends State<SplashScreen> {
       body: SizedBox(
           height: screenSize.height,
           width: screenSize.width,
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Container(
-                width: MediaQuery.of(context).size.width * .4,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.end,
-                  children: [
-                    Image.asset('assets/images/Group (6).png'),
-                    SizedBox(height: 5),
-                    Text(
-                      '...reach your true target',
-                      textAlign: TextAlign.right,
-                      style:
-                          TextStyles().whiteTextStyle().copyWith(fontSize: 17),
-                    ),
-                  ],
-                ),
-              ),
-              // SizedBox(
-              //   height: 20,
-              // ),
-              // Text(
-              //   'WELCOME ONBOARD',
-              //   style: TextStyles().whiteTextStyle().copyWith(fontSize: 20),
-              // )
-            ],
-          )),
+          child: VideoPlayer(_controller)
+          // child: Column(
+          //   mainAxisAlignment: MainAxisAlignment.center,
+          //   children: [
+          //     Container(
+          //       width: MediaQuery.of(context).size.width * .4,
+          //       child: Column(
+          //         crossAxisAlignment: CrossAxisAlignment.end,
+          //         children: [
+          //           Image.asset(ImageAssets.appLogo),
+          //           SizedBox(height: 5),
+          //           Text(
+          //             '...reach your true target',
+          //             textAlign: TextAlign.right,
+          //             style:
+          //                 TextStyles().whiteTextStyle().copyWith(fontSize: 17),
+          //           ),
+          //         ],
+          //       ),
+          //     ),
+          //     // SizedBox(
+          //     //   height: 20,
+          //     // ),
+          //     // Text(
+          //     //   'WELCOME ONBOARD',
+          //     //   style: TextStyles().whiteTextStyle().copyWith(fontSize: 20),
+          //     // )
+          //   ],
+          // ),
+          ),
     );
   }
 }

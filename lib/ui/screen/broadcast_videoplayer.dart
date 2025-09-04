@@ -654,7 +654,7 @@
 //               ],
 //             ),
 //             // Image.asset(
-//             //   'assets/images/Group (6).png',
+//             //   ImageAssets.appLogo,
 //             //   height: 40,
 //             //   width: 200,
 //             // ),
@@ -703,7 +703,7 @@
 //               mainAxisAlignment: MainAxisAlignment.spaceBetween,
 //               children: [
 //                 Image.asset(
-//                   'assets/images/Group (6).png',
+//                   ImageAssets.appLogo,
 //                   height: 40,
 //                   width: 200,
 //                 ),
@@ -778,7 +778,7 @@
 //                       child: Image.network(
 //                         walletDetail == null
 //                             ? ' '
-//                             : 'https://ads247-center.lazynerdstudios.com/${walletDetail!['image']}',
+//                             : 'https://central.adverts247.xyz/${walletDetail!['image']}',
 //                         height: 50,
 //                         width: 50,
 //                         fit: BoxFit.cover,

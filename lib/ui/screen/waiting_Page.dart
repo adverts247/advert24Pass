@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:adverts247Pass/services/image_assets.dart';
 import 'package:adverts247Pass/services/websocket.dart';
 import 'package:adverts247Pass/state/user_state.dart';
 import 'package:adverts247Pass/themes.dart';
@@ -12,10 +13,10 @@ class WaitingPage extends StatefulWidget {
   WaitingPage({Key? key}) : super(key: key);
 
   @override
-  _WaitingPageState createState() => _WaitingPageState();
+  WaitingPageState createState() => WaitingPageState();
 }
 
-class _WaitingPageState extends State<WaitingPage> {
+class WaitingPageState extends State<WaitingPage> {
   @override
   void initState() {
     checkIfisFirstTime();
@@ -23,14 +24,14 @@ class _WaitingPageState extends State<WaitingPage> {
   }
 
   Future<void> checkIfisFirstTime() async {
-    AppWebsocketService().broadcast(context);
+    AppWebsocketService().broadcast();
     var isFirstTime =
         await Provider.of<UserState>(context, listen: false).isFirstTime;
     print(isFirstTime);
 
     if (isFirstTime == null) {
       loader().circularModalLoading(context);
-      Future.delayed(Duration(seconds: 6), () {
+      Future.delayed(const Duration(seconds: 10), () {
         Navigator.pop(context);
       });
     } else {
@@ -44,47 +45,58 @@ class _WaitingPageState extends State<WaitingPage> {
     // print('dfgfg ${userData}');
     // connectToDriverChannel(userData['id']); // Replace with the actual user ID
     return Scaffold(
-      body: Container(
-        height: MediaQuery.of(context).size.height,
-        width: MediaQuery.of(context).size.width,
-        color: Colors.black,
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Container(
-              width: MediaQuery.of(context).size.width * .4,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.end,
-                children: [
-                  Image.asset('assets/images/Group (6).png'),
-                  SizedBox(height: 5),
-                  Text(
-                    '...reach your true target',
-                    textAlign: TextAlign.right,
-                    style: TextStyles().whiteTextStyle().copyWith(fontSize: 17),
-                  ),
-                ],
-              ),
+      body: LoadingWidget(),
+    );
+  }
+}
+
+class LoadingWidget extends StatelessWidget {
+  const LoadingWidget({
+    super.key,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      height: MediaQuery.of(context).size.height,
+      width: MediaQuery.of(context).size.width,
+      color: Colors.black,
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Container(
+            width: MediaQuery.of(context).size.width * .4,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.end,
+              children: [
+                Image.asset(ImageAssets.appLogo),
+                const SizedBox(height: 5),
+                Text(
+                  '...reach your true target',
+                  textAlign: TextAlign.right,
+                  style: TextStyles().whiteTextStyle().copyWith(fontSize: 17),
+                ),
+              ],
             ),
-            SizedBox(
-              height: 20,
+          ),
+          const SizedBox(
+            height: 20,
+          ),
+          RichText(
+            text: TextSpan(
+              children: [
+                TextSpan(
+                  text: 'Connecting ',
+                  style: TextStyles().whiteTextStyle().copyWith(fontSize: 20),
+                ),
+                const TextSpan(
+                  text: '....',
+                  style: TextStyle(color: Colors.red, fontSize: 20),
+                ),
+              ],
             ),
-            RichText(
-              text: TextSpan(
-                children: [
-                  TextSpan(
-                    text: 'Connecting ',
-                    style: TextStyles().whiteTextStyle().copyWith(fontSize: 20),
-                  ),
-                  TextSpan(
-                    text: '....',
-                    style: TextStyle(color: Colors.red, fontSize: 20),
-                  ),
-                ],
-              ),
-            ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }

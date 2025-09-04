@@ -1,11 +1,17 @@
 import 'dart:async';
+import 'dart:developer';
 
+import 'package:adverts247Pass/model/api_response.dart';
 import 'package:adverts247Pass/model/video_model.dart';
+import 'package:adverts247Pass/pre-streaming-screen/game/entertainment_page.dart';
+import 'package:adverts247Pass/pre-streaming-screen/profile_display/profile_image_display.dart';
+import 'package:adverts247Pass/pre-streaming-screen/weather_and_profile/weather_and_profile.dart';
 import 'package:adverts247Pass/pre-streaming-screen/welcome_onbaording/welcome-onboarding_view.dart';
 import 'package:adverts247Pass/services/network.dart/network.dart';
 import 'package:adverts247Pass/services/network.dart/streaming-network.dart';
 import 'package:adverts247Pass/services/wether_service/weather_service.dart';
 import 'package:adverts247Pass/state/user_state.dart';
+import 'package:adverts247Pass/ui/screen/thank_you_page.dart';
 import 'package:adverts247Pass/ui/screen/waiting_Page.dart';
 
 import 'package:adverts247Pass/services/websocket.dart';
@@ -13,7 +19,7 @@ import 'package:adverts247Pass/widget/loader.dart';
 import 'package:flutter/material.dart';
 import 'package:adverts247Pass/tools.dart' as tools;
 import 'package:flutter/services.dart';
-import 'package:get/get.dart';
+
 // import 'package:provider/provider.dart';
 import 'dart:convert';
 import 'dart:io';
@@ -28,73 +34,87 @@ import 'package:top_snackbar_flutter/top_snack_bar.dart';
 // import 'package:http_parser/http_parser.dart';
 
 class VideoService {
-  login(context, dynamic body) {
+  Future<APIResponse> login(context, dynamic body) async {
     // AboutMePage();
-    loader().showImageDialog(context);
-    HttpRequest('auth/login',
-        context: context,
-        body: body,
-        shouldPopOnError: false, onSuccess: (_, result) async {
-      tools.putInStore('accessToken', result['data']['token']);
 
-      tools.putInStore('email', body['email']);
-      tools.putInStore('password', body['password']);
+    // loader().showImageDialog(context);
+    try {
+      Completer<dynamic> completer = Completer<dynamic>();
+      // dynamic response;
+      HttpRequest('auth/login',
+          context: context,
+          body: body,
+          shouldPopOnError: false, onSuccess: (_, result) {
+        log("result=================$result");
+        tools.putInStore('accessToken', result['data']['token']);
 
-      await getWallet(context);
-      WeatherService().getWeatherData(context);
-      //    AppWebsocketService().broadcast(context);
+        tools.putInStore('email', body['email']);
+        tools.putInStore('password', body['password']);
+        completer.complete(result);
+        // await getWallet(context);
+        // WeatherService().getWeatherData(context);
+        //    AppWebsocketService().broadcast(context);
 
-      //
-      Get.to(
-        PreStreamingWelcomePage(),
-        transition: Transition.fadeIn,
-        curve: Curves.easeInOut,
-        duration: Duration(seconds: 1),
-      );
+        //
+        // Get.offAll(
+        //   // PreStreamingWelcomePage(),
+        //   ProfileImage(),
+        //   transition: Transition.fadeIn,
+        //   curve: Curves.easeInOut,
+        //   duration: Duration(seconds: 1),
+        // );
 
-      debugPrint(result);
-    }, onFailure: (_, result) {
-      Navigator.pop(context);
+        // debugPrint(result.toString());
+      }, onFailure: (_, result) {
+        completer.completeError(Exception(result["message"]));
+        // Navigator.pop(context);
 
-      debugPrint(result);
-      return;
-    }).send();
+        // debugPrint("Login Error:: $result");
+        // return;
+      }).send();
+      dynamic response = await completer.future;
+
+      return APIResponse.fromJson({
+        "data": response,
+        "message": "Success",
+      });
+    } catch (e) {
+      rethrow;
+    }
   }
 
-  Future<dynamic> getWallet(
-    context,
-  ) async {
-    var token = await tools.getFromStore('accessToken');
-    print(token);
-    Completer<dynamic> completer = Completer<dynamic>();
+  Future<APIResponse> getWallet(BuildContext context) async {
+    try {
+      var token = await tools.getFromStore('accessToken');
+      log("token=================$token");
 
-    //Loaders().showModalLoading(context);
-    HttpRequest('/auth',
-        context: context,
-        headers: {
-          'Authorization': 'Bearer $token',
-        },
+      // Use Completer for manual control
+      Completer<dynamic> completer = Completer<dynamic>();
 
-        // loader: LoaderType.popup,
-        shouldPopOnError: false, onSuccess: (_, result) {
-      Provider.of<UserState>(context, listen: false)
-          .getUserData(result['data']);
-      print(result['data']);
-      var state = Provider.of<UserState>(context, listen: false);
-      state.userDetails = result['data'];
-      //   print(await result['data']);
+      // Perform HTTP request
+      await HttpRequest('/auth',
+          context: context,
+          headers: {
+            'Authorization': 'Bearer $token',
+          },
+          shouldPopOnError: false, onSuccess: (_, result) {
+        completer.complete(result); // Complete the request
+      }, onFailure: (_, result) {
+        completer
+            .completeError(Exception(result["message"])); // Complete with error
+      }).send();
 
-      completer
-          .complete(result['data']); // Complete the completer with the result
-    }, onFailure: (_, result) {
-      //Navigator.pop(context);
-      debugPrint(result);
-      completer.completeError(
-          result['data']); // Complete the completer with an error
-    }).send();
+      // Wait for the response to complete
+      dynamic response = await completer.future;
 
-    return completer
-        .future; // Return the completer's future for handling results
+      return APIResponse.fromJson({
+        "data": response,
+        "message": "Success",
+      });
+    } catch (e) {
+      log("Exception caught: $e");
+      return APIResponse(error: true, message: e.toString());
+    }
   }
 
   // //verify Bvn
@@ -238,7 +258,7 @@ class VideoService {
       shouldPopOnError: false,
       onSuccess: (_, result) async {
         // ignore: avoid_print
-        print(result);
+        print("Queue result" + result);
         List<VideoModel> notificationList = result
             .map<VideoModel>((element) => VideoModel.fromJson(element))
             .toList();
@@ -270,7 +290,7 @@ class VideoService {
       shouldPopOnError: false,
       onSuccess: (_, result) async {
         // ignore: avoid_print
-        print(result);
+        log("result ========================$result");
         List<VideoModel> notificationList = result
             .map<VideoModel>((element) => VideoModel.fromJson(element))
             .toList();
@@ -338,7 +358,7 @@ class VideoService {
         final userState = Provider.of<UserState>(context, listen: false);
         final userData = userState.userDetails;
         final id = userData['id'].toString();
-        final url = 'https://ads247-streaming.lazynerdstudios.com';
+        final url = 'https://streaming.adverts247.xyz';
         final headers = {
           'Range': '0',
           'driver-id': id,
@@ -417,7 +437,7 @@ class VideoService {
   //   final userState = Provider.of<UserState>(context, listen: false);
   //   final userData = userState.userDetails;
   //   final id = userData['id'].toString();
-  //   final url = 'https://ads247-streaming.lazynerdstudios.com';
+  //   final url = 'https://streaming.adverts247.xyz';
   //   final headers = {
   //     'Range': '0',
   //     'driver-id': id,
@@ -452,7 +472,7 @@ class VideoService {
 
   //for broadcast ads
   Future<dynamic> fetchBroadcastVideo(String path, context) async {
-    // var path = 'https://ads247-streaming.lazynerdstudios.com/ads/${id}';
+    // var path = 'https://streaming.adverts247.xyz/ads/${id}';
     var userData = Provider.of<UserState>(context, listen: false).userDetails;
     var headers = {
       'Range': '0',
@@ -482,9 +502,8 @@ class VideoService {
         print(' sessionId : ${response.headers['sessionid'].toString()}');
 
         var filePath = await downloadVideo(
-            "https://ads247-streaming.lazynerdstudios.com/${responseBody['url']}");
-        print(
-            "https://ads247-streaming.lazynerdstudios.com/${responseBody['url']}");
+            "https://streaming.adverts247.xyz/${responseBody['url']}");
+        print("https://streaming.adverts247.xyz/${responseBody['url']}");
 
         return filePath;
       } else {
@@ -593,8 +612,7 @@ class VideoService {
     context,
     dynamic body,
   ) async {
-    final url =
-        Uri.parse('https://ads247-streaming.lazynerdstudios.com/rate-ad'); //
+    final url = Uri.parse('https://streaming.adverts247.xyz/rate-ad'); //
     print(url);
     print(body);
 
@@ -617,6 +635,11 @@ class VideoService {
             boxShadow: [],
             message: 'Thank you for rating this ad',
           ));
+      // Navigator.of(context).pop();
+      Navigator.pushAndRemoveUntil(
+          context,
+          MaterialPageRoute(builder: (context) => EntertainmentPage()),
+          (route) => true);
     } else {
       // Error handling
       print('Failed to make POST request: ${response.statusCode}');

@@ -1,3 +1,4 @@
+import 'package:adverts247Pass/services/image_assets.dart';
 import 'package:adverts247Pass/themes.dart';
 import 'package:flutter/material.dart';
 
@@ -77,7 +78,7 @@ class loader {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.end,
                         children: [
-                          Image.asset('assets/images/Group (6).png'),
+                          Image.asset(ImageAssets.appLogo),
                           SizedBox(height: 5),
                           Text(
                             '...reach your true target',
@@ -92,22 +93,8 @@ class loader {
                     SizedBox(
                       height: 20,
                     ),
-                    RichText(
-                      text: TextSpan(
-                        children: [
-                          TextSpan(
-                            text: 'Logging in ',
-                            style: TextStyles()
-                                .whiteTextStyle()
-                                .copyWith(fontSize: 20),
-                          ),
-                          TextSpan(
-                            text: '....',
-                            style: TextStyle(color: Colors.red, fontSize: 20),
-                          ),
-                        ],
-                      ),
-                    ),
+                  
+                  
                     SizedBox(
                       height: 20,
                     ),

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-class themes {
+class Themes {
   Color primaryColor = const Color(0xff3180E7);
   Color secondaryColor = const Color(0xff181336);
   Color tetiaryColor = const Color(0xff899a9a);
@@ -11,6 +11,8 @@ class themes {
   Color whiteColor = Colors.white;
   Color blackColor = Colors.black;
   Color blueColor = const Color(0xff6C6AEB);
+  Color blue = const Color(0xff0022EE);
+  Color pink = const Color(0xffE0135E);
   Color greyText = Color.fromARGB(171, 50, 71, 92);
   Color cardColor = const Color(0xff282C4A);
   Color pinkColor = const Color(0xffFF6E91);
@@ -21,7 +23,7 @@ class themes {
 }
 
 class TextStyles {
-  TextStyle DefaultText(final double? fontSize, final FontWeight? weight,
+  TextStyle defaultText(final double? fontSize, final FontWeight? weight,
           final Color color) =>
       GoogleFonts.manrope(
         color: color,
@@ -31,21 +33,25 @@ class TextStyles {
 
   //Blue Text
 
-  TextStyle whiteTextStyle() => GoogleFonts.manrope(
-        color: themes().whiteColor,
-        fontWeight: FontWeight.w300,
-        fontSize: 17,
+  TextStyle whiteTextStyle({
+    FontWeight? fontWeight,
+    double? fontSize
+
+  }) => GoogleFonts.manrope(
+        color: Themes().whiteColor,
+        fontWeight: fontWeight ?? FontWeight.w300,
+        fontSize: fontSize ?? 17,
       );
 
   TextStyle greyTextStyle() => GoogleFonts.manrope(
-        color: themes().greyText,
+        color: Themes().greyText,
         fontWeight: FontWeight.w300,
         fontSize: 14,
       );
 
   TextStyle purpleTextStyle() {
     return GoogleFonts.manrope(
-      color: themes().tetiaryColor,
+      color: Themes().tetiaryColor,
       fontWeight: FontWeight.w500,
       fontSize: 16,
     );
@@ -55,7 +61,7 @@ class TextStyles {
 
   TextStyle blackTextStyle400() {
     return GoogleFonts.manrope(
-      color: themes().secondaryColor,
+      color: Themes().secondaryColor,
       fontWeight: FontWeight.w400,
       fontSize: 14,
     );
@@ -63,7 +69,7 @@ class TextStyles {
 
   TextStyle blackTextStyle700() {
     return GoogleFonts.manrope(
-      color: themes().secondaryColor,
+      color: Themes().secondaryColor,
       fontWeight: FontWeight.w700,
       fontSize: 19,
     );
@@ -73,7 +79,7 @@ class TextStyles {
 
   TextStyle greyTextStyle400() {
     return GoogleFonts.manrope(
-      color: themes().tetiaryColor,
+      color: Themes().tetiaryColor,
       fontWeight: FontWeight.w400,
       fontSize: 14,
     );
@@ -81,7 +87,7 @@ class TextStyles {
 
   TextStyle greyTextStyle700() {
     return GoogleFonts.manrope(
-      color: themes().tetiaryColor,
+      color: Themes().tetiaryColor,
       fontWeight: FontWeight.w700,
       fontSize: 14,
     );
@@ -89,7 +95,7 @@ class TextStyles {
 
   TextStyle darkGreyTextStyle400() {
     return GoogleFonts.manrope(
-      color: themes().darkerGreyColor,
+      color: Themes().darkerGreyColor,
       fontWeight: FontWeight.w400,
       fontSize: 14,
     );
@@ -97,7 +103,7 @@ class TextStyles {
 
   TextStyle darkGreyTextStyle700() {
     return GoogleFonts.manrope(
-      color: themes().darkerGreyColor,
+      color: Themes().darkerGreyColor,
       fontWeight: FontWeight.w700,
       fontSize: 14,
     );

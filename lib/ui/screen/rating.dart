@@ -1,6 +1,8 @@
+import 'package:adverts247Pass/services/image_assets.dart';
 import 'package:adverts247Pass/services/video_service.dart';
 import 'package:adverts247Pass/state/user_state.dart';
 import 'package:adverts247Pass/themes.dart';
+import 'package:adverts247Pass/ui/screen/thank_you_page.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 
 import 'package:adverts247Pass/widget/button.dart';
@@ -149,10 +151,17 @@ class _RatingPageState extends State<RatingPage> {
                                 height: 30,
                               ),
                               Container(
-                                width: 150,
-                                child: MyButton(
-                                  text: 'Submit',
-                                  onPressed: () async {
+                                width: 200,
+                                child: GestureDetector(
+                                  // text: 'Submit',
+                                  onTap: () async {
+                                    Navigator.pushAndRemoveUntil(
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: (context) =>
+                                                ThankYouPage()),
+                                        (route) => true);
+                                    return;
                                     var sessionId =
                                         await Provider.of<UserState>(context,
                                                 listen: false)
@@ -186,6 +195,7 @@ class _RatingPageState extends State<RatingPage> {
                                     //         builder: (context) =>
                                     //             VideoPlayerApp()));
                                   },
+                                  child: Image.asset(ImageAssets.reviewUsIcon),
                                 ),
                               )
                             ],
